@@ -40,7 +40,7 @@ object Workspace {
     }
     fun result(values:FloatArray):String=json.encodeToString(JsonArray(values.map{JsonPrimitive(it)}))
     fun capabilities():String=buildJsonObject {
-        put("version","0.1.0-alpha.1");put("language","hyperl/1")
+        put("version","0.1.0-alpha.2");put("language","hyperl/1")
         put("os",System.getProperty("os.name"));put("architecture",System.getProperty("os.arch"))
         put("java",System.getProperty("java.version"))
         put("cpuReferenceAvailable",true);put("automaticGpuFallback",false)

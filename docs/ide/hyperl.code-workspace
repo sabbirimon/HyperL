@@ -1,0 +1,45 @@
+{
+  "folders": [
+    {
+      "path": "../.."
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "*.hyperl.json": "json"
+    },
+    "json.schemas": [
+      {
+        "fileMatch": [
+          "**/*.hyperl.json"
+        ],
+        "url": "./docs/ide/hyperl-workspace.schema.json"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "HyperL: validate current workspace",
+        "type": "process",
+        "command": "${input:hyperlExecutable}",
+        "args": [
+          "workspace-validate",
+          "${file}"
+        ],
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always"
+        }
+      }
+    ],
+    "inputs": [
+      {
+        "id": "hyperlExecutable",
+        "type": "promptString",
+        "description": "Absolute path to your installed HyperL launcher (.bat on Windows)"
+      }
+    ]
+  }
+}

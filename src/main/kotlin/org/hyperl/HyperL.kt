@@ -49,7 +49,7 @@ class HyperLCpuBackend(private val memoryBudgetBytes:Long=MemoryPlanner.DEFAULT_
                 if(i%1024==0) currentCoroutineContext().ensureActive()
                 result[i]=when(step.operation){"add"->args[0][i]+args[1][i];"multiply"->args[0][i]*args[1][i];"relu"->maxOf(0f,args[0][i]);else->error("Unsupported operation")}
             }
-            require(result.all(Float::isFinite)){"HyperL nonfinite result"};live[step.output]=result
+            require(result.all(Float::isFinite)){"HyperL nonfinite result at ${step.output}"};live[step.output]=result
         }
         return live.getValue(program.output).copyOf()
     }

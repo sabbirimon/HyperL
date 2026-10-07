@@ -4,11 +4,13 @@ plugins {
     application
 }
 group = "org.hyperl"
-version = "0.1.0-alpha.1"
+version = "0.1.0-alpha.2"
 repositories { mavenCentral() }
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
 java { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 dependencies {
+    implementation("com.formdev:flatlaf:3.7.2:no-natives")
+    implementation("com.fifesoft:rsyntaxtextarea:4.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     testImplementation("junit:junit:4.13.2")

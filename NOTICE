@@ -20,3 +20,9 @@ are separately installed and retain their own licenses; not bundled here.
 
 Preserve upstream license/notice resources contained in dependency jars.
 No Odysseus, OpenAirInterface or srsRAN implementation is imported.
+
+Developer workbench dependencies: FlatLaf 3.7.2 no-natives classifier
+(com.formdev, Apache-2.0, FormDev/Karl Tauber) and RSyntaxTextArea 4.0.1
+(com.fifesoft, BSD-3-Clause, Robert Futrell/contributors). Their original
+license texts are retained under docs/licenses and in the unmodified JARs.
+No NVIDIA artwork, code, trademark logo or Nsight assets are copied.

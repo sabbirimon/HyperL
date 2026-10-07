@@ -407,3 +407,35 @@ controls visible; speed and universal compatibility are outcomes to demonstrate.
 See [MEMORY.md](MEMORY.md) for the implemented CPU preflight, GUI Memory plan,
 optional `run` byte budget, bounded dataset headroom and future HBM/unified
 memory/SSD/NVMe allocation interfaces. The full developer SDK remains later.
+
+## Developer workbench and IDE helpers
+
+The workbench provides syntax-highlighted/foldable JSON editors, line numbers,
+undo/redo, literal Find next, semantic/shape Validate, Format JSON and two examples.
+Open/Save workspace uses bounded `hyperl-workspace/1` documents containing only
+program and input JSON; opening never executes them. Overwriting an existing file
+requires the visible file choice and confirmation. Export output saves the currently
+displayed result/source to an explicitly selected local file. Unsaved editor changes
+require confirmation before replacing an example/workspace or closing the window.
+Ctrl/Cmd+Enter runs the selected backend; Stop cancels managed local work.
+
+```sh
+bin/hyperl workspace-new my-example.hyperl.json
+bin/hyperl workspace-validate my-example.hyperl.json
+```
+
+[IDE helpers](ide/README.md) include a local JSON schema and optional VS Code
+workspace/process task. They require your independently installed IDE/CLI and
+manual task invocation; no plugin or language server is silently installed.
+[UI design plan](UI_DESIGN_PLAN.md) records the visual system, performance and
+accessibility gates, native profiler/cluster workspace and full SDK/IDE roadmap.
+
+## Advanced diagnostics and suggested fixes
+
+Use **Analyze** to inspect syntax, dependencies, shapes, memory and actual CPU
+behavior on the supplied vectors. **Review fix** previews one bounded operation/
+reference correction and requires explicit selection/confirmation; stale editor
+text is rejected. `hyperl diagnose PROGRAM INPUTS [BUDGET_BYTES]` provides the
+same structured diagnostics and context suggestions for scripts. See
+[CODE_DIAGNOSTICS.md](CODE_DIAGNOSTICS.md) for scope, exit codes and sample-only
+evidence. It is a HyperL analyzer, with full language-server/AI tooling staged later.

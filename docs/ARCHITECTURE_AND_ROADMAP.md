@@ -103,3 +103,10 @@ Security/crypto uses reviewed standard libraries and opaque key handles, never f
 kernels or ordinary model inputs for keys. Future encryption/auth/vision backends
 have their own tests. AGI/SI names express future interoperability requirements,
 not a present capability or a reason to remove human control.
+
+## Developer experience and built-in tools
+
+The owner requested a polished developer UI and built-in IDE tools. See
+[UI design plan](UI_DESIGN_PLAN.md), [developer tooling matrix](DEVELOPER_TOOLS_PLAN.md)
+and [local IDE helpers](ide/README.md). Full SDK/language-server/debugger/profiler
+work remains staged behind real runtime/compiler contracts.

@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HyperL declarative workspace",
+  "description": "Structural assistance only. Use HyperL semantic validation for dependency, shapes, finite values and memory. Opening this file never executes work.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "program",
+    "inputs"
+  ],
+  "properties": {
+    "format": {
+      "const": "hyperl-workspace/1"
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs",
+        "instructions",
+        "output"
+      ],
+      "properties": {
+        "format": {
+          "const": "hyperl/1",
+          "default": "hyperl/1"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+          }
+        },
+        "instructions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "output",
+              "operation",
+              "inputs"
+            ],
+            "properties": {
+              "output": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+              },
+              "operation": {
+                "enum": [
+                  "add",
+                  "multiply",
+                  "relu",
+                  "sum"
+                ]
+              },
+              "inputs": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+                }
+              }
+            }
+          }
+        },
+        "output": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 8,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 262144,
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

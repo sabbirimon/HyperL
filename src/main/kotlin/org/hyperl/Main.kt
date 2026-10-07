@@ -8,11 +8,14 @@ import kotlin.system.exitProcess
 fun main(args:Array<String>) {
     try {
         when(args.firstOrNull() ?: "help") {
-            "help","--help","-h"->println("""HyperL 0.1.0-alpha.1 — experimental portable AI kernels
+            "help","--help","-h"->println("""HyperL 0.1.0-alpha.2 — experimental portable AI kernels
 Usage:
   hyperl gui
   hyperl capabilities
+  hyperl diagnose PROGRAM.json INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl validate PROGRAM.json
+  hyperl workspace-new FILE.hyperl.json
+  hyperl workspace-validate FILE.hyperl.json
   hyperl run PROGRAM.json INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl memory-plan PROGRAM.json INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl emit TARGET PROGRAM.json
@@ -29,6 +32,9 @@ Only CPU_REFERENCE and the explicitly supplied OpenCL bridge execute; emission i
 Network access only through explicit authenticated node-probe; no shell, auto installs, radio or privileges.""")
             "gui"->{require(args.size==1);SwingUtilities.invokeLater{HyperLWindow.show()}}
             "capabilities"->{require(args.size==1);println(Workspace.capabilities())}
+            "workspace-new"->{require(args.size==2);DeveloperWorkspace.save(Path.of(args[1]),DeveloperWorkspace.encode(Workspace.EXAMPLE_PROGRAM,Workspace.EXAMPLE_INPUTS));println("Workspace created; nothing executed")}
+            "workspace-validate"->{require(args.size==2);DeveloperWorkspace.parse(Workspace.read(Path.of(args[1])));println("Valid hyperl-workspace/1") }
+            "diagnose"->{require(args.size in 3..4);val report=runBlocking{CodeDiagnostics.analyze(Workspace.read(Path.of(args[1])),Workspace.read(Path.of(args[2])),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)};println(Workspace.json.encodeToString(report));if(!report.valid)exitProcess(2)}
             "validate"->{require(args.size==2);Workspace.program(Workspace.read(Path.of(args[1])));println("Valid hyperl/1 program")}
             "run"->{require(args.size in 3..4);println(cpu(Workspace.read(Path.of(args[1])),Workspace.read(Path.of(args[2])),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET))}
             "memory-plan"->{require(args.size in 3..4);println(Workspace.json.encodeToString(MemoryPlanner.plan(Workspace.program(Workspace.read(Path.of(args[1]))),Workspace.inputs(Workspace.read(Path.of(args[2]))),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)))}

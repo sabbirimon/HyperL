@@ -56,3 +56,32 @@ capacity, kernel/fabric performance, telecom stack and certification remain late
 
 See [memory boundaries](MEMORY.md), [platform matrix](PLATFORMS.md),
 [programming/install guide](USER_GUIDE.md) and [ordered roadmap](ARCHITECTURE_AND_ROADMAP.md).
+
+## Developer workbench increment — alpha.2
+
+Local JVM/package validation after the polished UI/editor tools passes in **2m16s**:
+**28 cases, 27 pass, one GPU hardware skip, zero failures/errors**. This includes
+actual new workspace round-trip/no-overwrite/example/unsafe-hook and shape
+rejection checks, and real panel Validate, Format JSON, Memory plan and Find next
+actions in addition to CPU execution and Metal source emission. FlatLaf 3.7.2
+no-natives and RSyntaxTextArea 4.0.1 are pinned; component licenses are retained.
+The initial API integration compile failure was repaired before this passing run.
+
+The UI design/developer tooling plans and local IDE schema/workspace are included.
+Native desktop file dialogs/focus/accessibility and actual VS Code/JetBrains UI
+interaction remain unrun. An IDE task/configuration is not a shipped language
+server, debugger or complete SDK. The earlier alpha.1 OS CI result above is
+historical; the UI increment needs its own OS matrix run before claiming it passed.
+
+## Final alpha.2 diagnostics and polished-layout check
+
+After the final editor-layout and diagnostic changes, the combined JVM/package
+command passes in **24s**: **33 cases, 32 pass, one unavailable GPU hardware skip,
+zero failures/errors**. New diagnostics checks cover real CPU sample verification,
+context completions, operation/reference repairs, exact-text hash/stale-edit
+rejection, input/shape/memory/backend errors and actual overflow localization
+before ReLU. The real GUI Analyze action is exercised as well.
+
+Visual QA uses the actual Swing panel and CPU button result rendered to a buffered
+image. RSyntaxTextArea font metrics are initialized against that actual image in
+the headless preview helper; native window interaction is still separate.

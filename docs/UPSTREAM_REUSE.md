@@ -7,7 +7,9 @@ components, and test the exact target. Public availability is not permission to
 relicense closed or restricted source. No vendor performance transfers automatically.
 
 Already used: Kotlin standard library, kotlinx.serialization, kotlinx.coroutines,
-JDK Swing/ZIP and JCE AES-GCM/SecureRandom/MessageDigest, Gradle and CMake. Their
+JDK Swing/ZIP and JCE AES-GCM/SecureRandom/MessageDigest, Gradle and CMake.
+The workbench also links pinned FlatLaf 3.7.2 no-natives (Apache-2.0) and
+RSyntaxTextArea 4.0.1 (BSD-3-Clause), with licenses under docs/licenses. Their
 versions/notices are recorded. The small CPU reference is a conformance oracle;
 it is not intended to replace optimized math/compiler libraries.
 

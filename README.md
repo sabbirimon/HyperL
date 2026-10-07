@@ -1,7 +1,7 @@
 # HyperL
 
 Original open-source AI kernel language, runtime experiments and developer tools.
-Apache-2.0 • Experimental `0.1.0-alpha.1` • Created by IMON with Codex assistance.
+Apache-2.0 • Experimental `0.1.0-alpha.2` • Created by IMON with Codex assistance.
 
 HyperL is a standalone project. Meshlit is one potential client. The first release
 provides a desktop **CLI and GUI**, a portable **C CPU SDK**, typed JSON programs,
@@ -26,6 +26,12 @@ bin/hyperl memory-plan examples/elementwise.json examples/inputs.json
 bin/hyperl gui
 bin/hyperl emit METAL examples/elementwise.json
 ```
+
+The [developer UI plan](docs/UI_DESIGN_PLAN.md) and [IDE helpers](docs/ide/README.md)
+cover syntax editing, validation, formatting, examples, workspace files and later
+SDK/language-server/profiler integration. [Code diagnostics](docs/CODE_DIAGNOSTICS.md)
+adds context suggestions, field-level errors, actual CPU sample checking and
+explicitly reviewed operation/reference repairs.
 
 The arithmetic example returns `[0, 6, 12]`. The GUI edits program/input JSON, runs
 CPU or an explicitly installed GPU bridge, emits source, probes devices and stops
