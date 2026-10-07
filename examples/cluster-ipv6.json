@@ -1,0 +1,8 @@
+{
+  "format": "hyperl-cluster/1",
+  "maxManagedNodes": 10000,
+  "maxActiveWorkers": 8,
+  "agentMayManage": false,
+  "agentNodeLimit": 64,
+  "endpoints": ["https://[2001:db8::1]:8443/hyperl"]
+}

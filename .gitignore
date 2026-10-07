@@ -1,0 +1,9 @@
+.gradle/
+build/
+.idea/
+*.iml
+native/hyperl-opencl
+native/hyperl-opencl.exe
+__pycache__/
+*.pyc
+.kotlin/

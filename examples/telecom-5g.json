@@ -1,0 +1,9 @@
+{
+  "format": "hyperl-telecom/1",
+  "generation": "NR_5G",
+  "standardReferences": ["3GPP TS 23.501 (edition requires selection)", "3GPP TS 33.501 (edition requires selection)"],
+  "labOnly": true,
+  "ownerApproved": false,
+  "isolatedLabReady": false,
+  "adapterInstalled": false
+}
