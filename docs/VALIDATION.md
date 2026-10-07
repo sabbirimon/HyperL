@@ -85,3 +85,12 @@ before ReLU. The real GUI Analyze action is exercised as well.
 Visual QA uses the actual Swing panel and CPU button result rendered to a buffered
 image. RSyntaxTextArea font metrics are initialized against that actual image in
 the headless preview helper; native window interaction is still separate.
+
+OS CI [37700269194](https://github.com/sabbirimon/HyperL/actions/runs/37700269194)
+passes all Ubuntu, Windows and macOS jobs for the workbench/diagnostics source
+`12a991f`. The subsequent bounded-report refinement also passes locally in
+**22s**, retaining **33 cases, 32 pass, one GPU skip, zero failures/errors**. It
+caps issues/paths and rejects excessive root fields/input declarations before
+expanding diagnostic output. A malformed-field fixture verifies bounded rejection.
+The refinement receives its own source CI run; local results do not imply a
+GPU, native GUI session or general-language bug detector.

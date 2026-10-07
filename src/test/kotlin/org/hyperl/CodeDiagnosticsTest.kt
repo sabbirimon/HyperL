@@ -34,6 +34,8 @@ class CodeDiagnosticsTest {
     }
     @Test fun malformedAndOversizedDeclarationFailBoundedly()=runBlocking {
         assertTrue(CodeDiagnostics.analyze("{",Workspace.EXAMPLE_INPUTS).issues.any{it.code=="JSON_SYNTAX"})
+        val crowded=Workspace.json.encodeToString(JsonObject((0..20).associate{"field$it" to JsonPrimitive(1)}))
+        val bounded=CodeDiagnostics.analyze(crowded,Workspace.EXAMPLE_INPUTS);assertEquals(1,bounded.issues.size);assertEquals("PROGRAM_FIELD_LIMIT",bounded.issues.first().code)
         val bad=Workspace.EXAMPLE_PROGRAM.replace("[\"x\",\"w\"]","[\"x\",\"x\"]")
         assertTrue(CodeDiagnostics.analyze(bad,Workspace.EXAMPLE_INPUTS).issues.any{it.code=="INPUT_DECLARATION"})
     }

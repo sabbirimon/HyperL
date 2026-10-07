@@ -26,13 +26,16 @@ object CodeDiagnostics {
     }
     suspend fun analyze(programText:String,inputText:String,budget:Long=MemoryPlanner.DEFAULT_BUDGET,backend:String="CPU_REFERENCE"):DiagnosticReport {
         val issues=mutableListOf<CodeIssue>();val completions=mutableListOf<CodeCompletion>()
-        fun issue(code:String,path:String,message:String,suggestion:String,repair:SuggestedRepair?=null,severity:String="ERROR"){issues.add(CodeIssue(severity,code,path,message.take(1024),suggestion,repair))}
+        fun issue(code:String,path:String,message:String,suggestion:String,repair:SuggestedRepair?=null,severity:String="ERROR"){if(issues.size<256)issues.add(CodeIssue(severity,code,path.take(256),message.take(1024),suggestion,repair))}
         require(programText.length<=Workspace.MAX_JSON_BYTES && inputText.length<=Workspace.MAX_JSON_BYTES)
         val raw=try{Workspace.json.parseToJsonElement(programText).jsonObject}catch(e:Exception){issue("JSON_SYNTAX","program",e.message?:"Invalid JSON","Check quoting, commas and matching object/array delimiters.");return DiagnosticReport(false,issues,completions,false)}
+        if(raw.size>16){issue("PROGRAM_FIELD_LIMIT","program","Too many program fields","Keep only the four supported fields; diagnostic output is bounded.");return DiagnosticReport(false,issues,completions,false)}
         val format=raw["format"]?.let{(it as? JsonPrimitive)?.content}
         if(format!=null&&format!="hyperl/1")issue("VERSION","program.format","Unsupported language version","Use hyperl/1 only if you intend its f32 semantics.")
         for(key in raw.keys-setOf("format","inputs","instructions","output"))issue("UNKNOWN_FIELD","program.$key","Unknown program field","Remove unsupported metadata/build hooks; workspaces never execute hooks.")
-        val declared=(raw["inputs"] as? JsonArray)?.mapNotNull{(it as? JsonPrimitive)?.takeIf{p->p.isString}?.content}.orEmpty()
+        val declarations=raw["inputs"] as? JsonArray
+        if(declarations==null || declarations.size !in 1..8){issue("INPUT_DECLARATION","program.inputs","Expected 1–8 declared inputs","Supply a bounded list of distinct identifiers.");return DiagnosticReport(false,issues,completions,false)}
+        val declared=declarations.mapNotNull{(it as? JsonPrimitive)?.takeIf{p->p.isString}?.content}.orEmpty()
         if(declared.size !in 1..8 || declared.any{!it.matches(names)} || declared.toSet().size!=declared.size){issue("INPUT_DECLARATION","program.inputs","Expected 1–8 unique legal input names","Use distinct ASCII identifiers, max 32 characters.");return DiagnosticReport(false,issues,completions,false)}
         val steps=raw["instructions"] as? JsonArray
         if(steps==null || steps.size !in 1..64){issue("INSTRUCTION_COUNT","program.instructions","Expected 1–64 instructions","Supply a bounded ordered DAG.");return DiagnosticReport(false,issues,completions,false)}
