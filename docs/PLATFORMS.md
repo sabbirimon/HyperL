@@ -22,3 +22,11 @@ Kirin HiAI, MediaTek NeuroPilot/Neuron and Apple Core ML/ANE are separate SDK/pr
 milestones. XRING public NPU SDK availability remains unverified. NPUs are not
 generic device GPUs. SDK detection, free research access and source emission are
 not license/redistribution grants or inference qualification.
+
+## First standalone CI result
+
+[Run 37697211217](https://github.com/sabbirimon/HyperL/actions/runs/37697211217)
+passed all three Ubuntu, Windows and macOS jobs at `0203267`, including JVM
+tests/distribution, CMake/CTest and Python installer checks. References to CI
+qualification in the matrix above now have that runner evidence; ARM/mobile/OEM
+architectures, desktop interaction, accelerators and signing remain separate.

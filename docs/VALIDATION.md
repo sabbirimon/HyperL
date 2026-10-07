@@ -44,8 +44,11 @@ admission enforces the selected byte budget and observed JVM headroom. Failed
 attempts are not counted as successful validation.
 
 The desktop preview is an actual Swing panel rendered headlessly, not proof of a
-native visible window/session. OS matrix CI is configured for Ubuntu, Windows and
-macOS; until its results are available, local macOS evidence is the only OS claim.
+native visible window/session. [OS matrix CI run 37697211217](https://github.com/sabbirimon/HyperL/actions/runs/37697211217)
+completed successfully for Ubuntu, Windows and macOS at source `0203267`. Every
+job built/tested the JVM distribution, compiled/ran the portable C CPU contract
+and ran the Python installer checks. This establishes those runner build paths;
+it does not qualify native GUI sessions, OEM mobile devices or vendor accelerators.
 C ABI/IEEE semantics and source compatibility still need ARM/RISC-V/mobile target
 builds and hardware checks. Full SDK, tensor/model engine, native mobile packages,
 qualified GPU/NPU/FPGA runtimes, distributed scheduler, automatic spill, large-node
