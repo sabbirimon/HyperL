@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hyperl-experimental"
+version = "0.1.0a3"
+description = "Bounded experimental HyperL Python/C ABI bridge and preprocessing recipes"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+keywords = ["ai", "native", "cpu", "numpy", "pytorch", "hyperl"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/sabbirimon/HyperL"
+Repository = "https://github.com/sabbirimon/HyperL"
+
+[tool.setuptools]
+packages = ["hyperl"]

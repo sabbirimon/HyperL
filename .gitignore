@@ -7,3 +7,6 @@ native/hyperl-opencl.exe
 __pycache__/
 *.pyc
 .kotlin/
+
+python/build/
+python/*.egg-info/

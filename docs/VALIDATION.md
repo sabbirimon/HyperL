@@ -94,3 +94,31 @@ caps issues/paths and rejects excessive root fields/input declarations before
 expanding diagnostic output. A malformed-field fixture verifies bounded rejection.
 The refinement receives its own source CI run; local results do not imply a
 GPU, native GUI session or general-language bug detector.
+
+## Reference-driven polish and Python preview — alpha.3
+
+Final UI source/packaging check passes locally in **29s** with **33 JVM cases:
+32 pass, one unavailable OpenCL GPU skip, zero failures/errors**. Real GUI checks
+now verify actual bundled Inter/JetBrains Mono font families and select Source
+emission/Execution tabs before exercising the existing CPU/Metal source actions.
+The visual layout uses static vector gradients; no timer, browser engine or runtime
+font download is added. Native GUI/window/accessibility remains separate acceptance.
+
+The unchanged C99 core now builds both static and shared artifacts. Actual macOS
+shared-library build and CTest pass (**one C contract case**). The bundled Python
+3.12 runtime with NumPy 2.3.5 validates the explicit shared-library bridge and recipes:
+**nine cases, seven pass, two skip, zero failures/errors**. PyTorch is not installed
+locally, so Torch CPU/CUDA tests skip rather than emulate that framework. NumPy
+conversion uses actual installed NumPy. Cancellation callback failures/interrupts
+complete C cleanup; overflow before ReLU, shapes/budgets, retained graph bounds,
+existing program import, copy ownership and real recipes are checked. An initial
+recipe fixture incorrectly expected ReLU(-1+2) to be zero; its expected value was
+corrected to one before the passing run. Installer checks still pass (**two cases**).
+
+CI adds pinned NumPy 2.3.3 across three OS jobs and pinned PyTorch 2.9.1 CPU on Linux
+for actual framework dispatch checks. These new jobs must complete before claiming
+framework/matrix results for this increment. No actual CUDA GPU, vendor-specific
+Intel/AMD/Ascend libraries, phone package, enterprise service or full SDK is qualified.
+The source archive includes Python preview and native source, not precompiled
+universal native libraries or vendor runtimes. Enterprise/mobile/performance/SDK
+interoperability documents record plans; they are not successful deployments.

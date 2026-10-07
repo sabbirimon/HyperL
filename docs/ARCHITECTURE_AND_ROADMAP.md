@@ -16,7 +16,7 @@ This document records requirements; linked upstream material is evidence, not in
 | Windows | JVM tools and buildable C SDK | Native C++ ONNX Runtime/DirectML/provider adapters, IOCP and signed packaging; no DirectML implementation yet |
 | Apple | JVM macOS tools and emitted Metal source | Swift or Objective-C++ Metal host adapter, C ABI, MPS/Core ML where qualified. Native iOS app/library; no iOS JVM installer |
 | Android/mobile | C ABI/emitted Vulkan/OpenCL/Metal formats | JNI/NDK Vulkan and OEM-qualified OpenCL; iOS Metal separate. GPU vendor name does not qualify driver/operators |
-| Native service safety | Versioned ownership/cancellation and explicit adapter descriptors | A Rust service layer is an option where it reduces ownership/concurrency risk; choose after benchmarks, avoid adding languages without a specific role |
+| Native service safety | Versioned ownership/cancellation and explicit adapter descriptors | Owner-approved Rust cluster services, separated from C/C++ native kernels/adapters; stable C ABI and explicit ownership/concurrency boundaries. Qualify with actual benchmarks |
 
 Dynamic support means explicit capability negotiation, immutable artifact/model
 hashes, version/ABI checks and qualified adapters. No automatic downloading, root
@@ -110,3 +110,24 @@ The owner requested a polished developer UI and built-in IDE tools. See
 [UI design plan](UI_DESIGN_PLAN.md), [developer tooling matrix](DEVELOPER_TOOLS_PLAN.md)
 and [local IDE helpers](ide/README.md). Full SDK/language-server/debugger/profiler
 work remains staged behind real runtime/compiler contracts.
+
+## Owner-approved native and deployment expansion
+
+The owner approved C/C++ for kernels/accelerator adapters and Rust for cluster
+services; [native performance decision](NATIVE_PERFORMANCE_ARCHITECTURE.md) records
+the boundaries, native CLI/UI migration gates and measurements. Java is not a
+permanent desktop requirement; today's Kotlin/JVM editor remains a working tools
+package while the native engine develops.
+
+[Enterprise/datacenter service plan](ENTERPRISE_AND_CLUSTER_PLAN.md) defines
+profiles, useful P0/P1/P2 services, tenant isolation, scheduler integration, identity,
+quotas, storage/checkpoints, telemetry, networking, operations and measured rollout.
+[Single-phone/edge plan](MOBILE_AND_EDGE_PLAN.md) preserves offline local use,
+non-root defaults, native platform wrappers and optional authenticated remote access.
+These are planned services/packages, not deployed or hardware-qualified additions.
+
+The owner also requested Python-style ease. [Developer-experience plan](DEVELOPER_EXPERIENCE_PLAN.md)
+defines the later bounded text frontend/Python SDK, common IR, native execution,
+source diagnostics and onboarding gates; the alpha does not execute that proposed
+text syntax. A small explicit Python/C ABI preview is documented in
+[library interoperability](LIBRARY_INTEROPERABILITY.md); it is not the full SDK.

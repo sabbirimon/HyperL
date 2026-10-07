@@ -27,6 +27,23 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s scripts -p "test_*.py" -v
+      - name: Pinned optional NumPy bridge checks
+        run: python -m pip install numpy==2.3.3
+      - name: Pinned PyTorch CPU bridge dependency
+        if: matrix.os == 'ubuntu-latest'
+        run: python -m pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cpu
+      - name: Install local Python preview
+        run: python -m pip install ./python
+      - name: Actual Python native and tensor bridge checks
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          from pathlib import Path
+          import subprocess, sys
+          libraries = [p.resolve() for p in Path('build/native').rglob('*hyperl_cpu_runtime*') if p.is_file() and p.suffix in ('.dll', '.dylib', '.so')]
+          assert len(libraries) == 1, libraries
+          subprocess.run([sys.executable, 'python/tests/test_preview.py', '--library', str(libraries[0]), '-v'], check=True)
+          PYTHON
       - uses: actions/upload-artifact@v4
         with:
           name: hyperl-${{ matrix.os }}

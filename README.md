@@ -1,135 +1,313 @@
+<div align="center">
+
 # HyperL
 
-Original open-source AI kernel language, runtime experiments and developer tools.
-Apache-2.0 • Experimental `0.1.0-alpha.2` • Created by IMON with Codex assistance.
+### Open-source AI compute experiments and developer tools
 
-HyperL is a standalone project. Meshlit is one potential client. The first release
-provides a desktop **CLI and GUI**, a portable **C CPU SDK**, typed JSON programs,
-source emitters, memory-aware CPU admission, an optional OpenCL GPU bridge and encrypted streaming datasets.
-It does not replace CUDA, implement a complete tensor compiler, or qualify every
-OS, architecture, accelerator or telecom network. See [architecture and detailed
-build plan](docs/ARCHITECTURE_AND_ROADMAP.md) and [validation](docs/VALIDATION.md).
+**Simple authoring. Native execution. A path from one device to AI clusters.**
 
-## Install and run
+[![License: Apache-2.0](https://img.shields.io/badge/Source-Apache--2.0-72e0ce)](LICENSE)
+[![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
+[![Release: alpha.3](https://img.shields.io/badge/Release-0.1.0--alpha.3-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.3)
+[![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
-The [installation, usage and programming guide](docs/USER_GUIDE.md) includes
-Windows/Linux/macOS commands, program examples, C embedding and troubleshooting.
+[Download](https://github.com/sabbirimon/HyperL/releases) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
-Download a versioned ZIP/TAR from [Releases](https://github.com/sabbirimon/HyperL/releases).
-Install a maintained Java 17+ runtime separately, unpack, then use `bin/hyperl`
-on Linux/macOS or `bin\hyperl.bat` on Windows. The same archive contains both modes:
+</div>
+
+HyperL explores a common way to describe, validate and eventually execute AI workloads
+across CPUs, GPUs and other accelerators. Its goal is to give developers approachable
+authoring tools and explicit memory, device and numerical contracts, while letting
+qualified native backends use each platform's capabilities.
+
+**Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
+bounded f32 CPU reference, portable C ABI preview, backend source emitters, an optional
+OpenCL bridge, memory-aware CPU admission and encrypted local dataset streaming.
+A small Python/C ABI and tensor-copying preview adds reusable preprocessing helpers.
+The broader native compiler, Python-like text language, full SDK, mobile packages and
+enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
+or a production distributed AI runtime. [Current evidence and limits](docs/VALIDATION.md).
+
+Created by **Sabbir Hassan Imon (IMON)** with Codex assistance. HyperL is independent;
+[Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
+
+## Why build HyperL?
+
+AI developers face different runtime APIs, memory domains and deployment environments.
+HyperL's direction is to put a stable program/adapter contract between developer intent
+and platform execution, so portability does not require hiding unsupported operations
+or pretending every accelerator behaves the same.
+
+| Goal | Benefit to developers and operators | Delivery boundary |
+|---|---|---|
+| Easy as Python to start | Small examples, useful errors, sensible defaults and later Python-like syntax/API | Local editor/diagnostics and small Python preview exist; full authoring/SDK later |
+| Native compute where it matters | Explicit buffers, fused/compiled kernels and target-specific adapters | C99 preview exists; optimized C/C++ engine and speedups require benchmarks |
+| One program contract across devices | Reuse validation and precision rules instead of unrelated per-vendor semantics | `hyperl/1` f32 reference/source format exists; tensor/import/runtime support expands later |
+| Memory-aware large-data work | Predict cost, reject oversized work, stream encrypted data and plan future spill | CPU estimate/admission and local chunk IO exist; HBM/VRAM accounting and automatic spill are planned |
+| Single-device through cluster deployment | Keep offline local use useful while adding optional remote capacity | Desktop works today; phone and enterprise packages have separate qualification gates |
+| Human control and enterprise operations | Tenant quotas, audit, scoped agents and acknowledged emergency stops | Enterprise services/control protocol are planned, not deployed by this release |
+| Open development and reproducible evidence | Study code, contribute adapters, reproduce correctness and measure real performance | Apache-2.0 source; upstream components/SDKs retain their own licenses |
+
+Useful AI/security/vision goals include preprocessing kernels, inference pipelines,
+large-dataset preparation, evaluation and governed fleet operations. Full models,
+training, advanced crypto providers and hardware profiling need their own backends;
+the current f32 kernels are not an encryption primitive or complete model engine.
+
+## Developer workbench
+
+![HyperL workbench with actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.3/workbench-alpha3-preview.png)
+
+An original navy/graphite theme uses subtle teal/violet gradients, rounded panels,
+clear status cards, **Inter** interface typography and **JetBrains Mono** code.
+The screenshot renders the actual Swing panel headlessly after a real CPU run;
+it does not establish a native GUI session or GPU execution.
+
+- Editable program/input JSON: highlighting, line numbers, folding, undo, formatting
+  and literal search; two working examples and explicit workspace open/save.
+- Validate and Analyze: field-level errors, context suggestions, shapes/memory/backend
+  limits and actual supplied-input CPU checks. **Review fix** previews supported edits
+  and rejects stale text; sample success does not prove all programs bug-free.
+- Separate **Execution**, **Source emission** and **GPU setup** tabs, memory-budget
+  controls, real task status, local Stop and source/result export.
+- CLI parity, local JSON schema and an optional VS Code process task. Full VS Code/
+  JetBrains plugins, semantic language server, debugger and profiler remain later.
+
+[Workbench design](docs/UI_DESIGN_PLAN.md) · [Developer tools](docs/DEVELOPER_TOOLS_PLAN.md) · [Diagnostics](docs/CODE_DIAGNOSTICS.md) · [Font provenance](docs/FONT_PROVENANCE.md)
+
+## What runs now?
+
+| Area | Current alpha behavior |
+|---|---|
+| CPU reference | Real finite f32 `add`, `multiply`, `relu`, ordered `sum`; bounded DAG/vectors, validation and cancellation |
+| Native embedding | Original C99 arithmetic library and C ABI preview; static/shared build, explicit Python bridge; full SDK later |
+| Python libraries | Native CPU recipes, NumPy/CPU Torch copying bridges and optional verified PyTorch elementwise path; CUDA requires separate hardware validation |
+| Memory planning | Observed JVM heap/environment plus full-array estimate/admission; not VRAM reservation or a hard RSS limit |
+| Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
+| Optional GPU | Explicitly installed OpenCL bridge, supported elementwise requests verified against CPU; no GPU available on local validation host |
+| Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication |
+| Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
+| Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
+| Telecom research | Disabled/uncertified research profiles and a full-stack research plan; no RF or carrier stack activation |
+
+```mermaid
+flowchart LR
+    A[CLI or workbench] --> B[hyperl/1 validation]
+    B --> C[Memory admission]
+    C --> D[CPU reference result]
+    B --> E[Backend source emission]
+    E --> F[Generated source only]
+    G[Native caller] --> H[C99 ABI preview]
+    classDef ui fill:#183332,stroke:#72e0ce,color:#e9eff7
+    classDef cpu fill:#25351d,stroke:#c2ef87,color:#e9eff7
+    classDef source fill:#28213d,stroke:#bba7f8,color:#e9eff7
+    class A,B ui
+    class C,D,G,H cpu
+    class E,F source
+```
+
+The optional OpenCL path needs a reviewed local executable, installed runtime/driver
+and a supported GPU. It never silently substitutes CPU hardware. Java memory policy
+and the C ABI have different ownership scopes; source generation is a separate path.
+See [platform support and qualification](docs/PLATFORMS.md).
+
+## Quick start
+
+Download a versioned ZIP/TAR and matching checksum from [Releases](https://github.com/sabbirimon/HyperL/releases).
+Verify the digest, install a maintained **Java 17+** runtime, then extract the archive.
+The same distribution includes CLI, GUI, examples, documentation and native C source.
+No account, Android Studio or cloud provider is required.
+
+Linux/macOS, from the extracted directory:
 
 ```sh
 bin/hyperl capabilities
 bin/hyperl run examples/elementwise.json examples/inputs.json
+bin/hyperl diagnose examples/elementwise.json examples/inputs.json
 bin/hyperl memory-plan examples/elementwise.json examples/inputs.json
 bin/hyperl gui
-bin/hyperl emit METAL examples/elementwise.json
 ```
 
-The [developer UI plan](docs/UI_DESIGN_PLAN.md) and [IDE helpers](docs/ide/README.md)
-cover syntax editing, validation, formatting, examples, workspace files and later
-SDK/language-server/profiler integration. [Code diagnostics](docs/CODE_DIAGNOSTICS.md)
-adds context suggestions, field-level errors, actual CPU sample checking and
-explicitly reviewed operation/reference repairs.
+Windows PowerShell uses the corresponding launcher:
 
-The arithmetic example returns `[0, 6, 12]`. The GUI edits program/input JSON, runs
-CPU or an explicitly installed GPU bridge, emits source, probes devices and stops
-managed local work. It performs no network connection or automatic installation.
-`gui` needs a desktop display; headless systems use the CLI/library.
+```powershell
+.\bin\hyperl.bat run examples\elementwise.json examples\inputs.json
+.\bin\hyperl.bat gui
+```
 
-Optional user-local installation (Python 3): `scripts/install.sh ARCHIVE.zip PREFIX SHA256` or
-`scripts/install.ps1 -Archive ARCHIVE.zip -Prefix DIRECTORY -Sha256 SHA256`. Use an empty/new prefix
-owned by you; no root/admin access or global PATH modification is required. Verify
-the release SHA-256 checksums before extracting. Uninstall that chosen prefix only;
-keys, datasets and models stay separate and are not removed automatically.
+The example returns **`[0, 6, 12]`**: multiply vectors, then apply ReLU. Change inputs
+or load the reduction example in the workbench. Programs are bounded declarative JSON;
+opening a workspace does not execute shell hooks. A graphical desktop is required for
+`gui`; servers can use CLI/native libraries without starting a UI.
 
-Build from source with a maintained JDK 17+ (local validation uses JDK 21):
+Optional Python installer verifies the archive and creates a **new user-selected
+prefix**, with no root/admin or global PATH change. Uninstall that prefix after closing
+programs; keep keys, datasets and projects separately. [Full install/programming guide](docs/USER_GUIDE.md)
+includes checksum commands, native embedding, GPU setup and troubleshooting.
+
+## Performance architecture
+
+Owner-approved direction: **C/C++ for kernels and accelerator adapters; Rust for
+cluster services**, with a stable C ABI. Python-style ease belongs in the authoring
+layer; the execution engine is native. Today's desktop tools remain Kotlin/JVM while
+the native compiler/CLI and later full SDK develop.
+
+Keep parsing, UI, scheduling and telemetry outside timed kernels. Qualify native
+SIMD/fusion, buffers and accelerator transfers before advertising speedups. A native
+UI is an evaluation milestone: compare startup, memory, package size and responsiveness
+on Windows/Linux/macOS instead of assuming a new UI language speeds up inference.
+[Native architecture decision and measurement gates](docs/NATIVE_PERFORMANCE_ARCHITECTURE.md).
+
+## Library compatibility and easy migration
+
+Use a standard Python API first; keep existing NumPy/PyTorch workflows and migrate
+supported preprocessing regions gradually. The alpha.3 preview includes an explicit
+native-library loader, versioned bounded programs and reusable `weighted_relu`,
+`residual_relu` and `positive_sum` helpers. NumPy/CPU Torch arrays can be copied into
+HyperL and exported back. An optional installed-PyTorch path runs selected elementwise
+operations and checks them against the native C reference before returning a tensor.
+
+```python
+from hyperl import NativeCpu, f32, weighted_relu
+
+cpu = NativeCpu("/absolute/path/to/your/libhyperl_cpu_runtime.so")
+y = weighted_relu(cpu, f32([-1, 2, 3]), f32([2, 3, 4]))
+print(list(y))  # [0.0, 6.0, 12.0]
+```
+
+Build/install the local preview separately; the path is a placeholder. This is a
+small interoperability foundation, not the full SDK or universal model importer.
+CUDA execution needs real installed framework/driver/hardware; mandatory verification
+introduces copies/synchronization, and no speedup is claimed. Autograd, reductions
+in the Torch path, tensor graph/model import and arbitrary CUDA libraries are unsupported.
+[Build, use, compatibility matrix and long-term migration plan](docs/LIBRARY_INTEROPERABILITY.md).
+
+First-class roadmap candidates include **Intel oneAPI/oneDNN/OpenVINO**, **AMD
+ROCm/HIP/MIGraphX**, **NVIDIA CUDA libraries**, **Huawei CANN/MindSpore**, **Baidu
+PaddlePaddle**, **Alibaba MNN**, **Tencent ncnn/TNN**, Apple native APIs and Microsoft
+ONNX Runtime/DirectML. Each needs version/operator/layout/precision/license and actual
+hardware qualification. Chinese model families are separate from framework support.
+
+## One phone, workstation or enterprise cluster
+
+The design keeps a small local mode and adds optional services as the deployment grows.
+**Phone support is planned**, through native Android/iOS packages and qualified local
+CPU/GPU/NPU paths, with optional authenticated remote access. Desktop Java GUI archives
+are not Android/iOS installers. Non-root/sandboxed use is the default; physical-device
+validation remains paused. [Mobile/edge plan](docs/MOBILE_AND_EDGE_PLAN.md).
+
+The [enterprise/datacenter plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) defines useful
+services: identity/mTLS, tenant isolation, quotas, durable jobs/leases, scheduler
+adapters, artifact/model registry, data/checkpoints, telemetry, human/agent policies,
+acknowledged global Stop, upgrades/rollback and disaster recovery. These are roadmap
+services; this release starts no enterprise control-plane listener.
+
+```mermaid
+flowchart TB
+    subgraph future[Planned enterprise architecture]
+        A[Desktop CLI and native phone clients] --> B[Rust control services]
+        B --> C[Identity quotas jobs and stop policy]
+        B --> D[Scheduler integration]
+        D --> E[Isolated workers]
+        E --> F[C/C++ kernels and adapters]
+        F --> G[Qualified CPU GPU NPU or FPGA]
+        E --> H[Data checkpoints and artifacts]
+        E --> I[Measured telemetry and audit]
+    end
+    classDef client fill:#183332,stroke:#72e0ce,color:#e9eff7
+    classDef control fill:#28213d,stroke:#bba7f8,color:#e9eff7
+    classDef compute fill:#25351d,stroke:#c2ef87,color:#e9eff7
+    classDef ops fill:#35291c,stroke:#eac388,color:#e9eff7
+    class A client
+    class B,C,D control
+    class E,F,G compute
+    class H,I ops
+```
+
+Reuse proven systems where suitable: evaluate Kubernetes/Slurm orchestration, Ray for
+selected AI workflows and OpenTelemetry for telemetry. Pin/version/license review
+and actual integration tests precede adoption; none is bundled as a working cluster.
+Current configuration limits—up to **1,000,000 inventory entries** and **256 active
+workers**—are validation bounds, not demonstrated operating capacity. Begin with an
+independent 3–5-host pilot before expanding. No million-node or low-latency fabric
+performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md#7-size-limits-and-measured-rollout-gates).
+
+## Evidence, not assumed performance
+
+Local alpha.3 checks: **32 JVM tests pass, one unavailable-GPU test skips, zero failures**;
+portable C CTest **one pass** and installer **two passes**. GUI checks execute the real
+CPU/source/analysis actions and verify the bundled font families. Actual previews are
+checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
+pie showData
+    title Local alpha.3 JVM checks - 33 cases
+    "Passed" : 32
+    "Skipped - GPU unavailable" : 1
+```
+
+This chart counts checks; it does not measure speed, reliability of a production
+service or hardware capacity. [CI](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
+runs JVM/C/installer checks on Windows, Linux and macOS; consult the run for the exact
+commit. Native GUI sessions, mobile/ARM/RISC-V targets, vendor accelerators and live
+multi-host/provider paths require separate evidence.
+
+## Roadmap
+
+```mermaid
+flowchart LR
+    A[Now: local tools and bounded reference] --> B[Native CPU optimization and CLI]
+    B --> C[Qualified GPU and tensor/model paths]
+    C --> D[Full SDK and Python-like authoring]
+    D --> E[Enterprise multi-host pilot]
+    E --> F[Measured scale and supported releases]
+    classDef now fill:#25351d,stroke:#c2ef87,color:#e9eff7
+    classDef native fill:#183332,stroke:#72e0ce,color:#e9eff7
+    classDef later fill:#28213d,stroke:#bba7f8,color:#e9eff7
+    class A now
+    class B,C native
+    class D,E,F later
+```
+
+Future work includes HBM/GDDR/unified/NUMA/CXL observation, explicit encrypted SSD/NVMe
+spill, supported tensor/model operators, mobile packaging, IPv6 distribution, qualified
+fabric transports and full telecom-stack research. Vendor/API inspiration is not a
+licensing or certification grant. Publish an LTS/support promise only after an actual
+maintenance policy, qualified targets and maintainers exist.
+
+| Documentation | Purpose |
+|---|---|
+| [Install, use and program](docs/USER_GUIDE.md) | CLI/GUI, examples, C ABI, installation and troubleshooting |
+| [Library interoperability](docs/LIBRARY_INTEROPERABILITY.md) | Native Python preview, recipes, tensor copying and framework/provider migration |
+| [Developer experience](docs/DEVELOPER_EXPERIENCE_PLAN.md) | Python-style language/API goals, onboarding and SDK ergonomics |
+| [Developer tools](docs/DEVELOPER_TOOLS_PLAN.md) | Current editing/diagnostics versus later IDE/debugger/profiler |
+| [Memory contracts](docs/MEMORY.md) | What CPU admission observes and what remains unknown |
+| [Native architecture](docs/NATIVE_PERFORMANCE_ARCHITECTURE.md) | C/C++ and Rust roles, ABI and performance gates |
+| [Enterprise services](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) | Deployment profiles, services, isolation and rollout |
+| [Phone/edge plan](docs/MOBILE_AND_EDGE_PLAN.md) | Local mobile mode, lifecycle and optional remote use |
+| [Platforms](docs/PLATFORMS.md) | Implemented, source-only and unqualified targets |
+| [Architecture/roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) | Ordered runtime/compiler/SDK milestones |
+| [Telecom research](docs/TELECOM.md) | LTE/5G/future-6G research; execution disabled/uncertified |
+
+## Build and contribute
 
 ```sh
-./gradlew test installDist distZip distTar
-build/install/hyperl/bin/hyperl help
+./gradlew --no-daemon test installDist distZip distTar
 cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
-cmake --build build/native
-ctest --test-dir build/native --output-on-failure
-cmake --install build/native --prefix /your/selected/sdk-prefix
+cmake --build build/native --config Release
+ctest --test-dir build/native -C Release --output-on-failure
+python3 -m unittest discover -s scripts -p 'test_*.py' -v
 ```
 
-Gradle resolves the pinned Kotlin/runtime dependencies. It does not require Android
-Studio or an Android SDK. Native SDK users need a C99 compiler/CMake and can use
-`native/include/hyperl.h` directly without the JVM. See [platform matrix](docs/PLATFORMS.md).
+Use `gradlew.bat` on Windows. The desktop build needs a maintained JDK 17+; native
+C needs CMake 3.20+ and a C99 compiler. Optional OpenCL needs separately installed
+headers/runtime/driver. Full SDK and bindings are later milestones; the C ABI is a
+preview foundation. [Report issues](https://github.com/sabbirimon/HyperL/issues) with
+minimal programs and actual OS/compiler/driver evidence; keep credentials and private
+inputs out of reports. Contributions should preserve bounds and numerical contracts,
+name untested targets and retain upstream provenance/license notices.
 
-## Memory-aware execution
-
-The CLI and GUI estimate full CPU array/workspace costs and reject jobs exceeding
-the selected budget or observed JVM heap headroom. See [memory policy](docs/MEMORY.md).
-HBM/GDDR/unified GPU/NUMA/CXL/SSD/NVMe are explicit future adapter tiers; unknown
-capacity stays unknown, and automatic kernel spill is unavailable.
-
-## Device GPUs
-
-An optional original OpenCL 1.2 host bridge selects actual GPU devices and fails
-when unavailable. It never substitutes a CPU device or installs a vendor driver.
-On macOS or Linux with existing OpenCL headers/runtime:
-
-```sh
-native/build.sh
-build/install/hyperl/bin/hyperl gpu-probe /absolute/path/native/hyperl-opencl
-build/install/hyperl/bin/hyperl gpu-run /absolute/path/native/hyperl-opencl 0 examples/elementwise.json examples/inputs.json
-```
-
-The current GPU path verifies each request against CPU reference output and rejects
-nonfinite/mismatched results. It is a qualification experiment, not a speed claim.
-Only elementwise kernels are supported; reduction dispatch is unavailable. A 20 s
-process deadline bounds host work, but killing a process is not proof that a driver
-has interrupted an accepted GPU kernel. Use the installed, reviewed bridge only.
-
-CUDA, HIP, OpenCL C, Metal and Vulkan GLSL **source** can be emitted. Metal/Vulkan
-source has no runtime loader yet. Apple iOS/macOS GPU adapters and Android
-Adreno/Mali/Immortalis/other GPUs need native wrappers and actual device tests;
-NPUs such as Qualcomm QNN, Apple Neural Engine or Ascend use separate SDK paths.
-
-## Large datasets and IPv6 clusters
-
-```sh
-bin/hyperl keygen /private/location/dataset.key
-bin/hyperl data-import /source/big-file /destination/dataset /private/location/dataset.key 10737418240
-bin/hyperl data-export /destination/dataset /destination/restored /private/location/dataset.key 10737418240
-bin/hyperl cluster-plan examples/cluster-ipv6.json
-```
-
-Import/export streams bounded 4 MiB chunks, with standard-library AES-256-GCM,
-fresh per-file nonces, authenticated manifest/ordinal/length and SHA-256 checks.
-Output publishes only after verification; existing outputs are never overwritten.
-Keep the 32-byte key private and outside the dataset; losing it loses access.
-The explicit quota can be 1 byte–4 TiB, with at most 1,048,576 chunks. These are
-format/operation limits, not demonstrated multi-terabyte performance. RAM/RSS also
-includes crypto, JVM and file buffers; it is not fixed at one chunk.
-
-Cluster profiles accept bracketed IPv6 literals, IPv4 and DNS **HTTPS** endpoints.
-Inventory is configurable up to 1,000,000, active workers to 256, and agent
-management is separately default-off. The plan command validates configuration
-only: remote transport, enrollment, sharded inventory and scheduler are future work.
-No million-node capacity, IPv6 connectivity or distributed large-data compute is
-inferred from a valid profile.
-
-`node-probe ORIGIN TOKEN_FILE` makes a bounded authenticated read-only `/node`
-request to the existing Meshlit host companion schema. Remote origins need normal
-trusted HTTPS; plaintext is limited to numeric IPv4/IPv6 loopback. Redirects and
-automatic retry are disabled. This observes host metadata, not model execution.
-
-## Full telecom research
-
-`telecom-plan examples/telecom-5g.json` records a typed research profile and always
-reports execution disabled and uncertified. [Telecom research](docs/TELECOM.md)
-covers LTE/5G core/RAN, AI/MEC, future 6G, security and standards evidence. No RF
-transmitter, subscriber credential handling, live carrier action or network stack
-is activated. Full stack research is a separate milestone from AI compute kernels.
-
-## Licensing and provenance
-
-HyperL started as original Meshlit experimental code; see [provenance](NOTICE).
-Upstream vendor SDKs retain their own licenses. No NVIDIA closed binary/source,
-Odysseus AGPL implementation, radio stack or driver is bundled. Optional research
-and independently installed adapters do not grant redistribution or certification.
-Report issues through [GitHub](https://github.com/sabbirimon/HyperL/issues).
+HyperL source is [Apache-2.0](LICENSE). [NOTICE](NOTICE) records original Meshlit
+foundation provenance and pinned dependencies. Fonts retain OFL-1.1; FlatLaf retains
+Apache-2.0 and RSyntaxTextArea BSD-3-Clause. Proprietary vendor SDKs/drivers are separately
+installed/licensed; no NVIDIA artwork or Odysseus AGPL implementation is copied.

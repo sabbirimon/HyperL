@@ -1,6 +1,6 @@
 # HyperL installation, usage and programming guide
 
-For `0.1.0-alpha.1`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
+For `0.1.0-alpha.3`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what
 is tested. This alpha is a developer experiment, not a CUDA-compatible SDK or a
@@ -29,9 +29,9 @@ Linux:
 
 ```sh
 java -version
-sha256sum hyperl-0.1.0-alpha.1.zip
-unzip hyperl-0.1.0-alpha.1.zip
-cd hyperl-0.1.0-alpha.1
+sha256sum hyperl-0.1.0-alpha.3.zip
+unzip hyperl-0.1.0-alpha.3.zip
+cd hyperl-0.1.0-alpha.3
 bin/hyperl capabilities
 bin/hyperl gui
 ```
@@ -40,9 +40,9 @@ macOS:
 
 ```sh
 java -version
-shasum -a 256 hyperl-0.1.0-alpha.1.zip
-unzip hyperl-0.1.0-alpha.1.zip
-cd hyperl-0.1.0-alpha.1
+shasum -a 256 hyperl-0.1.0-alpha.3.zip
+unzip hyperl-0.1.0-alpha.3.zip
+cd hyperl-0.1.0-alpha.3
 bin/hyperl run examples/elementwise.json examples/inputs.json
 bin/hyperl gui
 ```
@@ -51,9 +51,9 @@ Windows PowerShell:
 
 ```powershell
 java -version
-Get-FileHash .\hyperl-0.1.0-alpha.1.zip -Algorithm SHA256
-Expand-Archive .\hyperl-0.1.0-alpha.1.zip -DestinationPath .\hyperl-download
-Set-Location .\hyperl-download\hyperl-0.1.0-alpha.1
+Get-FileHash .\hyperl-0.1.0-alpha.3.zip -Algorithm SHA256
+Expand-Archive .\hyperl-0.1.0-alpha.3.zip -DestinationPath .\hyperl-download
+Set-Location .\hyperl-download\hyperl-0.1.0-alpha.3
 .\bin\hyperl.bat capabilities
 .\bin\hyperl.bat gui
 ```
@@ -70,13 +70,13 @@ After inspecting the downloaded script and verifying its source, pass the archiv
 a **new** selected installation prefix and exact SHA-256:
 
 ```sh
-python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.1.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
+python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.3.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
 ```
 
 PowerShell equivalent:
 
 ```powershell
-python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.1.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
+python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.3.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
 ```
 
 The placeholder is not a real checksum. The installer checks hashes, paths, special
@@ -439,3 +439,20 @@ text is rejected. `hyperl diagnose PROGRAM INPUTS [BUDGET_BYTES]` provides the
 same structured diagnostics and context suggestions for scripts. See
 [CODE_DIAGNOSTICS.md](CODE_DIAGNOSTICS.md) for scope, exit codes and sample-only
 evidence. It is a HyperL analyzer, with full language-server/AI tooling staged later.
+
+## Alpha.3 layout and deployment plans
+
+The desktop workbench groups controls into Execution, Source emission and GPU setup
+tabs. Select the tab for Run/Stop/budget, target source generation or reviewed bridge
+configuration. The footer explains the selected path. Local font resources provide
+Inter/JetBrains Mono typography with system fallback and no runtime download.
+
+[Native performance architecture](NATIVE_PERFORMANCE_ARCHITECTURE.md),
+[enterprise services](ENTERPRISE_AND_CLUSTER_PLAN.md),
+[single-phone mode](MOBILE_AND_EDGE_PLAN.md) and
+[Python-style developer experience](DEVELOPER_EXPERIENCE_PLAN.md) record later
+implementation plans. They do not change the current execution/platform contracts.
+
+The alpha.3 [Python/native library preview](LIBRARY_INTEROPERABILITY.md) contains
+small reusable recipes and explicit framework bridges. It needs a separately built
+reviewed shared C library and selected Python environment; the full SDK remains later.

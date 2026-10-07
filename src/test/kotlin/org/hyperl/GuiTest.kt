@@ -6,10 +6,10 @@ import javax.swing.SwingUtilities
 class GuiTest {
     @Test fun realPanelButtonsEmitMetalAndExecuteCpu() {
         lateinit var panel:HyperLPanel
-        SwingUtilities.invokeAndWait{panel=HyperLPanel();panel.sourceTarget.selectedItem="METAL";panel.emit.doClick();assertFalse(panel.backend.isEnabled)}
+        SwingUtilities.invokeAndWait{panel=HyperLPanel();assertTrue(panel.program.font.family.contains("JetBrains Mono"));assertTrue(panel.run.font.family.contains("Inter"));panel.executionTabs.selectedIndex=1;panel.sourceTarget.selectedItem="METAL";panel.emit.doClick();assertFalse(panel.backend.isEnabled)}
         try {
             await {panel.output.text.contains("kernel void hyperl_kernel") && panel.run.isEnabled}
-            SwingUtilities.invokeAndWait{panel.run.doClick()}
+            SwingUtilities.invokeAndWait{panel.executionTabs.selectedIndex=0;panel.run.doClick()}
             await{panel.output.text.contains("Backend: CPU_REFERENCE") && panel.run.isEnabled}
             SwingUtilities.invokeAndWait{assertTrue(panel.output.text.contains("12.0"));assertFalse(panel.output.isEditable)}
         }finally{SwingUtilities.invokeAndWait{panel.close()}}

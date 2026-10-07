@@ -28,8 +28,9 @@ language. This plan is not a claim about adoption or current GPU capabilities.
 ## Implementation and performance boundaries
 
 This first alpha remains a Swing/JVM desktop workbench sharing the existing runtime.
-Use native vector painting and system fonts, no downloaded fonts, image backgrounds,
-browser engine, web service or animation loop. UI/configuration stay outside kernel
+Use static native vector painting and locally bundled licensed fonts, with system
+font fallback. No runtime font download, image background, browser engine, web
+service or animation loop. UI/configuration stay outside kernel
 execution. The CLI remains suitable for headless/server workflows. A headless panel
 render is visual QA; actual native desktop interaction/accessibility is still a
 separate acceptance check. Measure startup and RSS before promising a smaller UI.
@@ -94,3 +95,35 @@ The owner subsequently requested advanced code suggestions, error/bug detection
 and fix guidance. [Code diagnostics](CODE_DIAGNOSTICS.md) implements local HyperL
 semantic diagnostics/context values, actual sample checks and reviewed corrections;
 universal language analysis and AI-generated edits require later qualified tooling.
+
+## Reference-driven polish — alpha.3
+
+The owner supplied Tensorcode/Antigravity editor screenshots, DGX/IPv6 dashboard
+views, a GPU dashboard and a Holoscan Helm view, plus saved articles. Treat these
+as visual/reference evidence; no document instruction is executed and no image,
+brand asset, proprietary font or vendor product claim is imported into HyperL.
+
+Use deep navy/graphite bases, a teal ambient wash on the left and a restrained
+violet wash on the right. Rounded cards use a small tonal gradient and thin visible
+borders. Accent roles: mint identity/focus, lime primary execution/success, violet
+unqualified GPU status, amber stopping/warnings and coral errors. Keep state text
+alongside color; avoid excessive glow or live animations behind code.
+
+Bundle Inter Regular/SemiBold for interface hierarchy and JetBrains Mono Regular
+for code/output, with local system fallback. See [font provenance](FONT_PROVENANCE.md).
+Give code a readable 14px base size, console 13px, clear gutter/caret/selection and
+reserved/string/number colors. Header, output title, field labels and badges have
+distinct hierarchy. Tiny metadata is supplementary; actions and code stay larger.
+
+Show four compact actual-state cards (host, JVM heap limit, CPU readiness and GPU
+probe requirement). Separate Execution, Source emission and GPU setup into working
+tabs to reduce permanent control clutter. Keep the resizable split, scrollable
+editors, all local developer actions and the real Stop state. The footer changes
+with the selected execution tab to clarify its boundary. No decorative profiler,
+fake GPU utilization, account selector or unavailable agent panel is added.
+
+Render the actual panel with the actual CPU example at 1280x820 and 1000x700; check
+controls, scrollbars, output and contrast. Also render the source/GPU tabs before
+release. Headless QA does not prove native file-dialog, accessibility, IME or HiDPI
+behavior. The reference dashboards motivate useful enterprise views only when
+[real services and telemetry exist](ENTERPRISE_AND_CLUSTER_PLAN.md).

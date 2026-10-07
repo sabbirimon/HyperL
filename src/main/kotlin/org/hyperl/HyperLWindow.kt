@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 
 /** Real local developer tools share the CLI's validation and execution contracts. */
-class HyperLPanel: JPanel(BorderLayout(0,18)) {
+class HyperLPanel: JPanel(BorderLayout(0,14)) {
     private val initializedTheme=DesktopTheme.install()
     val program=DesktopTheme.editor("""{
   "format": "hyperl/1",
@@ -40,7 +40,8 @@ class HyperLPanel: JPanel(BorderLayout(0,18)) {
     private var diagnosticReport:DiagnosticReport?=null
     val findText=JTextField("",16);val find=JButton("Find next")
     val examples=JComboBox(arrayOf("Elementwise","Reduction"));val loadExample=JButton("Load example")
-    val state=DesktopTheme.label("READY",12,DesktopTheme.cyan)
+    val state=DesktopTheme.badge("READY")
+    val executionTabs=JTabbedPane()
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
     private var job:Job?=null
     private var searchEditor=program
@@ -48,49 +49,83 @@ class HyperLPanel: JPanel(BorderLayout(0,18)) {
     private val configurationControls=listOf<JComponent>(backend,sourceTarget,bridge,device,memoryBudget,findText,examples)
     private val actions=listOf(run,emit,probe,memory,validate,format,open,save,export,find,loadExample,analyze,review)
     init {
-        background=DesktopTheme.background;border=EmptyBorder(22,24,16,24)
+        background=DesktopTheme.background;border=EmptyBorder(18,22,14,22)
         output.syntaxEditingStyle=SyntaxConstants.SYNTAX_STYLE_NONE
-        actions.forEach{DesktopTheme.button(it,it===run)};DesktopTheme.button(stop);stop.foreground=Color(0xFFA5A5);stop.isEnabled=false
+        output.font=DesktopTheme.codeFont(13)
+        actions.forEach{DesktopTheme.button(it,it===run)};DesktopTheme.button(stop);stop.foreground=DesktopTheme.error;stop.isEnabled=false
         backend.toolTipText="Only CPU reference and an explicitly installed OpenCL bridge execute."
         memoryBudget.toolTipText="CPU byte budget; GPU VRAM is not measured by this policy."
         bridge.toolTipText="An absolute path to your reviewed, installed OpenCL bridge; never downloaded automatically."
-        val header=JPanel(BorderLayout(20,0));header.isOpaque=false
-        val brand=JPanel(BorderLayout(0,7));brand.isOpaque=false
-        val title=JPanel(FlowLayout(FlowLayout.LEFT,12,0));title.isOpaque=false
-        val logo=DesktopTheme.label("HL",22,DesktopTheme.background);logo.isOpaque=true;logo.background=DesktopTheme.cyan;logo.border=EmptyBorder(8,11,8,11)
-        title.add(logo);title.add(DesktopTheme.label("HyperL",30));title.add(DesktopTheme.label("DEVELOPER WORKBENCH",11,DesktopTheme.muted))
-        brand.add(title,BorderLayout.NORTH);brand.add(DesktopTheme.label("Write a kernel. Inspect memory. Build with evidence.",14,DesktopTheme.muted),BorderLayout.SOUTH)
-        header.add(brand);val edition=JPanel(GridLayout(2,1,0,7));edition.isOpaque=false;edition.add(DesktopTheme.label("LOCAL  /  ALPHA.2",11,DesktopTheme.muted));edition.add(state);header.add(edition,BorderLayout.EAST)
-        val top=JPanel(BorderLayout(0,16));top.isOpaque=false;top.add(header,BorderLayout.NORTH)
+        findText.accessibleContext.accessibleName="Literal search in focused editor"
+        bridge.accessibleContext.accessibleName="OpenCL bridge executable path"
+        memoryBudget.accessibleContext.accessibleName="CPU memory budget in bytes"
+        val header=DesktopTheme.panel(BorderLayout(18,0),hero=true)
+        header.border=EmptyBorder(10,16,10,16)
+        val brand=JPanel(BorderLayout(16,0));brand.isOpaque=false
+        val logo=DesktopTheme.badge("HL");logo.font=DesktopTheme.uiFont(23,true);logo.border=EmptyBorder(10,12,10,12)
+        brand.add(logo,BorderLayout.WEST)
+        val title=JPanel(BorderLayout(0,4));title.isOpaque=false
+        val titleLine=JPanel(FlowLayout(FlowLayout.LEFT,12,0));titleLine.isOpaque=false
+        titleLine.add(DesktopTheme.label("HyperL",28,bold=true));titleLine.add(DesktopTheme.label("DEVELOPER WORKBENCH",10,DesktopTheme.muted,true))
+        title.add(titleLine,BorderLayout.NORTH);title.add(DesktopTheme.label("From idea to a verified kernel.",13,DesktopTheme.muted),BorderLayout.SOUTH)
+        brand.add(title);header.add(brand)
+        val edition=JPanel(BorderLayout(0,8));edition.isOpaque=false
+        edition.add(DesktopTheme.label("LOCAL STUDIO  /  ALPHA.3",10,DesktopTheme.muted),BorderLayout.NORTH)
+        edition.add(state,BorderLayout.SOUTH);header.add(edition,BorderLayout.EAST)
+        val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(12))
         val snapshot=MemoryPlanner.observe()
-        val environment=DesktopTheme.panel(FlowLayout(FlowLayout.LEFT,20,0))
-        environment.add(DesktopTheme.label("ENVIRONMENT",10,DesktopTheme.muted));environment.add(DesktopTheme.label("${System.getProperty("os.name")}  ·  ${System.getProperty("os.arch")}",12))
-        environment.add(DesktopTheme.label("JVM heap limit: ${snapshot.heapLimitBytes/(1024*1024)} MiB",12))
-        environment.add(DesktopTheme.label("CPU reference available",12,DesktopTheme.accent));environment.add(DesktopTheme.label("GPU requires probe",12,DesktopTheme.muted));top.add(environment,BorderLayout.SOUTH);add(top,BorderLayout.NORTH)
+        val environment=JPanel(GridLayout(1,4,12,0));environment.isOpaque=false
+        environment.add(environmentCard("HOST", "${System.getProperty("os.name")} · ${System.getProperty("os.arch")}",DesktopTheme.foreground))
+        environment.add(environmentCard("JVM HEAP LIMIT", "${snapshot.heapLimitBytes/(1024*1024)} MiB",DesktopTheme.foreground))
+        environment.add(environmentCard("CPU RUNTIME", "Reference ready",DesktopTheme.accent))
+        environment.add(environmentCard("GPU RUNTIME", "Probe required",DesktopTheme.violet))
+        top.add(environment);add(top,BorderLayout.NORTH)
 
         val tools=JPanel(GridLayout(2,1,0,7));tools.isOpaque=false
-        val fileTools=JPanel(FlowLayout(FlowLayout.LEFT,8,0));fileTools.isOpaque=false
+        val fileTools=JPanel(FlowLayout(FlowLayout.LEFT,7,0));fileTools.isOpaque=false
         listOf(open,save,validate,format).forEach(fileTools::add)
-        val exampleTools=JPanel(FlowLayout(FlowLayout.LEFT,8,0));exampleTools.isOpaque=false
-        exampleTools.add(DesktopTheme.label("START FROM",10,DesktopTheme.muted));exampleTools.add(examples);exampleTools.add(loadExample);exampleTools.add(analyze);exampleTools.add(review)
+        val exampleTools=JPanel(FlowLayout(FlowLayout.LEFT,7,0));exampleTools.isOpaque=false
+        exampleTools.add(DesktopTheme.label("EXAMPLE",10,DesktopTheme.muted,true));exampleTools.add(examples);exampleTools.add(loadExample);exampleTools.add(analyze);exampleTools.add(review)
         tools.add(fileTools);tools.add(exampleTools)
-        val editors=JTabbedPane();editors.addTab("Program",editorCard("01  PROGRAM","hyperl/1 · JSON",program));editors.addTab("Inputs",editorCard("02  INPUT VECTORS","finite f32 · JSON",inputs))
-        editors.minimumSize=Dimension(330,260)
-        val left=JPanel(BorderLayout(0,12));left.isOpaque=false;left.add(tools,BorderLayout.NORTH);left.add(editors)
-        val search=JPanel(FlowLayout(FlowLayout.LEFT,8,0));search.isOpaque=false;search.add(DesktopTheme.label("Literal search",11,DesktopTheme.muted));search.add(findText);search.add(find);left.add(search,BorderLayout.SOUTH)
-        val right=DesktopTheme.panel(BorderLayout(0,12));right.minimumSize=Dimension(320,260)
-        val resultHeader=JPanel(BorderLayout());resultHeader.isOpaque=false;resultHeader.add(DesktopTheme.label("03  OUTPUT / DIAGNOSTICS",11,DesktopTheme.muted));resultHeader.add(export,BorderLayout.EAST);right.add(resultHeader,BorderLayout.NORTH);right.add(DesktopTheme.scroll(output))
-        val split=JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,right);split.resizeWeight=0.53;split.dividerSize=14;split.border=null;split.background=DesktopTheme.background
+        val editors=JTabbedPane();editors.addTab("Program",editorCard("KERNEL PROGRAM","hyperl/1 · JSON",program));editors.addTab("Inputs",editorCard("INPUT VECTORS","finite f32 · JSON",inputs))
+        editors.minimumSize=Dimension(330,240)
+        val left=JPanel(BorderLayout(0,10));left.isOpaque=false;left.add(tools,BorderLayout.NORTH);left.add(editors)
+        val search=JPanel(FlowLayout(FlowLayout.LEFT,7,0));search.isOpaque=false;search.add(DesktopTheme.label("Search",11,DesktopTheme.muted));search.add(findText);search.add(find);left.add(search,BorderLayout.SOUTH)
+        val right=DesktopTheme.panel(BorderLayout(0,10));right.minimumSize=Dimension(320,240)
+        val resultHeader=JPanel(BorderLayout());resultHeader.isOpaque=false
+        val resultTitle=JPanel(BorderLayout(0,5));resultTitle.isOpaque=false
+        resultTitle.add(DesktopTheme.label("Output & diagnostics",15,bold=true),BorderLayout.NORTH)
+        resultTitle.add(DesktopTheme.label("RESULTS · SOURCE · MEMORY · ANALYSIS",9,DesktopTheme.muted),BorderLayout.SOUTH)
+        resultHeader.add(resultTitle);resultHeader.add(export,BorderLayout.EAST);right.add(resultHeader,BorderLayout.NORTH);right.add(DesktopTheme.scroll(output))
+        val split=JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,right);split.resizeWeight=0.54;split.dividerSize=14;split.border=null;split.background=DesktopTheme.background;split.isOpaque=false
         add(split)
 
-        val bottom=JPanel(BorderLayout(0,12));bottom.isOpaque=false
-        val execution=DesktopTheme.panel(BorderLayout(0,10));val commands=JPanel(FlowLayout(FlowLayout.LEFT,8,0));commands.isOpaque=false
-        commands.add(backend);commands.add(run);commands.add(stop);commands.add(memory);commands.add(DesktopTheme.label("CPU budget (bytes)",11,DesktopTheme.muted));commands.add(memoryBudget)
+        val bottom=JPanel(BorderLayout(0,8));bottom.isOpaque=false
+        val execution=DesktopTheme.panel(BorderLayout(0,7))
+        val commands=JPanel(FlowLayout(FlowLayout.LEFT,8,0));commands.isOpaque=false
+        commands.add(DesktopTheme.label("BACKEND",10,DesktopTheme.muted,true));commands.add(backend);commands.add(run);commands.add(stop)
+        commands.add(DesktopTheme.label("Budget (bytes)",11,DesktopTheme.muted));commands.add(memoryBudget);commands.add(memory)
+        execution.add(commands,BorderLayout.NORTH)
+        val sources=DesktopTheme.panel(BorderLayout(0,7))
         val sourceCommands=JPanel(FlowLayout(FlowLayout.LEFT,8,0));sourceCommands.isOpaque=false
-        sourceCommands.add(sourceTarget);sourceCommands.add(emit);sourceCommands.add(DesktopTheme.label("Generate source · compilation / device qualification remains separate",11,DesktopTheme.muted))
-        val commandRows=JPanel(GridLayout(2,1,0,9));commandRows.isOpaque=false;commandRows.add(commands);commandRows.add(sourceCommands);execution.add(commandRows,BorderLayout.NORTH)
-        val gpu=JPanel(FlowLayout(FlowLayout.LEFT,8,0));gpu.isOpaque=false;gpu.add(DesktopTheme.label("OpenCL bridge",11,DesktopTheme.muted));gpu.add(bridge);gpu.add(DesktopTheme.label("Device",11,DesktopTheme.muted));gpu.add(device);gpu.add(probe);execution.add(gpu,BorderLayout.SOUTH)
-        bottom.add(execution);bottom.add(DesktopTheme.label("Ctrl / Cmd + Enter to run  ·  Local files only  ·  Full SDK, model engines and device profiler are later milestones",11,DesktopTheme.muted),BorderLayout.SOUTH);add(bottom,BorderLayout.SOUTH)
+        sourceCommands.add(DesktopTheme.label("TARGET",10,DesktopTheme.muted,true));sourceCommands.add(sourceTarget);sourceCommands.add(emit)
+        sources.add(sourceCommands,BorderLayout.NORTH)
+        val gpuSetup=DesktopTheme.panel(BorderLayout(0,7))
+        val gpu=JPanel(FlowLayout(FlowLayout.LEFT,8,0));gpu.isOpaque=false
+        gpu.add(DesktopTheme.label("Bridge path",11,DesktopTheme.muted));gpu.add(bridge);gpu.add(DesktopTheme.label("Device",11,DesktopTheme.muted));gpu.add(device);gpu.add(probe)
+        gpuSetup.add(gpu,BorderLayout.NORTH)
+        executionTabs.addTab("Execution",execution);executionTabs.addTab("Source emission",sources);executionTabs.addTab("GPU setup",gpuSetup)
+        bottom.add(executionTabs)
+        val footer=JPanel(BorderLayout());footer.isOpaque=false
+        val footerHint=DesktopTheme.label("Ctrl / Cmd + Enter to run · hyperl/1 · finite f32",10,DesktopTheme.muted)
+        footer.add(footerHint)
+        executionTabs.addChangeListener {footerHint.text=when(executionTabs.selectedIndex){
+            1->"Source only · Compilation and device qualification remain separate"
+            2->"Reviewed installed bridge · Probe establishes GPU availability"
+            else->"Ctrl / Cmd + Enter to run · hyperl/1 · finite f32"
+        }}
+        footer.add(DesktopTheme.label("Full SDK & native profiler planned",10,DesktopTheme.muted),BorderLayout.EAST)
+        bottom.add(footer,BorderLayout.SOUTH);add(bottom,BorderLayout.SOUTH)
         for(editor in listOf(program,inputs)){
             editor.addFocusListener(object:FocusAdapter(){override fun focusGained(e:FocusEvent){searchEditor=editor}})
             editor.document.addDocumentListener(object:javax.swing.event.DocumentListener{
@@ -122,12 +157,18 @@ class HyperLPanel: JPanel(BorderLayout(0,18)) {
             if(JOptionPane.showConfirmDialog(this,"Replace ${repair.before} with ${repair.after}?\nOnly this field changes; Analyze again afterward.","Apply reviewed suggestion",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return@addActionListener
             val text=program.text;start{val patched=CodeDiagnostics.apply(text,repair);SwingUtilities.invokeAndWait{program.text=patched;diagnosticReport=null};"Applied the reviewed suggestion. Analyze and test again before execution."}
         }
-        find.addActionListener {val term=findText.text;if(term.isEmpty()||term.length>256)return@addActionListener;val text=searchEditor.text;val start=searchEditor.selectionEnd;var index=text.indexOf(term,start);if(index<0)index=text.indexOf(term);if(index>=0){searchEditor.requestFocusInWindow();searchEditor.select(index,index+term.length);state.text="MATCH FOUND"}else state.text="NO MATCH"}
+        find.addActionListener {val term=findText.text;if(term.isEmpty()||term.length>256)return@addActionListener;val text=searchEditor.text;val start=searchEditor.selectionEnd;var index=text.indexOf(term,start);if(index<0)index=text.indexOf(term);if(index>=0){searchEditor.requestFocusInWindow();searchEditor.select(index,index+term.length);DesktopTheme.status(state,"MATCH FOUND")}else DesktopTheme.status(state,"NO MATCH")}
         loadExample.addActionListener {if(!allowDiscard())return@addActionListener;val example=DeveloperWorkspace.example(examples.selectedItem as String);program.text=pretty(example.program);inputs.text=pretty(example.inputs);dirty=false;state.text="EXAMPLE LOADED"}
         open.addActionListener {if(!allowDiscard())return@addActionListener;val file=choose(false,"Open HyperL workspace")?:return@addActionListener;start{val doc=DeveloperWorkspace.parse(Workspace.read(file));SwingUtilities.invokeAndWait{program.text=doc.program;inputs.text=doc.inputs;dirty=false};"Opened ${file.fileName}.\nNothing was executed."}}
         save.addActionListener {val file=choose(true,"Save HyperL workspace")?:return@addActionListener;val replace=Files.exists(file);if(replace&&!confirmReplace(file))return@addActionListener;val p=program.text;val i=inputs.text;start{DeveloperWorkspace.save(file,DeveloperWorkspace.encode(p,i),replace);SwingUtilities.invokeAndWait{dirty=false};"Saved ${file.fileName}."}}
         export.addActionListener {val file=choose(true,"Export displayed output")?:return@addActionListener;val replace=Files.exists(file);if(replace&&!confirmReplace(file))return@addActionListener;val text=output.text;start{DeveloperWorkspace.save(file,text,replace);"Exported displayed output to ${file.fileName}.\nNo source was compiled or executed."}}
-        stop.addActionListener{job?.cancel();state.text="STOPPING";output.text="Stop requested; awaiting local task/native cleanup. Remote termination is not implied."}
+        stop.addActionListener{job?.cancel();DesktopTheme.status(state,"STOPPING");output.text="Stop requested; awaiting local task/native cleanup. Remote termination is not implied."}
+    }
+    override fun paintComponent(g:Graphics){DesktopTheme.paintBackdrop(this,g)}
+    private fun environmentCard(title:String,value:String,color:Color)=DesktopTheme.panel(BorderLayout(0,4)).also{
+        it.border=EmptyBorder(10,14,10,14)
+        it.add(DesktopTheme.label(title,9,DesktopTheme.muted,true),BorderLayout.NORTH)
+        it.add(DesktopTheme.label(value,12,color,true),BorderLayout.SOUTH)
     }
     private fun editorCard(title:String,detail:String,editor:org.fife.ui.rsyntaxtextarea.RSyntaxTextArea)=DesktopTheme.panel(BorderLayout(0,10)).also{
         val heading=JPanel(BorderLayout());heading.isOpaque=false;heading.add(DesktopTheme.label(title,11,DesktopTheme.muted));heading.add(DesktopTheme.label(detail,11,DesktopTheme.cyan),BorderLayout.EAST);it.add(heading,BorderLayout.NORTH);it.add(DesktopTheme.scroll(editor))
@@ -143,11 +184,11 @@ class HyperLPanel: JPanel(BorderLayout(0,18)) {
     }
     private fun start(syntax:String=SyntaxConstants.SYNTAX_STYLE_NONE,action:suspend ()->String) {
         if(job?.isActive==true)return
-        actions.forEach{it.isEnabled=false};configurationControls.forEach{it.isEnabled=false};program.isEditable=false;inputs.isEditable=false;stop.isEnabled=true;state.text="RUNNING"
+        actions.forEach{it.isEnabled=false};configurationControls.forEach{it.isEnabled=false};program.isEditable=false;inputs.isEditable=false;stop.isEnabled=true;DesktopTheme.status(state,"RUNNING")
         job=scope.launch {
             var message="Stopped after local cleanup.";var status="STOPPED"
             try{message=action();status="COMPLETED"}catch(_:CancellationException){}catch(e:Exception){message="Failed: ${e.message?.take(1024)}";status="FAILED"}
-            finally{val finalMessage=message;val finalStatus=status;SwingUtilities.invokeLater{output.syntaxEditingStyle=if(finalMessage.trimStart().startsWith("{"))SyntaxConstants.SYNTAX_STYLE_JSON else syntax;output.text=finalMessage;output.caretPosition=0;state.text=finalStatus;actions.forEach{it.isEnabled=true};configurationControls.forEach{it.isEnabled=true};program.isEditable=true;inputs.isEditable=true;stop.isEnabled=false}}
+            finally{val finalMessage=message;val finalStatus=status;SwingUtilities.invokeLater{output.syntaxEditingStyle=if(finalMessage.trimStart().startsWith("{"))SyntaxConstants.SYNTAX_STYLE_JSON else syntax;output.text=finalMessage;output.caretPosition=0;DesktopTheme.status(state,finalStatus);actions.forEach{it.isEnabled=true};configurationControls.forEach{it.isEnabled=true};program.isEditable=true;inputs.isEditable=true;stop.isEnabled=false}}
         }
     }
     fun close(){scope.cancel()}
