@@ -96,8 +96,9 @@ are delivered today. Read the [complete stack and deployment profiles](docs/SOFT
 | Fabric | IPv6/IPv4/DNS endpoint configuration and HTTPS probe | Collective communication and qualified fabric transports |
 | Security and Operations | Local authenticated encryption and cancellation | Enterprise identity, RBAC, audit and measured telemetry |
 
-**Support counts:** two CPU implementations, six source emitters, two GPU host
-previews, and **zero NVIDIA architecture families hardware-qualified**.
+**Support counts:** two CPU implementations, six source emitters, two desktop GPU
+host previews and one Android Vulkan qualification runner. Exact workload evidence
+exists for Radeon Pro 560X and Adreno 506; **zero NVIDIA architecture families are hardware-qualified**.
 See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 [AMD ROCm/AI matrix](docs/AMD_COMPATIBILITY.md), [AI Services plan](docs/AI_SERVICES_PLAN.md), and
 [AMD Mac / Metal build and test guide](docs/MACOS_METAL.md).
@@ -112,6 +113,7 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Memory planning | Observed JVM heap/environment plus full-array estimate/admission; not VRAM reservation or a hard RSS limit |
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
 | Optional GPU | Explicit OpenCL/macOS Metal hosts; four bounded Metal cases passed on AMD Radeon Pro 560X, with CPU verification and expected overflow rejection. Other GPUs and full models need separate qualification |
+| Android GPU experiment | Samsung Galaxy A20s / Adreno 506 executes generated Vulkan kernels: 11 CPU-verified outputs and two expected overflow rejections. Native test runner; Meshlit GPU wiring and mobile installers remain separate. [Build and evidence](docs/ANDROID_VULKAN.md) |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
@@ -220,8 +222,10 @@ hardware qualification. Chinese model families are separate from framework suppo
 The design keeps a small local mode and adds optional services as the deployment grows.
 **Phone support is planned**, through native Android/iOS packages and qualified local
 CPU/GPU/NPU paths, with optional authenticated remote access. Desktop Java GUI archives
-are not Android/iOS installers. Non-root/sandboxed use is the default; physical-device
-validation remains paused. [Mobile/edge plan](docs/MOBILE_AND_EDGE_PLAN.md).
+are not Android/iOS installers. Non-root/sandboxed use is the default. The owner resumed
+single-phone GPU tests: [Adreno 506 Vulkan checks pass](docs/ANDROID_VULKAN.md).
+Meshlit app GPU integration and two-phone cluster acceptance remain pending.
+[Mobile/edge plan](docs/MOBILE_AND_EDGE_PLAN.md).
 
 The [enterprise/datacenter plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) defines useful
 services: identity/mTLS, tenant isolation, quotas, durable jobs/leases, scheduler

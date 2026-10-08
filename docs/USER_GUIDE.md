@@ -1,5 +1,9 @@
 # HyperL installation, usage and programming guide
 
+For the separate ARM64 Android Vulkan qualification runner and the actual
+Samsung/Adreno 506 results, see [Android GPU build/test](ANDROID_VULKAN.md).
+This experiment is not a mobile installer or Meshlit app GPU backend.
+
 For `0.1.0-alpha.5`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what

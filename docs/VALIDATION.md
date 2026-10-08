@@ -1,5 +1,26 @@
 # Standalone alpha validation — 2026-10-08
 
+## Physical Samsung GPU qualification
+
+The owner resumed single-phone GPU testing. The original ARM64 C++17 Vulkan host
+compiles with NDK 28.2.13676358/API 24 and `-Wall -Wextra -Werror`; all thirteen
+generated shaders compile and pass SPIR-V validation. On Samsung Galaxy A20s
+SM-A207F, Android 11/API 30, **Adreno 506 / Vulkan 1.1.128**, eleven finite-output
+cases pass CPU comparison and two explicitly dispatched overflow cases reject
+without publishing results. Completion and temporary-device cleanup are confirmed.
+[Full scope, hashes, commands and observations](ANDROID_VULKAN.md).
+
+Local required JVM/package check succeeds in 15s (`test` reuses the previously
+passing unchanged JVM suite; installDist/distZip execute). CMake/CTest: two pass.
+Script checks: fourteen pass, including eight new fail-closed metadata/integrity
+checks; these unit fixtures do not replace the actual phone evidence above.
+Initial ADB enumeration was empty because the session-started macOS daemon could
+not use USB interfaces. After the owner started ADB in normal Terminal and
+authorized the Samsung, the existing loopback client reached the real device.
+No permissions or root authorization were bypassed. No APK/JNI adapter, full
+model, sustained-load/thermal, CPU speedup or other mobile GPU is qualified.
+The published alpha.5 installers predate this test-runner increment.
+
 ## Alpha.5 production-hardening candidate
 
 Local JVM/package checks pass in 48 seconds: **43 tests, 41 pass, two unavailable

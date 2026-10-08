@@ -35,7 +35,10 @@ HyperL standalone and Meshlit as separate repositories and review branches.
   both APK flavors and fatal lint. Inspect packaged classes/assets and docs.
 - Build installers on their actual OS/architecture and inspect their payloads.
   Build/CI success is separate from interactive installer/upgrade/uninstall tests.
-- Physical-phone tests remain paused at the owner's request. Do not infer Android
+- The owner resumed single-phone GPU qualification; the standalone native runner
+  passes listed Adreno 506 Vulkan cases. App-UID/JNI integration and two-phone
+  cluster acceptance remain pending. [Exact test scope](ANDROID_VULKAN.md).
+  Do not infer Android
   runtime, thermal, accessibility or vendor GPU acceptance from JVM tests/APKs.
 - Radeon evidence qualifies only the previously listed elementwise workloads.
   Expand values/shapes, repeat/warm/transfer measurements, device loss and memory

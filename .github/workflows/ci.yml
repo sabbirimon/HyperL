@@ -3,6 +3,31 @@ on: [push, pull_request]
 permissions:
   contents: read
 jobs:
+  android-vulkan-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Explicit pinned Android qualification toolchain
+        run: sdkmanager --install 'ndk;28.2.13676358'
+      - name: Build the CLI and original Android Vulkan cases
+        run: |
+          ./gradlew --no-daemon installDist
+          python scripts/build_android_vulkan.py \
+            --ndk "$ANDROID_HOME/ndk/28.2.13676358" \
+            --cli "$PWD/build/install/hyperl/bin/hyperl" \
+            --output "$PWD/build/android-vulkan"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-vulkan-build-not-device-tested
+          path: build/android-vulkan
   check:
     strategy:
       fail-fast: false
