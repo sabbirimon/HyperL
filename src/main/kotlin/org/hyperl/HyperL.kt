@@ -8,14 +8,14 @@ import kotlinx.serialization.Serializable
 /** HyperL v1: bounded declarative f32 vector kernels. No shell, pointers, host I/O,
  * recursive calls, arbitrary code or automatic backend substitution. */
 @Serializable data class HyperLInstruction(val output:String,val operation:String,val inputs:List<String>)
-@Serializable data class HyperLProgram(val format:String="hyperl/1",val inputs:Set<String>,val instructions:List<HyperLInstruction>,val output:String) {
+@Serializable data class HyperLProgram(val format:String=HyperLContract.LANGUAGE_FORMAT,val inputs:Set<String>,val instructions:List<HyperLInstruction>,val output:String) {
     fun validate(){
-        require(format=="hyperl/1") {"Unsupported HyperL language version"}
-        require(inputs.size in 1..8 && instructions.size in 1..64)
+        require(format==HyperLContract.LANGUAGE_FORMAT) {"Unsupported HyperL language version"}
+        require(inputs.size in 1..HyperLContract.MAX_INPUTS && instructions.size in 1..HyperLContract.MAX_STEPS)
         val defined=inputs.toMutableSet();require(defined.all{it.matches(NAME)})
         instructions.forEach { step ->
             require(step.output.matches(NAME) && step.output !in defined && step.inputs.all{it in defined}) {"Invalid HyperL dependency or duplicate output"}
-            require(step.inputs.size == when(step.operation){"add","multiply"->2;"relu","sum"->1;else->error("Unsupported HyperL operation")})
+            require(step.inputs.size == (HyperLContract.operandCounts[step.operation] ?: error("Unsupported HyperL operation")))
             defined.add(step.output)
         }
         require(output in defined)
@@ -31,31 +31,31 @@ interface HyperLBackend {
  * inference engine or a CUDA-compatible compiler. Accelerated targets require adapters. */
 class HyperLCpuBackend(private val memoryBudgetBytes:Long=HyperLAdmission.DEFAULT_BUDGET):HyperLBackend {
     override val target=HyperLTarget.CPU_REFERENCE
-    override val runtimeRevision="hyperl-cpu/1"
+    override val runtimeRevision=HyperLContract.RUNTIME_REVISION
     override suspend fun execute(program:HyperLProgram,inputs:Map<String,FloatArray>):FloatArray {
         currentCoroutineContext().ensureActive()
         program.validate()
         val ownedProgram=program.copy(inputs=program.inputs.toSet(),instructions=program.instructions.map{it.copy(inputs=it.inputs.toList())})
         ownedProgram.validate()
         val vectors=inputs.toMap();require(vectors.keys==ownedProgram.inputs)
-        require(vectors.values.all{it.size in 1..262144})
+        require(vectors.values.all{it.size in 1..HyperLContract.MAX_VECTOR_ELEMENTS})
         var retained=vectors.values.sumOf{it.size.toLong()}
-        require(retained<=1048576){"HyperL input vectors exceed retained memory budget"}
+        require(retained<=HyperLContract.MAX_RETAINED_ELEMENTS){"HyperL input vectors exceed retained memory budget"}
         // Validate the complete shape/retention estimate before allocating input copies.
         HyperLAdmission.requireAdmission(HyperLAdmission.plan(ownedProgram,vectors,memoryBudgetBytes))
         val live=vectors.mapValues{(_,source)->FloatArray(source.size).also{copy->
-            for(i in source.indices){if(i%1024==0)currentCoroutineContext().ensureActive();val value=source[i];require(value.isFinite()){"HyperL nonfinite input"};copy[i]=value}
+            for(i in source.indices){if(i%HyperLContract.CANCELLATION_INTERVAL==0)currentCoroutineContext().ensureActive();val value=source[i];require(value.isFinite()){"HyperL nonfinite input"};copy[i]=value}
         }}.toMutableMap()
         for(step in ownedProgram.instructions){
             currentCoroutineContext().ensureActive()
             val args=step.inputs.map{live.getValue(it)};val length=if(step.operation=="sum") 1 else args[0].size
             require(step.operation !in setOf("add","multiply") || args[0].size==args[1].size){"HyperL shape mismatch; no implicit broadcasting"}
-            retained+=length;require(retained<=1048576){"HyperL working memory exceeds 4 MiB vector budget"}
+            retained+=length;require(retained<=HyperLContract.MAX_RETAINED_ELEMENTS){"HyperL working memory exceeds 4 MiB vector budget"}
             val result=FloatArray(length)
             if(step.operation=="sum"){
-                var sum=0f;args[0].forEachIndexed{i,value->if(i%1024==0) currentCoroutineContext().ensureActive();sum+=value;require(sum.isFinite()){"HyperL nonfinite ordered sum at ${step.output}"}};result[0]=sum
+                var sum=0f;args[0].forEachIndexed{i,value->if(i%HyperLContract.CANCELLATION_INTERVAL==0) currentCoroutineContext().ensureActive();sum+=value;require(sum.isFinite()){"HyperL nonfinite ordered sum at ${step.output}"}};result[0]=sum
             }else for(i in 0 until length){
-                if(i%1024==0) currentCoroutineContext().ensureActive()
+                if(i%HyperLContract.CANCELLATION_INTERVAL==0) currentCoroutineContext().ensureActive()
                 val value=when(step.operation){"add"->args[0][i]+args[1][i];"multiply"->args[0][i]*args[1][i];"relu"->maxOf(0f,args[0][i]);else->error("Unsupported operation")}
                 require(value.isFinite()){"HyperL nonfinite result at ${step.output}"};result[i]=value
             }
@@ -77,4 +77,4 @@ class HyperLRuntime(backends:List<HyperLBackend> = listOf(HyperLCpuBackend()),ma
         try{return withTimeout(deadlineMs){backend.execute(program,inputs)}}finally{admission.release()}
     }
 }
-private val NAME=Regex("[A-Za-z][A-Za-z0-9_]{0,31}")
+private val NAME=Regex(HyperLContract.IDENTIFIER_PATTERN)

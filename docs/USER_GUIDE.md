@@ -1,8 +1,9 @@
 # HyperL installation, usage and programming guide
 
-These examples target the published Apache-licensed alpha.5 release. Alpha.6 is
-unreleased development source with [new community/enterprise rights](LICENSING.md);
-[earlier grants](LICENSE_HISTORY.md) remain unchanged.
+Download/install examples target the published Apache-licensed alpha.5 release.
+Sections explicitly marked alpha.6 describe unreleased development additions,
+with [new community/enterprise rights](LICENSING.md); [earlier grants](LICENSE_HISTORY.md)
+remain unchanged. Existing `hyperl/1` graph semantics and ABI-1 structures are retained.
 
 For the separate ARM64 Android Vulkan qualification runner and the actual
 Samsung/Adreno 506 results, see [Android GPU build/test](ANDROID_VULKAN.md).
@@ -137,6 +138,8 @@ launcher path if you have not added a user-local PATH entry.
 | `keygen KEYFILE` | Creates a new random 32-byte AES key file; never overwrites |
 | `data-import SOURCE DATASET KEYFILE MAX_BYTES` | Encrypts a local file as bounded chunks and authenticated manifest |
 | `data-export DATASET DESTINATION KEYFILE MAX_BYTES` | Verifies/decrypts chunks into a new output, published after full integrity checks |
+| `sum-precise INPUTS.json [MEMORY_BUDGET_BYTES]` (alpha.6) | Separate compensated CPU reduction of exactly one `x` vector, rounded once to finite f32 |
+| `data-rekey DATASET NEW_DATASET OLD_KEYFILE NEW_KEYFILE MAX_BYTES` (alpha.6) | Verifies the entire source and writes HLM2 under a different key without an intermediate plaintext export |
 | `cluster-plan PROFILE.json` | Validates IPv6/capacity configuration; does not enroll/dispatch nodes |
 | `node-probe ORIGIN TOKEN_FILE` | Authenticated read-only host metadata observation, no inference qualification |
 | `telecom-plan PROFILE.json` | Validates a research profile, reports stack unavailable/uncertified |
@@ -354,15 +357,28 @@ destinations are rejected. A temporary output publishes after the entire dataset
 verifies, avoiding accepted truncated/tampered exports. Ordinary process failures
 clean staging; abrupt OS crashes can leave private staging that needs owner review.
 
-Manifest `HLM1` uses individually authenticated records with at most 512 plaintext
-bytes, ordered by authenticated index, and a final authenticated total/hash footer.
-Metadata decoding does not ask the crypto provider to buffer a whole large manifest.
-Chunk nonces are freshly random; use dataset-specific keys and plan key rotation
-before very large numbers of encryptions. This format is experimental/versioned.
+Alpha.5 writes `HLM1`; alpha.6 writes typed `HLM2` records and still reads authentic
+HLM1 datasets. Records have at most 512 plaintext bytes, authenticated order and a
+final authenticated total/hash footer. HLM2 uses an authenticated key ID and grouped
+chunk directories. Metadata decoding does not buffer the whole manifest. Nonces
+are freshly random; keys are random 32-byte AES keys, not password-derived keys.
+[Format, publication boundaries and key rotation](DATASET_FORMAT.md).
+
+Alpha.6 rotation writes a new dataset and leaves the source/key unchanged:
+
+```sh
+hyperl keygen /private/keys/new.key
+hyperl data-rekey /data/dataset /data/rotated /private/keys/dataset.key /private/keys/new.key 10737418240
+```
+
+Export publishes verified plaintext with atomic no-overwrite hard-link creation
+on the selected filesystem. A filesystem without hard links fails explicitly.
+Import/rekey reserve a new directory and publish the authenticated manifest last;
+this is a commit marker, not an atomic whole-directory rename or fsync guarantee.
 
 Back up the 32-byte key securely; never paste it into prompts, source, JSON programs
 or logs. POSIX-created keys/directories receive private permissions; review Windows
-ACLs in the chosen private parent. No KMS, distributed key exchange, key rotation,
+ACLs in the chosen private parent. No KMS, distributed key exchange,
 secure erasure or storage snapshot guarantee is implemented. The quota upper bound
 is 4 TiB, not a tested multi-terabyte performance claim. This is local storage IO;
 distributed large-data operators/shuffle/offload are future work.

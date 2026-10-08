@@ -21,6 +21,7 @@ distributions {
         contents {
             from("README.md", "LICENSE", "NOTICE")
             from("examples") { into("examples") }
+            from("contracts") { into("contracts") }
             from("python") { into("python"); exclude("__pycache__/**", "**/__pycache__/**", "*.pyc", "**/*.egg-info/**", "build/**") }
             from("docs") { into("docs") }
             from("native") { into("sdk/native"); exclude("hyperl-opencl", "hyperl-opencl.exe", "hyperl-metal") }

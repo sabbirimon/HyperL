@@ -2,9 +2,9 @@
 
 # HyperL
 
-### AI compute experiments and developer tools
+### Bounded CPU and GPU compute experiments
 
-**Simple authoring. Native execution. A path from one device to AI clusters.**
+**Small programs, explicit limits, reproducible native execution.**
 
 [![Licence: HyperL Community](https://img.shields.io/badge/Source-HyperL_Community-72e0ce)](LICENSE)
 [![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
@@ -43,6 +43,13 @@ recipe workbench with per-function and emergency stop controls.
 The broader native compiler, Python-like text language, full SDK, mobile packages and
 enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
 or a production distributed AI runtime. [Current evidence and limits](docs/VALIDATION.md).
+
+**Alpha.6 development improvements:** one generated cross-language contract,
+strict native/sanitizer checks, an explicit compensated CPU sum, typed encrypted
+datasets with key rotation, and locally built platform wheels with opt-in native
+loading. [Review fixes and remaining milestones](docs/FOUNDATION_HARDENING.md) ·
+[Measured CPU baseline](docs/CPU_BENCHMARK.md) · [Dataset format](docs/DATASET_FORMAT.md).
+These changes are not yet part of the published alpha.5 installers.
 
 Created by **Sabbir Hassan Imon (IMON)** with Codex assistance. HyperL is independent;
 [Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
@@ -94,23 +101,11 @@ it does not establish a native GUI session or GPU execution.
 
 [Workbench design](docs/UI_DESIGN_PLAN.md) · [Developer tools](docs/DEVELOPER_TOOLS_PLAN.md) · [Diagnostics](docs/CODE_DIAGNOSTICS.md) · [Font provenance](docs/FONT_PROVENANCE.md)
 
-## HyperL software platform
+## Hardware and expansion
 
-HyperL has nine architecture layers, from one local workstation to planned AI
-clusters. They group code and roadmap interfaces; only the documented local tools
-are delivered today. Read the [complete stack and deployment profiles](docs/SOFTWARE_STACK.md).
-
-| Layer | Current delivery | Next milestone |
-|---|---|---|
-| Core | Bounded f32 CPU execution and C ABI preview | Optimized C/C++ kernels and tensor primitives |
-| Developer Tools | CLI, workbench, validation and reviewed fixes | SDK, LSP, IDE plugins, debugger/profiler |
-| SDK and Libraries | Python/native preview, NumPy/CPU Torch copies, recipes | Model/framework import and explicit zero-copy ownership |
-| Compute Adapters | Six source emitters; OpenCL/Metal host previews | Vendor-by-vendor hardware qualification |
-| Memory and Data | CPU admission and encrypted local streaming | HBM/VRAM/NUMA/CXL accounting and encrypted spill |
-| AI Services | Small preprocessing recipes | Full model inference, training, vision and serving |
-| Control Services | Configuration and read-only node observations | Rust fleet services, quotas, durable jobs and acknowledged stop |
-| Fabric | IPv6/IPv4/DNS endpoint configuration and HTTPS probe | Collective communication and qualified fabric transports |
-| Security and Operations | Local authenticated encryption and cancellation | Enterprise identity, RBAC, audit and measured telemetry |
+The [architecture and deployment profiles](docs/SOFTWARE_STACK.md) describe the
+larger platform. Full tensor/model engines, VRAM/NUMA spill, semantic IDE tools
+and Rust fleet services have explicit [implementation gates](docs/FOUNDATION_HARDENING.md#next-implementation-gates).
 
 **Support counts:** two CPU implementations, six source emitters, two desktop GPU
 host previews and one Android Vulkan qualification runner. Exact workload evidence
@@ -124,13 +119,14 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Area | Current alpha behavior |
 |---|---|
 | CPU reference | Real finite f32 `add`, `multiply`, `relu`, ordered `sum`; bounded DAG/vectors, validation and cancellation |
+| Precision option (alpha.6) | Separate CPU `precise-sum/1` uses compensated binary64 accumulation and one finite f32 rounding; graph `sum` stays unchanged |
 | Native embedding | Original C99 arithmetic library and C ABI preview; static/shared build, explicit Python bridge; full SDK later |
 | Python libraries | Native CPU recipes, NumPy/CPU Torch copying bridges and optional verified PyTorch elementwise path; CUDA requires separate hardware validation |
 | Memory planning | Observed JVM heap/environment plus full-array estimate/admission; not VRAM reservation or a hard RSS limit |
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
 | Optional GPU | Explicit OpenCL/macOS Metal hosts; four bounded Metal cases passed on AMD Radeon Pro 560X, with CPU verification and expected overflow rejection. Other GPUs and full models need separate qualification |
 | Android GPU experiment | Samsung Galaxy A20s / Adreno 506 executes generated Vulkan kernels: 11 CPU-verified outputs and two expected overflow rejections. Native test runner; Meshlit GPU wiring and mobile installers remain separate. [Build and evidence](docs/ANDROID_VULKAN.md) |
-| Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication |
+| Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication; alpha.6 adds typed HLM2 records, grouped chunks and explicit rekey |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
 | Telecom research | Disabled/uncertified research profiles and a full-stack research plan; no RF or carrier stack activation |

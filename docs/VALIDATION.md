@@ -1,5 +1,50 @@
 # Standalone alpha validation — 2026-10-08
 
+## Cross-language/native/data hardening — unreleased alpha.6
+
+The actual local `test installDist distZip distTar` check passes in **30 seconds**:
+**49 JVM cases, 47 passed, two unavailable OpenCL/Metal execution skips, zero
+failures/errors**. New tests cover separate precise reduction, independently
+encrypted legacy HLM1 export/rotation, HLM2 multi-chunk rotation, authenticated
+invalid record types/fields/numbers, retained source, wrong-key and no-overwrite
+publication. An initial HLM2 writer omitted default-valued types; its two failing
+tests were retained and the corrected writer explicitly serializes record types
+before this passing run.
+
+Strict AppleClang 17 Release CMake/CTest: **three passes** (CPU contract, 4,096
+seeded stress cases covering all sixteen declared categories, Metal availability
+probe). Debug ASan/UBSan CTest also reports three passes; only the C targets are
+instrumented. Local macOS leak detection is off because this sanitizer runtime
+does not support it. The separate Ubuntu CI sanitizer job enables leak detection;
+its new-head result is separate from the local run. The deterministic corpus is
+not exhaustive or a claim of coverage-guided fuzzing.
+
+Actual Python/native preview: **ten cases, eight passed, two uninstalled
+PyTorch/CUDA skips**. Cross-language conformance: three test methods pass,
+covering sixteen same-JSON cases through actual JVM/Python/C, 120 seeded DAGs
+against NumPy 2.3.3 ordered-f32 arithmetic, and precise reduction/cancellation/
+overflow cases. Fourteen existing installer/GPU-harness script tests pass.
+Generated contract/schema consistency passes. [Measured CPU baseline](CPU_BENCHMARK.md)
+records real overhead and the distinct cost scopes rather than claiming a speedup.
+
+A local macOS 15/x86-64 native platform wheel builds and installs in a clean
+virtual environment: **three installed-package checks pass**, including actual
+native execution/cancellation and rejection of corrupt binary/path/target metadata.
+An older-SDK Python's initial pip attempt rejected the macOS 15 wheel because it
+reported compatibility version 10.16; the retry with `SYSTEM_VERSION_COMPAT=0`
+uses the actual host OS and passes without retagging the artifact. Wheel metadata
+retains the development licence and prior Apache notices. No index/release upload
+or other architecture claim follows from this local installation.
+
+The formatted/current Android Vulkan host compiles under NDK 28.2.13676358 with
+strict warnings; all thirteen generated shaders compile and validate. **No phone
+is visible in this fresh ADB inventory**, so there is no new physical-device pass.
+Historical exact Samsung/Radeon evidence below remains distinct. New-head OS CI,
+installer signing and fresh hardware execution require their own results.
+
+[Implemented review fixes and next gates](FOUNDATION_HARDENING.md) ·
+[Encrypted format and publication semantics](DATASET_FORMAT.md).
+
 ## Community/enterprise licence transition — unreleased alpha.6
 
 The affected JVM/package check passes in **39 seconds**: 44 JVM cases, 42 passed,

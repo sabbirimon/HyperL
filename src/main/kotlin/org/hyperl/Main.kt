@@ -20,6 +20,7 @@ Usage:
   hyperl workspace-new FILE.hyperl.json
   hyperl workspace-validate FILE.hyperl.json
   hyperl run PROGRAM.json INPUTS.json [MEMORY_BUDGET_BYTES]
+  hyperl sum-precise INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl memory-plan PROGRAM.json INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl emit TARGET PROGRAM.json
   hyperl gpu-probe /absolute/path/to/hyperl-opencl
@@ -32,6 +33,7 @@ Usage:
   hyperl keygen KEYFILE
   hyperl data-import SOURCE DATASET_DIRECTORY KEYFILE MAX_BYTES
   hyperl data-export DATASET_DIRECTORY DESTINATION KEYFILE MAX_BYTES
+  hyperl data-rekey DATASET_DIRECTORY NEW_DATASET_DIRECTORY OLD_KEYFILE NEW_KEYFILE MAX_BYTES
 Targets: LLVM_CPU, CUDA, ROCM_HIP, OPENCL_SPIRV, METAL, VULKAN_SPIRV.
 CPU_REFERENCE and explicitly supplied OpenCL/Metal bridges can execute; actual GPU qualification is separate. Emission is source only.
 Network access only through explicit authenticated node-probe; no shell, auto installs, radio or privileges.""")
@@ -45,6 +47,7 @@ Network access only through explicit authenticated node-probe; no shell, auto in
             "diagnose"->{require(args.size in 3..4);val report=runBlocking{CodeDiagnostics.analyze(Workspace.read(Path.of(args[1])),Workspace.read(Path.of(args[2])),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)};println(Workspace.json.encodeToString(report));if(!report.valid)exitProcess(2)}
             "validate"->{require(args.size==2);Workspace.program(Workspace.read(Path.of(args[1])));println("Valid hyperl/1 program")}
             "run"->{require(args.size in 3..4);println(cpu(Workspace.read(Path.of(args[1])),Workspace.read(Path.of(args[2])),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET))}
+            "sum-precise"->{require(args.size in 2..3);val inputs=Workspace.inputs(Workspace.read(Path.of(args[1])));require(inputs.keys==setOf("x"));println(runBlocking{Workspace.result(floatArrayOf(PreciseReduction.sum(inputs.getValue("x"),args.getOrNull(2)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)))})}
             "memory-plan"->{require(args.size in 3..4);println(Workspace.json.encodeToString(MemoryPlanner.plan(Workspace.program(Workspace.read(Path.of(args[1]))),Workspace.inputs(Workspace.read(Path.of(args[2]))),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)))}
             "emit"->{require(args.size==3);println(PortableEmitter.emit(Workspace.program(Workspace.read(Path.of(args[2]))),HyperLTarget.valueOf(args[1])).source)}
             "gpu-probe"->{require(args.size==2);println(runBlocking { OpenClBridge(Path.of(args[1])).probe() })}
@@ -59,6 +62,7 @@ Network access only through explicit authenticated node-probe; no shell, auto in
             "keygen"->{require(args.size==2);LargeData.keygen(Path.of(args[1]));println("Key created; keep it private and separate from datasets")}
             "data-import"->{require(args.size==5);println(runBlocking{LargeData.import(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}
             "data-export"->{require(args.size==5);println(runBlocking{LargeData.export(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}
+            "data-rekey"->{require(args.size==6);println(runBlocking{LargeData.rekey(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),Path.of(args[4]),args[5].toLong())})}
             else->error("Unknown command; run hyperl help")
         }
     } catch(e:Exception) {System.err.println("HyperL failed: ${e.message?.take(1024)}");exitProcess(2)}
