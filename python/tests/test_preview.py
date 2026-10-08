@@ -7,7 +7,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from hyperl import NativeCpu, Program, Step, f32, weighted_relu, residual_relu, positive_sum
+from hyperl import NativeCpu, Program, Step, f32, weighted_relu, residual_relu, positive_sum, LIBRARY as LIBRARY_IDS, recipe_program
 from hyperl.interop import from_numpy, to_numpy, from_torch, to_torch
 
 LIBRARY = None
@@ -30,6 +30,18 @@ class NativeTests(unittest.TestCase):
         data = json.loads((Path(__file__).resolve().parents[2] / "examples/elementwise.json").read_text())
         result = self.cpu.execute(Program.from_dict(data), {"x": f32([-1, 2, 3]), "w": f32([2, 3, 4])})
         self.assertEqual([0, 6, 12], list(result))
+
+    def test_twelve_library_programs_execute_native_cpu(self):
+        expected = ([3, -1, 4], [-2, 6, 12], [0, 2, 3], [0, 6, 12], [0, 1, 3],
+                    [-1, 7, 13], [0, 7, 13], [0, 6, 13], [16], [4], [5], [14])
+        values = {k: f32(v) for k, v in {"x": [-1, 2, 3], "w": [2, 3, 4],
+                  "y": [4, -3, 1], "bias": [1, 1, 1], "residual": [1, -1, 0]}.items()}
+        for name, output in zip(LIBRARY_IDS, expected):
+            with self.subTest(recipe=name):
+                program = recipe_program(name)
+                self.assertEqual(output, list(self.cpu.execute(program, {k: values[k] for k in program.inputs})))
+        with self.assertRaisesRegex(RuntimeError, "nonfinite"):
+            self.cpu.execute(recipe_program("sum"), {"x": f32([3.402823466e38, 3.402823466e38, -3.402823466e38])})
 
     def test_overflow_before_relu_shape_and_budget(self):
         with self.assertRaisesRegex(RuntimeError, "nonfinite"):

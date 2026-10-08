@@ -12,6 +12,9 @@ fun main(args:Array<String>) {
 Usage:
   hyperl gui
   hyperl capabilities
+  hyperl library
+  hyperl recipe RECIPE_ID
+  hyperl recipe-run RECIPE_ID INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl diagnose PROGRAM.json INPUTS.json [MEMORY_BUDGET_BYTES]
   hyperl validate PROGRAM.json
   hyperl workspace-new FILE.hyperl.json
@@ -34,6 +37,9 @@ CPU_REFERENCE and explicitly supplied OpenCL/Metal bridges can execute; actual G
 Network access only through explicit authenticated node-probe; no shell, auto installs, radio or privileges.""")
             "gui"->{require(args.size==1);SwingUtilities.invokeLater{HyperLWindow.show()}}
             "capabilities"->{require(args.size==1);println(Workspace.capabilities())}
+            "library"->{require(args.size==1);HyperLLibrary.ids.forEach{id->val recipe=HyperLLibrary.recipe(id);println("$id · ${recipe.title} · ${recipe.purpose} · ${if(recipe.elementwiseOnly)"elementwise source eligible; hardware qualification separate" else "CPU reduction"}")}}
+            "recipe"->{require(args.size==2);val recipe=HyperLLibrary.recipe(args[1]);println(DeveloperWorkspace.encode(HyperLCodec.json.encodeToString(recipe.program),HyperLCodec.json.encodeToString(recipe.example)))}
+            "recipe-run"->{require(args.size in 3..4);val recipe=HyperLLibrary.recipe(args[1]);println(cpu(Workspace.json.encodeToString(recipe.program),Workspace.read(Path.of(args[2])),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET))}
             "workspace-new"->{require(args.size==2);DeveloperWorkspace.save(Path.of(args[1]),DeveloperWorkspace.encode(Workspace.EXAMPLE_PROGRAM,Workspace.EXAMPLE_INPUTS));println("Workspace created; nothing executed")}
             "workspace-validate"->{require(args.size==2);DeveloperWorkspace.parse(Workspace.read(Path.of(args[1])));println("Valid hyperl-workspace/1") }
             "diagnose"->{require(args.size in 3..4);val report=runBlocking{CodeDiagnostics.analyze(Workspace.read(Path.of(args[1])),Workspace.read(Path.of(args[2])),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)};println(Workspace.json.encodeToString(report));if(!report.valid)exitProcess(2)}

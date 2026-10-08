@@ -6,7 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object Workspace {
-    const val VERSION="0.1.0-alpha.4"
+    const val VERSION="0.1.0-alpha.5"
     const val MAX_JSON_BYTES=16*1024*1024
     val json=Json { prettyPrint=true; ignoreUnknownKeys=false }
     const val EXAMPLE_PROGRAM="""{"format":"hyperl/1","inputs":["x","w"],"instructions":[{"output":"value","operation":"multiply","inputs":["x","w"]},{"output":"positive","operation":"relu","inputs":["value"]}],"output":"positive"}"""
@@ -21,23 +21,10 @@ object Workspace {
     }
     fun program(text:String):HyperLProgram {
         require(text.length<=MAX_JSON_BYTES)
-        return json.decodeFromString<HyperLProgram>(text).also{it.validate()}
+        return HyperLCodec.program(text)
     }
     fun inputs(text:String):Map<String,FloatArray> {
-        require(text.length<=MAX_JSON_BYTES)
-        val root=json.parseToJsonElement(text).jsonObject
-        require(root.size in 1..8)
-        var total=0L
-        return root.mapValues{(_,value)->
-            val items=value.jsonArray
-            require(items.size in 1..262144)
-            total+=items.size;require(total<=1048576){"Input exceeds retained vector budget"}
-            FloatArray(items.size){index->
-                val number=items[index].jsonPrimitive
-                require(!number.isString){"Numbers must not be strings"}
-                number.float.also{require(it.isFinite()){"Nonfinite input"}}
-            }
-        }
+        return HyperLCodec.inputs(text)
     }
     fun result(values:FloatArray):String=json.encodeToString(JsonArray(values.map{JsonPrimitive(it)}))
     fun capabilities():String=buildJsonObject {

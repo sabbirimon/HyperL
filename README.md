@@ -8,10 +8,10 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/Source-Apache--2.0-72e0ce)](LICENSE)
 [![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
-[![Release: alpha.4](https://img.shields.io/badge/Release-0.1.0--alpha.4-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.4)
+[![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
-[Download](https://github.com/sabbirimon/HyperL/releases) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
+[Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
 </div>
 
@@ -23,7 +23,9 @@ qualified native backends use each platform's capabilities.
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
 OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
-A small Python/C ABI and tensor-copying preview adds reusable preprocessing helpers.
+Twelve ready-made recipes are available through Kotlin/JSON, the CLI and Python/C ABI preview.
+Native desktop installer previews bundle Java; the separate Meshlit port adds a local
+recipe workbench with per-function and emergency stop controls.
 The broader native compiler, Python-like text language, full SDK, mobile packages and
 enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
 or a production distributed AI runtime. [Current evidence and limits](docs/VALIDATION.md).
@@ -57,10 +59,12 @@ the current f32 kernels are not an encryption primitive or complete model engine
 
 ![HyperL workbench with actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.4/workbench-alpha4-preview.png)
 
-An original navy/graphite theme uses subtle teal/violet gradients, rounded panels,
-thin header/status strips, **Inter** interface typography and **JetBrains Mono** code.
-The editor gets a wider initial split and compact spacing. Optional glass-inspired
-surface highlights can be switched off in the header; code/output stay dark and opaque.
+Choose **Graphite**, **Aurora** or **Paper** from the thin header strip. The workbench
+uses **Inter** for the interface and **JetBrains Mono** for code, compact spacing and
+a wider editor split. **Focus** gives the editor the full workspace width; toggle it
+again to restore output. Optional glass highlights and theme selection persist locally.
+Switching themes preserves the program, inputs and results. Paper uses readable light
+editor surfaces; the dark themes use restrained teal/violet grading.
 The screenshot renders the actual Swing panel headlessly after a real CPU run;
 it does not establish a native GUI session or GPU execution.
 
@@ -94,8 +98,9 @@ are delivered today. Read the [complete stack and deployment profiles](docs/SOFT
 | Fabric | IPv6/IPv4/DNS endpoint configuration and HTTPS probe | Collective communication and qualified fabric transports |
 | Security and Operations | Local authenticated encryption and cancellation | Enterprise identity, RBAC, audit and measured telemetry |
 
-**Support counts:** two CPU implementations, six source emitters, two GPU host
-previews, and **zero NVIDIA architecture families hardware-qualified**.
+**Support counts:** two CPU implementations, six source emitters, two desktop GPU
+host previews and one Android Vulkan qualification runner. Exact workload evidence
+exists for Radeon Pro 560X and Adreno 506; **zero NVIDIA architecture families are hardware-qualified**.
 See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 [AMD ROCm/AI matrix](docs/AMD_COMPATIBILITY.md), [AI Services plan](docs/AI_SERVICES_PLAN.md), and
 [AMD Mac / Metal build and test guide](docs/MACOS_METAL.md).
@@ -110,6 +115,7 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Memory planning | Observed JVM heap/environment plus full-array estimate/admission; not VRAM reservation or a hard RSS limit |
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
 | Optional GPU | Explicit OpenCL/macOS Metal hosts; four bounded Metal cases passed on AMD Radeon Pro 560X, with CPU verification and expected overflow rejection. Other GPUs and full models need separate qualification |
+| Android GPU experiment | Samsung Galaxy A20s / Adreno 506 executes generated Vulkan kernels: 11 CPU-verified outputs and two expected overflow rejections. Native test runner; Meshlit GPU wiring and mobile installers remain separate. [Build and evidence](docs/ANDROID_VULKAN.md) |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
@@ -218,8 +224,10 @@ hardware qualification. Chinese model families are separate from framework suppo
 The design keeps a small local mode and adds optional services as the deployment grows.
 **Phone support is planned**, through native Android/iOS packages and qualified local
 CPU/GPU/NPU paths, with optional authenticated remote access. Desktop Java GUI archives
-are not Android/iOS installers. Non-root/sandboxed use is the default; physical-device
-validation remains paused. [Mobile/edge plan](docs/MOBILE_AND_EDGE_PLAN.md).
+are not Android/iOS installers. Non-root/sandboxed use is the default. The owner resumed
+single-phone GPU tests: [Adreno 506 Vulkan checks pass](docs/ANDROID_VULKAN.md).
+Meshlit app GPU integration and two-phone cluster acceptance remain pending.
+[Mobile/edge plan](docs/MOBILE_AND_EDGE_PLAN.md).
 
 The [enterprise/datacenter plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) defines useful
 services: identity/mTLS, tenant isolation, quotas, durable jobs/leases, scheduler
@@ -259,16 +267,16 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local post-alpha.4 source checks: **37 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
-native CTest **two passes (CPU contract and Metal discovery)** and Python scripts **six passes**. GUI checks execute the real
+Local post-alpha.4 source checks: **42 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **two passes (CPU contract and Metal discovery)** and Python scripts **fourteen passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Local post-alpha.4 JVM checks - 39 cases
-    "Passed" : 37
+    title Current local JVM checks - 44 cases
+    "Passed" : 42
     "Skipped - GPU unavailable" : 2
 ```
 
@@ -279,8 +287,9 @@ commit. Separately, the owner's Terminal completed **four Metal GPU cases on AMD
 Radeon Pro 560X** and an expected overflow rejection. See the
 [hardware case and timing record](docs/A1990_METAL_VALIDATION.md). These working-source
 results include the JSON fix after the published alpha.4 archives. Native GUI sessions,
-mobile/ARM/RISC-V targets, other accelerators and live multi-host/provider paths need
-separate evidence.
+Android Adreno 506 passed the bounded standalone Vulkan cases over USB and TLS
+wireless ADB. Mobile app/JNI integration, other ARM/RISC-V targets, other accelerators
+and live multi-host/provider paths need separate evidence.
 
 ## Roadmap
 

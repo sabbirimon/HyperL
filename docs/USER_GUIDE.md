@@ -1,6 +1,10 @@
 # HyperL installation, usage and programming guide
 
-For `0.1.0-alpha.4`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
+For the separate ARM64 Android Vulkan qualification runner and the actual
+Samsung/Adreno 506 results, see [Android GPU build/test](ANDROID_VULKAN.md).
+This experiment is not a mobile installer or Meshlit app GPU backend.
+
+For `0.1.0-alpha.5`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what
 is tested. This alpha is a developer experiment, not a CUDA-compatible SDK or a
@@ -9,11 +13,16 @@ describes the expansion and performance gates.
 
 ## 1. Choose an installation
 
+For the bundled-runtime macOS DMG, Windows MSI and Linux DEB/RPM previews,
+see [native desktop installation](DESKTOP_INSTALLERS.md). The steps below are
+for the alternative portable archives. [Use cases and twelve recipes](USE_CASES.md)
+provide runnable development workflows.
+
 The desktop release ZIP/TAR contains `bin/`, `lib/`, examples, documentation,
 install scripts and portable C SDK source under `sdk/`. `bin/hyperl` is the Unix
 launcher; `bin/hyperl.bat` is the Windows launcher. Both run the same CLI and GUI.
 Install a maintained Java **17 or later** runtime separately. The local build uses
-Java 21. No JRE, GPU driver, model, Android/iOS app or telecom stack is bundled.
+Java 21. The portable archives bundle no JRE, GPU driver, model, Android/iOS app or telecom stack.
 
 The C SDK needs no JVM at runtime. It needs CMake 3.20+ and a C99 compiler to build.
 Optional OpenCL execution needs existing reviewed headers/runtime/driver and a
@@ -29,9 +38,9 @@ Linux:
 
 ```sh
 java -version
-sha256sum hyperl-0.1.0-alpha.4.zip
-unzip hyperl-0.1.0-alpha.4.zip
-cd hyperl-0.1.0-alpha.4
+sha256sum hyperl-0.1.0-alpha.5.zip
+unzip hyperl-0.1.0-alpha.5.zip
+cd hyperl-0.1.0-alpha.5
 bin/hyperl capabilities
 bin/hyperl gui
 ```
@@ -40,9 +49,9 @@ macOS:
 
 ```sh
 java -version
-shasum -a 256 hyperl-0.1.0-alpha.4.zip
-unzip hyperl-0.1.0-alpha.4.zip
-cd hyperl-0.1.0-alpha.4
+shasum -a 256 hyperl-0.1.0-alpha.5.zip
+unzip hyperl-0.1.0-alpha.5.zip
+cd hyperl-0.1.0-alpha.5
 bin/hyperl run examples/elementwise.json examples/inputs.json
 bin/hyperl gui
 ```
@@ -51,9 +60,9 @@ Windows PowerShell:
 
 ```powershell
 java -version
-Get-FileHash .\hyperl-0.1.0-alpha.4.zip -Algorithm SHA256
-Expand-Archive .\hyperl-0.1.0-alpha.4.zip -DestinationPath .\hyperl-download
-Set-Location .\hyperl-download\hyperl-0.1.0-alpha.4
+Get-FileHash .\hyperl-0.1.0-alpha.5.zip -Algorithm SHA256
+Expand-Archive .\hyperl-0.1.0-alpha.5.zip -DestinationPath .\hyperl-download
+Set-Location .\hyperl-download\hyperl-0.1.0-alpha.5
 .\bin\hyperl.bat capabilities
 .\bin\hyperl.bat gui
 ```
@@ -70,13 +79,13 @@ After inspecting the downloaded script and verifying its source, pass the archiv
 a **new** selected installation prefix and exact SHA-256:
 
 ```sh
-python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.4.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
+python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.5.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
 ```
 
 PowerShell equivalent:
 
 ```powershell
-python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.4.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
+python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.5.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
 ```
 
 The placeholder is not a real checksum. The installer checks hashes, paths, special
@@ -93,6 +102,7 @@ and verified version; retain the previous prefix until the new version works.
 ```sh
 git clone https://github.com/sabbirimon/HyperL.git
 cd HyperL
+git checkout v0.1.0-alpha.5
 ./gradlew --no-daemon test installDist distZip distTar
 build/install/hyperl/bin/hyperl capabilities
 ```
@@ -112,6 +122,7 @@ launcher path if you have not added a user-local PATH entry.
 | Command | Effect |
 |---|---|
 | `memory-plan PROGRAM INPUTS [BUDGET_BYTES]` | Observed heap/environment, full graph array estimate and admission decision; see [memory policy](MEMORY.md) |
+| `library` / `recipe ID` / `recipe-run ID INPUTS [BUDGET]` | Inspect twelve recipes, export a workspace or execute on CPU; see [use cases](USE_CASES.md) |
 | `capabilities` | Actual OS/architecture/JRE and implemented tool status; does not invent accelerators |
 | `validate PROGRAM.json` | Checks `hyperl/1`, names, dependencies and operations |
 | `run PROGRAM.json INPUTS.json` | Executes finite f32 vectors on CPU reference |
@@ -213,6 +224,14 @@ controls. Dataset and node commands currently use the CLI.
 
 The repository's GUI test operates actual Swing panel buttons headlessly. That
 does not prove native window interaction on every OS.
+
+The thin header contains **Theme**, **Focus** and **Glass**. Graphite and Aurora
+provide darker surfaces; Paper provides a light appearance. Focus hides the environment
+row and output panel to expand the editor; toggling it restores the previous divider.
+Theme changes keep edited code, input data and execution output. Theme/glass settings
+are saved in `~/.hyperl/ui.properties`; they are display preferences, not runtime or
+network permissions. `-Dhyperl.ui.settings=/path/to/ui.properties` overrides this file
+for a test or isolated profile. Glass is a painted highlight, not OS backdrop blur.
 
 ## 5. Source emitters and accelerators
 

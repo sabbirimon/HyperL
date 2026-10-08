@@ -15,7 +15,7 @@ This document records requirements; linked upstream material is evidence, not in
 | Linux hardware/transports | Original OpenCL bridge in C; other backends unavailable | C/C++ SDK plugins for CUDA/HIP/CANN, LLVM/MLIR, UCX/RDMA/AF_XDP/DPDK, NUMA/affinity; privileged code separately installed and qualified |
 | Windows | JVM tools and buildable C SDK | Native C++ ONNX Runtime/DirectML/provider adapters, IOCP and signed packaging; no DirectML implementation yet |
 | Apple | JVM macOS tools, Metal source and Objective-C++ host; four bounded Radeon Pro 560X Metal cases pass | Wider Metal/other-device qualification, C ABI, MPS/Core ML where qualified. Native iOS app/library; no iOS JVM installer |
-| Android/mobile | C ABI/emitted Vulkan/OpenCL/Metal formats | JNI/NDK Vulkan and OEM-qualified OpenCL; iOS Metal separate. GPU vendor name does not qualify driver/operators |
+| Android/mobile | C ABI/emitted Vulkan/OpenCL/Metal formats; ARM64 Vulkan qualification host passes listed Adreno 506 kernels | App-UID JNI/runtime, broader f32/lifecycle/thermal checks and OEM-qualified OpenCL; iOS Metal separate. [Android evidence](ANDROID_VULKAN.md) |
 | Native service safety | Versioned ownership/cancellation and explicit adapter descriptors | Owner-approved Rust cluster services, separated from C/C++ native kernels/adapters; stable C ABI and explicit ownership/concurrency boundaries. Qualify with actual benchmarks |
 
 Dynamic support means explicit capability negotiation, immutable artifact/model

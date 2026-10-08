@@ -1,5 +1,82 @@
 # Standalone alpha validation — 2026-10-08
 
+## Workbench themes and editor focus
+
+The actual `test installDist distZip` run succeeds in 1m41s: **44 JVM cases,
+42 passed, two unavailable-GPU skips, zero failures/errors**. The new GUI check
+switches the real component tree to Paper, verifies saved preferences, retains
+edited code/input, toggles editor Focus, and executes the real CPU result `[12]`.
+Actual Swing panel renders at 1360×840 were visually inspected in Graphite, Aurora,
+Paper and Focus. These are offscreen component renders, not native OS-window or
+GPU execution evidence. The current installers/release screenshots predate this UI
+increment; source packaging and installer publication are separate.
+
+## Physical Samsung GPU qualification
+
+The owner resumed single-phone GPU testing. The original ARM64 C++17 Vulkan host
+compiles with NDK 28.2.13676358/API 24 and `-Wall -Wextra -Werror`; all thirteen
+generated shaders compile and pass SPIR-V validation. On Samsung Galaxy A20s
+SM-A207F, Android 11/API 30, **Adreno 506 / Vulkan 1.1.128**, eleven finite-output
+cases pass CPU comparison and two explicitly dispatched overflow cases reject
+without publishing results. Completion and temporary-device cleanup are confirmed.
+[Full scope, hashes, commands and observations](ANDROID_VULKAN.md).
+
+Local required JVM/package check succeeds in 15s (`test` reuses the previously
+passing unchanged JVM suite; installDist/distZip execute). CMake/CTest: two pass.
+Script checks: fourteen pass, including eight new fail-closed metadata/integrity
+checks; these unit fixtures do not replace the actual phone evidence above.
+Initial ADB enumeration was empty because the session-started macOS daemon could
+not use USB interfaces. After the owner started ADB in normal Terminal and
+authorized the Samsung, the existing loopback client reached the real device.
+No permissions or root authorization were bypassed. No APK/JNI adapter, full
+model, sustained-load/thermal, CPU speedup or other mobile GPU is qualified.
+The published alpha.5 installers predate this test-runner increment.
+
+## Alpha.5 production-hardening candidate
+
+Local JVM/package checks pass in 48 seconds: **43 tests, 41 pass, two unavailable
+GPU tests skip, zero failures/errors**. Native C/Metal-probe CTest: **two pass**;
+the probe detects no GPU in the restricted agent shell. Script checks: **six pass**.
+Python/native preview: **ten tests, eight pass, two optional Torch checks skip**;
+the real shared C library and NumPy execute locally. The twelve-recipe test checks
+actual outputs, including dot/sum/energy, and ordered intermediate-overflow rejection.
+An initial Python test imported a library inventory under the existing binary-path
+variable name; this test-name collision was repaired before the passing rerun.
+
+New JVM checks cover full-graph admission before copies, actual recipe values,
+strict malformed-input rejection, capacity/deadline/cancellation and overflow.
+Coordination fixtures are explicitly identified; they do not qualify a backend.
+The C contract additionally rejects a nonfinite ordered partial sum without
+publishing a changed caller output. Language and native ABI remain version 1.
+
+The Intel macOS jpackage app image builds and its bundled-runtime CLI checks pass:
+capabilities/version, twelve library entries and weighted ReLU `[0,6,12]` with
+JAVA_HOME removed and PATH empty. Native DMG creation fails at `hdiutil create`
+in this restricted session. Earlier packaging attempts exposed macOS's positive
+version constraint and case-insensitive launcher collisions; both are fixed.
+OS-specific installer CI is separate evidence, recorded in release packaging
+reports. No native GUI, interactive install/uninstall, signing/notarization or new
+GPU qualification is inferred from the app image. Historical alpha.4 Radeon
+Terminal results remain exactly scoped in [their hardware report](A1990_METAL_VALIDATION.md).
+
+See [native installers](DESKTOP_INSTALLERS.md), [twelve-library use cases](USE_CASES.md)
+and [production/Meshlit gates](PRODUCTION_AND_MESHLIT_PLAN.md). The Meshlit source
+port is reviewed and tested separately in its own repository; phones remain paused.
+
+Alpha.5 native installers are now published. The immutable tag source is
+`d330d2bc46c427421c9d3dc04aec9ec2e9170b76`. All four
+[target package jobs](https://github.com/sabbirimon/HyperL/actions/runs/37721587473)
+pass; their initial publication step failed because it assumed flat artifact
+directories. The corrected collector reused the exact tagged artifacts and
+[publication recovery passes](https://github.com/sabbirimon/HyperL/actions/runs/37722682361).
+No tag or older release was replaced. All five published installer sizes/digests
+match their target-build reports. Windows/Linux/macOS source checks also pass at
+`fda4d92`, `d330d2b` and `415d7de`; workflow-only cleanup is separate from runtime
+qualification. The published `desktop-validation.json` and `SHA256SUMS` retain
+the complete per-target evidence. Interactive lifecycle/signing gates remain open.
+
+## Historical foundation evidence
+
 Actual local host: macOS/x86-64, Homebrew OpenJDK 21.0.12, Apple Clang 17,
 Gradle 9.4.1, Kotlin 2.4.10. No Android SDK is required by this standalone build.
 This evidence concerns HyperL standalone, not the separate Meshlit Android app.

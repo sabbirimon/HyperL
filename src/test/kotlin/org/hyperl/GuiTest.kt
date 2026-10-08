@@ -24,6 +24,32 @@ class GuiTest {
             SwingUtilities.invokeAndWait{panel.findText.text="multiply";panel.find.doClick();assertEquals("multiply",panel.program.selectedText);assertFalse(panel.stop.isEnabled)}
         }finally{SwingUtilities.invokeAndWait{panel.close()}}
     }
+    @Test fun appearanceAndFocusPreserveWorkspaceAndActualExecution(){
+        val config=java.nio.file.Files.createTempDirectory("hyperl-ui-").resolve("ui.properties")
+        val previous=System.getProperty("hyperl.ui.settings")
+        System.setProperty("hyperl.ui.settings",config.toString())
+        var created:HyperLPanel?=null
+        lateinit var panel:HyperLPanel
+        try {
+            SwingUtilities.invokeAndWait{
+                panel=HyperLPanel();created=panel
+                val source=panel.program.text;val vectors=panel.inputs.text
+                panel.appearanceSelector.selectedItem=DesktopAppearance.PAPER
+                assertEquals(DesktopAppearance.PAPER,DesktopTheme.appearance)
+                assertEquals(DesktopTheme.background,panel.program.background)
+                assertEquals(DesktopTheme.foreground,panel.program.foreground)
+                assertEquals(source,panel.program.text);assertEquals(vectors,panel.inputs.text)
+                panel.focusEditor.doClick();assertTrue(panel.focusEditor.isSelected)
+                panel.focusEditor.doClick();assertFalse(panel.focusEditor.isSelected)
+                assertTrue(java.nio.file.Files.readString(config).contains("appearance=PAPER"))
+                panel.run.doClick()
+            }
+            await{panel.output.text.contains("Backend: CPU_REFERENCE")&&panel.run.isEnabled}
+            SwingUtilities.invokeAndWait{assertTrue(panel.output.text.contains("12.0"))}
+        }finally{SwingUtilities.invokeAndWait{created?.close();DesktopTheme.select(DesktopAppearance.AURORA,false)}
+            if(previous==null)System.clearProperty("hyperl.ui.settings") else System.setProperty("hyperl.ui.settings",previous)
+            java.nio.file.Files.deleteIfExists(config);java.nio.file.Files.deleteIfExists(config.parent)}
+    }
     private fun await(condition:()->Boolean){
         val deadline=System.nanoTime()+5_000_000_000L
         while(System.nanoTime()<deadline){var ready=false;SwingUtilities.invokeAndWait{ready=condition()};if(ready)return;Thread.sleep(20)}
