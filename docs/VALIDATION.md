@@ -31,6 +31,18 @@ See [native installers](DESKTOP_INSTALLERS.md), [twelve-library use cases](USE_C
 and [production/Meshlit gates](PRODUCTION_AND_MESHLIT_PLAN.md). The Meshlit source
 port is reviewed and tested separately in its own repository; phones remain paused.
 
+Alpha.5 native installers are now published. The immutable tag source is
+`d330d2bc46c427421c9d3dc04aec9ec2e9170b76`. All four
+[target package jobs](https://github.com/sabbirimon/HyperL/actions/runs/37721587473)
+pass; their initial publication step failed because it assumed flat artifact
+directories. The corrected collector reused the exact tagged artifacts and
+[publication recovery passes](https://github.com/sabbirimon/HyperL/actions/runs/37722682361).
+No tag or older release was replaced. All five published installer sizes/digests
+match their target-build reports. Windows/Linux/macOS source checks also pass at
+`fda4d92`, `d330d2b` and `415d7de`; workflow-only cleanup is separate from runtime
+qualification. The published `desktop-validation.json` and `SHA256SUMS` retain
+the complete per-target evidence. Interactive lifecycle/signing gates remain open.
+
 ## Historical foundation evidence
 
 Actual local host: macOS/x86-64, Homebrew OpenJDK 21.0.12, Apple Clang 17,
