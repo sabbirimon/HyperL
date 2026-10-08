@@ -98,6 +98,7 @@ and verified version; retain the previous prefix until the new version works.
 ```sh
 git clone https://github.com/sabbirimon/HyperL.git
 cd HyperL
+git checkout v0.1.0-alpha.5
 ./gradlew --no-daemon test installDist distZip distTar
 build/install/hyperl/bin/hyperl capabilities
 ```

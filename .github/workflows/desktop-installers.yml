@@ -56,3 +56,76 @@ jobs:
             build/desktop/packaging-report.json
             build/distributions/*.zip
             build/distributions/*.tar
+  publish-preview:
+    if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '-alpha.')
+    needs: package
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: desktop-*
+          path: release-inputs
+      - name: Verify all package reports and collect release assets
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_RUN: ${{ github.run_id }}
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          import hashlib, json, os, re, shutil
+          version = os.environ['RELEASE_TAG'].removeprefix('v')
+          assert re.fullmatch(r'\d+\.\d+\.\d+-alpha\.\d+', version)
+          assert f'version = "{version}"' in Path('build.gradle.kts').read_text()
+          folders = list(Path('release-inputs').glob('desktop-*'))
+          assert len(folders) == 4
+          output = Path('release-assets'); output.mkdir()
+          reports = []
+          names = set()
+          def collect(path):
+              assert path.is_file() and path.name not in names
+              names.add(path.name); shutil.copy2(path, output / path.name)
+          def sha(path):
+              h = hashlib.sha256()
+              with path.open('rb') as stream:
+                  for chunk in iter(lambda: stream.read(1024 * 1024), b''): h.update(chunk)
+              return h.hexdigest()
+          for folder in folders:
+              report = json.loads((folder / 'packaging-report.json').read_text())
+              assert report['format'] == 'hyperl-desktop-package/1' and report['version'] == version
+              assert report['bundledRuntimeCpuSmoke'] == 'passed' and report['cpuExample'] == [0,6,12]
+              assert report['signed'] is False and report['productionQualified'] is False
+              for asset in report['artifacts']:
+                  name = asset['file']
+                  assert Path(name).name == name and name.startswith(f'hyperl-{version}-')
+                  path = folder / name
+                  assert sha(path) == asset['sha256'] and path.stat().st_size == asset['bytes']
+                  collect(path)
+              reports.append(report)
+          assert len(names) == 5
+          assert {p.suffix for p in output.iterdir()} == {'.dmg','.msi','.deb','.rpm'}
+          linux = Path('release-inputs/desktop-ubuntu-22.04')
+          for suffix in ('zip', 'tar'): collect(linux / f'hyperl-{version}.{suffix}')
+          manifest = {'format':'hyperl-preview-release/1', 'version':version, 'run':os.environ['RELEASE_RUN'],
+                      'reports':reports, 'productionQualified':False}
+          (output / 'desktop-validation.json').write_text(json.dumps(manifest, indent=2)+'\n')
+          for name in ('DESKTOP_INSTALLERS.md','USE_CASES.md'): collect(Path('docs') / name)
+          (output / 'SHA256SUMS').write_text(''.join(f'{sha(p)}  {p.name}\n' for p in sorted(output.iterdir())))
+          Path('preview-release.md').write_text(f'''HyperL {version} adds self-contained desktop installer previews and twelve ready-made preprocessing recipes.
+
+          Downloads: Intel Mac `darwin-x86_64.dmg` (A1990), Apple Silicon `darwin-arm64.dmg`, Windows x64 `windows-amd64.msi`, Linux x64 DEB/RPM. Native installers bundle Java 21 and provide the HyperL GUI plus hyperl-cli. Portable ZIP/TAR remain alternatives requiring Java 17+.
+
+          All four target builds passed JVM/native checks and ran capabilities, twelve-library inventory and actual CPU weighted ReLU without external Java. SHA256SUMS and desktop-validation.json record the exact artifacts and platform reports. Build: https://github.com/sabbirimon/HyperL/actions/runs/{os.environ['RELEASE_RUN']}
+
+          These are publisher-unsigned, unnotarized alpha previews. Interactive installation/upgrade/uninstall, native GUI acceptance, independent security review and broader GPU/model/cluster qualification remain open. Native installer metadata is independent of the application alpha version; it does not imply production readiness.
+
+          Read DESKTOP_INSTALLERS.md for setup/removal and USE_CASES.md for twelve recipes, CLI/Python/C usage, memory limits and Meshlit port boundaries. Source build: git checkout v{version} before following the build guide. GPU source generation is not GPU execution; prior Radeon evidence retains its limited scope.
+          ''')
+          PYTHON
+      - name: Publish new prerelease without replacing existing assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" release-assets/* --verify-tag --prerelease --title "HyperL $RELEASE_TAG — desktop installer previews" --notes-file preview-release.md
