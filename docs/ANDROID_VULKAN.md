@@ -91,6 +91,10 @@ The current harness intentionally checks Samsung manufacturer to preserve this
 owner-authorized test scope. Generalizing it needs a selected-device contract and
 the corresponding physical vendor checks. It does not use Wi-Fi pairing or root.
 
+An already owner-paired TLS wireless endpoint can also be selected explicitly
+with `--serial PHONE_IP:DEBUG_PORT`. The owner enables/pairs Android wireless
+debugging separately; this script does not turn it on or authorize a host.
+
 ## Observed results
 
 The first actual report is `hyperl-android-vulkan-qualification/1`, generated at
@@ -124,6 +128,29 @@ timestamp, p95/throughput result, full upload/download/verification measurement
 or CPU speedup. CPU reference generation runs on the build host. Cold/warm cache,
 driver overhead, thermal/battery/sustained load and alternative memory paths need
 separate performance experiments. No performance promise follows from detection.
+
+### USB and TLS wireless reruns
+
+On 2026-10-08, the same notice-preserving bundle was tested through explicit USB
+and paired TLS wireless targets. Each run passed all thirteen listed cases
+(eleven CPU comparisons and two expected rejections), confirmed Adreno 506
+completion and removed its temporary files. ADB wireless access does not change
+these kernels into remote model inference or an in-app Meshlit GPU backend.
+
+| Transport | Pipeline creation, 65,536 elements | Submit/fence wait | ADB run/wait wall time |
+| --- | ---: | ---: | ---: |
+| USB | 16.6934 ms | 2.58333 ms | 240.884 ms |
+| TLS wireless | 17.0516 ms | 2.72365 ms | 686.041 ms |
+
+Each cell is one observation, not a repeated latency distribution or speedup.
+The ADB measurement includes host/transport/command overhead; the native wait
+is not a hardware timestamp. Mac builds were running during these checks.
+Local report SHA-256 values, with serials/addresses absent from reports:
+
+- USB, 2026-10-08 05:55:06 UTC:
+  `0a642e2bbf52bc3b2d25d6a9e12d5f42c4effd117317fe8da9d838d45f12153b`.
+- TLS wireless, 2026-10-08 05:55:42 UTC:
+  `0202aa8bd69367f4cf999b30d26ad1677834b163e0f72ca4d8a8bf23a348e0ae`.
 
 ## Next integration gates
 
