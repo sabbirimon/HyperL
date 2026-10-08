@@ -6,7 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object Workspace {
-    const val VERSION="0.1.0-alpha.5"
+    const val VERSION="0.1.0-alpha.6"
     const val MAX_JSON_BYTES=16*1024*1024
     val json=Json { prettyPrint=true; ignoreUnknownKeys=false }
     const val EXAMPLE_PROGRAM="""{"format":"hyperl/1","inputs":["x","w"],"instructions":[{"output":"value","operation":"multiply","inputs":["x","w"]},{"output":"positive","operation":"relu","inputs":["value"]}],"output":"positive"}"""

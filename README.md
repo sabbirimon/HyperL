@@ -2,11 +2,11 @@
 
 # HyperL
 
-### Open-source AI compute experiments and developer tools
+### AI compute experiments and developer tools
 
 **Simple authoring. Native execution. A path from one device to AI clusters.**
 
-[![License: Apache-2.0](https://img.shields.io/badge/Source-Apache--2.0-72e0ce)](LICENSE)
+[![Licence: HyperL Community](https://img.shields.io/badge/Source-HyperL_Community-72e0ce)](LICENSE)
 [![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
 [![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
@@ -14,6 +14,20 @@
 [Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
 </div>
+
+**Development licence:** newly covered material uses the [HyperL Community and
+Enterprise License 1.0](LICENSE). Personal, developer and research use is free;
+small-business production is free. A group with **US$10 million annual revenue/
+budget or 100 employees** gets one six-calendar-month enterprise production trial,
+then needs a paid written agreement or must stop that covered production use.
+Contact [sabbirimon@gmail.com](mailto:sabbirimon@gmail.com).
+[Examples and terms](docs/LICENSING.md) · [Contribution rights](CONTRIBUTING.md).
+
+This development licence is source available. **Published releases through alpha.5
+and earlier Apache-covered code keep Apache 2.0 rights**, including enterprise
+use and forks. A notice change cannot revoke those rights.
+[Scope/history](docs/LICENSE_HISTORY.md). Alpha.6 is unreleased development source;
+the alpha.5 badge above points to the existing Apache release.
 
 HyperL explores a common way to describe, validate and eventually execute AI workloads
 across CPUs, GPUs and other accelerators. Its goal is to give developers approachable
@@ -48,7 +62,7 @@ or pretending every accelerator behaves the same.
 | Memory-aware large-data work | Predict cost, reject oversized work, stream encrypted data and plan future spill | CPU estimate/admission and local chunk IO exist; HBM/VRAM accounting and automatic spill are planned |
 | Single-device through cluster deployment | Keep offline local use useful while adding optional remote capacity | Desktop works today; phone and enterprise packages have separate qualification gates |
 | Human control and enterprise operations | Tenant quotas, audit, scoped agents and acknowledged emergency stops | Enterprise services/control protocol are planned, not deployed by this release |
-| Open development and reproducible evidence | Study code, contribute adapters, reproduce correctness and measure real performance | Apache-2.0 source; upstream components/SDKs retain their own licenses |
+| Available source and reproducible evidence | Study code, contribute adapters, reproduce correctness and measure real performance | Community/enterprise terms for new rights; prior Apache and dependency grants preserved |
 
 Useful AI/security/vision goals include preprocessing kernels, inference pipelines,
 large-dataset preparation, evaluation and governed fleet operations. Full models,
@@ -351,7 +365,8 @@ minimal programs and actual OS/compiler/driver evidence; keep credentials and pr
 inputs out of reports. Contributions should preserve bounds and numerical contracts,
 name untested targets and retain upstream provenance/license notices.
 
-HyperL source is [Apache-2.0](LICENSE). [NOTICE](NOTICE) records original Meshlit
+Newly covered HyperL rights follow [LICENSE](LICENSE), with earlier Apache grants
+preserved in [licence history](docs/LICENSE_HISTORY.md). [NOTICE](NOTICE) records original Meshlit
 foundation provenance and pinned dependencies. Fonts retain OFL-1.1; FlatLaf retains
 Apache-2.0 and RSyntaxTextArea BSD-3-Clause. Proprietary vendor SDKs/drivers are separately
 installed/licensed; no NVIDIA artwork or Odysseus AGPL implementation is copied.

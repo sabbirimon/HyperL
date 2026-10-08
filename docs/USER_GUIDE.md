@@ -1,5 +1,9 @@
 # HyperL installation, usage and programming guide
 
+These examples target the published Apache-licensed alpha.5 release. Alpha.6 is
+unreleased development source with [new community/enterprise rights](LICENSING.md);
+[earlier grants](LICENSE_HISTORY.md) remain unchanged.
+
 For the separate ARM64 Android Vulkan qualification runner and the actual
 Samsung/Adreno 506 results, see [Android GPU build/test](ANDROID_VULKAN.md).
 This experiment is not a mobile installer or Meshlit app GPU backend.

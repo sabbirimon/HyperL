@@ -99,8 +99,10 @@ implementation; do not select five systems when one satisfies the pilot.
 
 Useful optional services: deployment/adapter qualification, private registry and
 on-prem operations tooling, migration/conformance assistance, benchmark reports,
-training and support. Keep the core open-source usable without a hosted account or
-paid license gate. No SLA, commercial terms or certification is established here.
+training and support. Eligible community uses remain free without a hosted account
+or activation server. New rights follow [community/enterprise terms](LICENSING.md):
+large-entity production needs a paid written agreement after its six-month trial.
+Earlier Apache rights remain. This plan creates no SLA, price or certification.
 
 ## 4. Proven systems to evaluate before inventing replacements
 

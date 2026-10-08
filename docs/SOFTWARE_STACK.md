@@ -1,6 +1,8 @@
 # HyperL software platform and architecture
 
-Status as of 2026-10-08. HyperL is an independent open-source AI compute project.
+Status as of 2026-10-08. HyperL is an independent AI compute project. Newly covered
+development rights follow [community/enterprise terms](LICENSING.md); earlier
+Apache releases and third-party components retain their grants.
 Its architecture names describe software layers and deployment profiles, not new
 silicon designs. This overview organizes the platform in a way that developers
 and operators can scan, while keeping current code separate from future products.

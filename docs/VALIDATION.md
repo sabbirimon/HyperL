@@ -1,5 +1,34 @@
 # Standalone alpha validation — 2026-10-08
 
+## Community/enterprise licence transition — unreleased alpha.6
+
+The affected JVM/package check passes in **39 seconds**: 44 JVM cases, 42 passed,
+two unavailable-GPU skips, zero failures/errors; installDist, ZIP and TAR build.
+The actual installed CLI reports `0.1.0-alpha.6` and retains `hyperl/1`. Native
+CMake build/CTest passes two checks (CPU contract and Metal probe); fourteen
+packaging/qualification script checks pass. The Metal probe is availability
+evidence, not a newly qualified GPU.
+
+Actual ZIP/TAR inspection confirms ten licence/history/Python metadata files
+match current source. A Python wheel builds as `hyperl-experimental 0.1.0a6`, with
+`License-Expression: LicenseRef-HyperL-Community-1.0` and four accompanying files:
+LICENSE, NOTICE, Apache-2.0.txt and LICENSE_HISTORY.md. Each matches its package
+source; the original Apache text is byte-identical to pre-transition commit
+`67b30e09741f4bba1672a891644fc73abb1f9855`. No release/tag, historical alpha.5 asset,
+Meshlit grant or dependency licence is replaced. These local packages are not
+published installers, signing evidence or proof of legal enforceability.
+
+[Licence scope and legal-review limits](LICENSING.md) explain the free uses,
+group thresholds, six-calendar-month production trial and prior Apache rights.
+Qualified counsel review remains required before commercial enforcement. No
+automated check establishes patent clearance or every contributor's authority.
+
+The owner-authorized main ruleset is Active, targets only `main`, blocks deletion
+and force pushes, requires pull requests/resolved review conversations and eight
+strict GitHub Actions checks. No bypass actor or second-person approval is set;
+the single owner can merge their own checked PR. `dev` remains unprotected.
+The configuration does not merge a PR or change release/licence history.
+
 ## Workbench themes and editor focus
 
 The actual `test installDist distZip` run succeeds in 1m41s: **44 JVM cases,

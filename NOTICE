@@ -1,6 +1,10 @@
 HyperL — original experimental AI compute tools
 Copyright 2026 Sabbir Hassan Imon and contributors.
-Licensed under Apache License 2.0; see LICENSE.
+Newly covered rights: HyperL Community and Enterprise License 1.0; see LICENSE.
+Earlier Apache-2.0 grants are preserved, including pre-transition source through
+67b30e09741f4bba1672a891644fc73abb1f9855 and released alpha.5 material.
+See docs/LICENSE_HISTORY.md and docs/licenses/Apache-2.0.txt.
+Licensing contact: sabbirimon@gmail.com.
 AI-assisted contributor: Codex by OpenAI.
 
 Foundation adapted from original Meshlit HyperL source commit
