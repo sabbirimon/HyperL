@@ -1,5 +1,16 @@
 # Standalone alpha validation — 2026-10-08
 
+## Workbench themes and editor focus
+
+The actual `test installDist distZip` run succeeds in 1m41s: **44 JVM cases,
+42 passed, two unavailable-GPU skips, zero failures/errors**. The new GUI check
+switches the real component tree to Paper, verifies saved preferences, retains
+edited code/input, toggles editor Focus, and executes the real CPU result `[12]`.
+Actual Swing panel renders at 1360×840 were visually inspected in Graphite, Aurora,
+Paper and Focus. These are offscreen component renders, not native OS-window or
+GPU execution evidence. The current installers/release screenshots predate this UI
+increment; source packaging and installer publication are separate.
+
 ## Physical Samsung GPU qualification
 
 The owner resumed single-phone GPU testing. The original ARM64 C++17 Vulkan host

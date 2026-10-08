@@ -59,10 +59,12 @@ the current f32 kernels are not an encryption primitive or complete model engine
 
 ![HyperL workbench with actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.4/workbench-alpha4-preview.png)
 
-An original navy/graphite theme uses subtle teal/violet gradients, rounded panels,
-thin header/status strips, **Inter** interface typography and **JetBrains Mono** code.
-The editor gets a wider initial split and compact spacing. Optional glass-inspired
-surface highlights can be switched off in the header; code/output stay dark and opaque.
+Choose **Graphite**, **Aurora** or **Paper** from the thin header strip. The workbench
+uses **Inter** for the interface and **JetBrains Mono** for code, compact spacing and
+a wider editor split. **Focus** gives the editor the full workspace width; toggle it
+again to restore output. Optional glass highlights and theme selection persist locally.
+Switching themes preserves the program, inputs and results. Paper uses readable light
+editor surfaces; the dark themes use restrained teal/violet grading.
 The screenshot renders the actual Swing panel headlessly after a real CPU run;
 it does not establish a native GUI session or GPU execution.
 
@@ -265,16 +267,16 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local post-alpha.4 source checks: **37 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
-native CTest **two passes (CPU contract and Metal discovery)** and Python scripts **six passes**. GUI checks execute the real
+Local post-alpha.4 source checks: **42 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **two passes (CPU contract and Metal discovery)** and Python scripts **fourteen passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Local post-alpha.4 JVM checks - 39 cases
-    "Passed" : 37
+    title Current local JVM checks - 44 cases
+    "Passed" : 42
     "Skipped - GPU unavailable" : 2
 ```
 
@@ -285,8 +287,9 @@ commit. Separately, the owner's Terminal completed **four Metal GPU cases on AMD
 Radeon Pro 560X** and an expected overflow rejection. See the
 [hardware case and timing record](docs/A1990_METAL_VALIDATION.md). These working-source
 results include the JSON fix after the published alpha.4 archives. Native GUI sessions,
-mobile/ARM/RISC-V targets, other accelerators and live multi-host/provider paths need
-separate evidence.
+Android Adreno 506 passed the bounded standalone Vulkan cases over USB and TLS
+wireless ADB. Mobile app/JNI integration, other ARM/RISC-V targets, other accelerators
+and live multi-host/provider paths need separate evidence.
 
 ## Roadmap
 

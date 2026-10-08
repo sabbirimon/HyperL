@@ -225,6 +225,14 @@ controls. Dataset and node commands currently use the CLI.
 The repository's GUI test operates actual Swing panel buttons headlessly. That
 does not prove native window interaction on every OS.
 
+The thin header contains **Theme**, **Focus** and **Glass**. Graphite and Aurora
+provide darker surfaces; Paper provides a light appearance. Focus hides the environment
+row and output panel to expand the editor; toggling it restores the previous divider.
+Theme changes keep edited code, input data and execution output. Theme/glass settings
+are saved in `~/.hyperl/ui.properties`; they are display preferences, not runtime or
+network permissions. `-Dhyperl.ui.settings=/path/to/ui.properties` overrides this file
+for a test or isolated profile. Glass is a painted highlight, not OS backdrop blur.
+
 ## 5. Source emitters and accelerators
 
 ```sh

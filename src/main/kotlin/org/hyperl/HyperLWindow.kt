@@ -42,6 +42,8 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
     val examples=JComboBox(arrayOf("Elementwise","Reduction"));val loadExample=JButton("Load example")
     val state=DesktopTheme.badge("READY")
     val executionTabs=JTabbedPane()
+    val appearanceSelector=JComboBox(DesktopAppearance.entries.toTypedArray())
+    val focusEditor=JToggleButton("Focus")
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
     private var job:Job?=null
     private var searchEditor=program
@@ -68,9 +70,12 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
         val appearance=JPanel(FlowLayout(FlowLayout.RIGHT,8,0));appearance.isOpaque=false
         val glass=JCheckBox("Glass",DesktopTheme.glassEnabled);glass.isOpaque=false;glass.font=DesktopTheme.uiFont(11);glass.foreground=DesktopTheme.muted
         glass.toolTipText="Subtle static surface tint and highlights; turn off for solid panels."
-        glass.addActionListener{DesktopTheme.glassEnabled=glass.isSelected;repaint()}
+        glass.addActionListener{DesktopTheme.glassEnabled=glass.isSelected;try{DesktopTheme.select(DesktopTheme.appearance)}catch(_:Exception){state.toolTipText="Glass preference could not be saved"};repaint()}
         state.border=BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(DesktopTheme.line),EmptyBorder(3,8,3,8))
-        appearance.add(DesktopTheme.label("LOCAL / ALPHA.5",9,DesktopTheme.muted));appearance.add(glass);appearance.add(state);header.add(appearance,BorderLayout.EAST)
+        appearanceSelector.selectedItem=DesktopTheme.appearance;appearanceSelector.font=DesktopTheme.uiFont(11);appearanceSelector.toolTipText="Workbench appearance; saved for the next launch"
+        appearanceSelector.addActionListener{try{DesktopTheme.select(appearanceSelector.selectedItem as DesktopAppearance);DesktopTheme.refresh(this);DesktopTheme.status(state,state.text)}catch(_:Exception){DesktopTheme.status(state,"FAILED");state.toolTipText="Appearance could not be saved"}}
+        focusEditor.font=DesktopTheme.uiFont(11);focusEditor.toolTipText="Give the editor the output pane’s space; preserve results and runtime controls"
+        appearance.add(appearanceSelector);appearance.add(focusEditor);appearance.add(glass);appearance.add(state);header.add(appearance,BorderLayout.EAST)
         val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(6))
         val snapshot=MemoryPlanner.observe()
         val environment=JPanel(GridLayout(1,4,8,0));environment.isOpaque=false
@@ -105,7 +110,9 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
                 }
                 super.doLayout()
             }
-        };split.resizeWeight=0.70;split.dividerSize=8;split.border=null;split.background=DesktopTheme.background;split.isOpaque=false
+        };var previousDivider=0
+        focusEditor.addActionListener{if(focusEditor.isSelected){previousDivider=split.dividerLocation;right.isVisible=false;environment.isVisible=false;split.dividerSize=0;split.dividerLocation=split.width}else{right.isVisible=true;environment.isVisible=true;split.dividerSize=8;split.dividerLocation=previousDivider};revalidate();repaint()}
+        split.resizeWeight=0.70;split.dividerSize=8;split.border=null;split.background=DesktopTheme.background;split.isOpaque=false
         add(split)
 
         val bottom=JPanel(BorderLayout(0,6));bottom.isOpaque=false
