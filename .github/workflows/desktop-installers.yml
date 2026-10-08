@@ -1,0 +1,58 @@
+name: Desktop preview installers
+on:
+  push:
+    branches: [main, codex/production-library]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Linux package build dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot rpm
+      - name: Confirm Windows WiX 3 build tools
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $wixBin = Join-Path $env:WIX 'bin'
+          if (!(Test-Path (Join-Path $wixBin 'candle.exe'))) { throw 'WiX 3 is required on the build runner' }
+          $wixBin >> $env:GITHUB_PATH
+      - run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build/native --config Release
+      - run: ctest --test-dir build/native -C Release --output-on-failure
+      - name: Test and prepare portable payload
+        shell: bash
+        run: ./gradlew --no-daemon test installDist distZip distTar
+      - name: Package and smoke-test bundled runtime
+        shell: bash
+        run: python scripts/package_desktop.py --distribution build/install/hyperl --native build/native --output build/desktop --jdk "$JAVA_HOME"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}
+          if-no-files-found: error
+          path: |
+            build/desktop/*.dmg
+            build/desktop/*.msi
+            build/desktop/*.deb
+            build/desktop/*.rpm
+            build/desktop/SHA256SUMS
+            build/desktop/packaging-report.json
+            build/distributions/*.zip
+            build/distributions/*.tar

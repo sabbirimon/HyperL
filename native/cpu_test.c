@@ -14,6 +14,8 @@ int main(void){
     steps[0].a=9;assert(hl_execute(inputs,2,steps,3,4,out,3,&n,NULL,NULL)==HL_INVALID&&n==0);steps[0].a=0;
     x[0]=-FLT_MAX;w[0]=2;assert(hl_execute(inputs,2,steps,2,3,out,3,&n,NULL,NULL)==HL_NONFINITE&&n==0);
     x[0]=NAN;assert(hl_execute(inputs,2,steps,2,3,out,3,&n,NULL,NULL)==HL_NONFINITE);
+    {float overflow[]={FLT_MAX,FLT_MAX,-FLT_MAX};struct hl_vector vector={overflow,3};struct hl_step sum={HL_SUM,0,0};
+     out[0]=123;assert(hl_execute(&vector,1,&sum,1,1,out,3,&n,NULL,NULL)==HL_NONFINITE&&n==0&&out[0]==123);}
     inputs[0].length=262145;assert(hl_execute(inputs,2,steps,2,3,out,3,&n,NULL,NULL)==HL_INVALID);
     puts("Portable C CPU checks passed: arithmetic, sum, immutability, cancel, DAG, bounds, nonfinite/overflow.");return 0;
 }

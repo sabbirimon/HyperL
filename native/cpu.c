@@ -41,6 +41,7 @@ enum hl_status hl_execute(const struct hl_vector *inputs,size_t input_count,
             if(s.operation==HL_SUM){
                 float sum=0;for(size_t i=0;i<lengths[s.a];i++){
                     if(i%1024==0&&cancelled&&cancelled(cancel_context)){status=HL_CANCELLED;goto done;}sum+=a[i];
+                    if(!isfinite(sum)){status=HL_NONFINITE;goto done;}
                 }values[index][0]=sum;
             }else for(size_t i=0;i<lengths[index];i++){
                 if(i%1024==0&&cancelled&&cancelled(cancel_context)){status=HL_CANCELLED;goto done;}

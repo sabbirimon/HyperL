@@ -70,7 +70,7 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
         glass.toolTipText="Subtle static surface tint and highlights; turn off for solid panels."
         glass.addActionListener{DesktopTheme.glassEnabled=glass.isSelected;repaint()}
         state.border=BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(DesktopTheme.line),EmptyBorder(3,8,3,8))
-        appearance.add(DesktopTheme.label("LOCAL / ALPHA.4",9,DesktopTheme.muted));appearance.add(glass);appearance.add(state);header.add(appearance,BorderLayout.EAST)
+        appearance.add(DesktopTheme.label("LOCAL / ALPHA.5",9,DesktopTheme.muted));appearance.add(glass);appearance.add(state);header.add(appearance,BorderLayout.EAST)
         val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(6))
         val snapshot=MemoryPlanner.observe()
         val environment=JPanel(GridLayout(1,4,8,0));environment.isOpaque=false

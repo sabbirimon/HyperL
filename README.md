@@ -8,10 +8,10 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/Source-Apache--2.0-72e0ce)](LICENSE)
 [![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
-[![Release: alpha.4](https://img.shields.io/badge/Release-0.1.0--alpha.4-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.4)
+[![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
-[Download](https://github.com/sabbirimon/HyperL/releases) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
+[Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
 </div>
 
@@ -23,7 +23,9 @@ qualified native backends use each platform's capabilities.
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
 OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
-A small Python/C ABI and tensor-copying preview adds reusable preprocessing helpers.
+Twelve ready-made recipes are available through Kotlin/JSON, the CLI and Python/C ABI preview.
+Native desktop installer previews bundle Java; the separate Meshlit port adds a local
+recipe workbench with per-function and emergency stop controls.
 The broader native compiler, Python-like text language, full SDK, mobile packages and
 enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
 or a production distributed AI runtime. [Current evidence and limits](docs/VALIDATION.md).
