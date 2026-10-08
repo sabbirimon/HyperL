@@ -163,3 +163,27 @@ height versus alpha.3. Headless rendering does not qualify native GUI interactio
 The [platform overview](SOFTWARE_STACK.md), [AMD matrix](AMD_COMPATIBILITY.md),
 [NVIDIA matrix](NVIDIA_COMPATIBILITY.md) and [AI Services plan](AI_SERVICES_PLAN.md)
 record implementation status separately from proposed enterprise/model services.
+
+## Post-alpha.4 Metal JSON contract fix — 2026-10-08
+
+The owner's normal Terminal reports the exact Radeon and Intel devices. Its first
+qualification attempt fails with `Device or completion mismatch` and no recorded
+passed cases. The report is preserved; it is not counted as successful qualification.
+The CLI's default JSON serializer omitted the default-valued `backend` and
+`cpuVerified` properties. A new wire-format fixture reproduces the missing backend
+assertion before the fix (**one failing test**); that fixture uses no physical GPU.
+Making those fields required restores explicit verification metadata after the
+existing completion and CPU checks. The harness still rejects absent/false flags,
+wrong devices and incomplete commands, and retains bounded metadata for diagnosis.
+
+After the source fix, `./gradlew --offline --no-daemon --max-workers=1 test installDist
+distZip` succeeds in **28s**: **39 JVM cases, 37 pass, two unavailable GPU skips,
+zero failures/errors**. Native build/CTest: **two passes**. Python script checks:
+**six passes**, including four metadata-contract cases; these are fixtures, not GPU
+qualification. No native kernel, numerical tolerance or device fallback was changed.
+
+An initial Gradle invocation could not create its local socket under the current
+sandbox (`Operation not permitted`); it ran after the specific network permission
+was granted. This permission does not demonstrate GPU access. The full Radeon
+Terminal rerun and this fix's new OS CI results remain pending. Published alpha.4
+archives are unchanged; the corrected working-source distribution must be rebuilt.

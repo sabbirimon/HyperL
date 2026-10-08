@@ -14,6 +14,15 @@ class MetalBridgeTest {
         assumeTrue("Optional macOS Metal bridge not built",Files.isExecutable(binary));return MetalBridge(binary)
     }
     @Test fun missingBridgeNeverDownloadsOrFallsBack(){assertThrows(IllegalArgumentException::class.java){MetalBridge(Path.of("missing"))}}
+    @Test fun wireResultIncludesVerificationAndBackendWithoutHardware() {
+        // Wire-format fixture only; it does not qualify a physical GPU.
+        val fixture=MetalResult(backend="METAL_GPU",result=floatArrayOf(0f,6f,12f),device="TEST SERIALIZATION ONLY",cpuVerified=true,metrics=MetalMetrics("hyperl-metal-result/1","TEST SERIALIZATION ONLY","managed",true,1.0,1.0))
+        val encoded=Workspace.json.encodeToString(fixture)
+        val wire=Workspace.json.parseToJsonElement(encoded).jsonObject
+        assertEquals("METAL_GPU",wire["backend"]?.jsonPrimitive?.content)
+        assertEquals(true,wire["cpuVerified"]?.jsonPrimitive?.boolean)
+        assertTrue(wire.getValue("metrics").jsonObject.getValue("gpuCompletionConfirmed").jsonPrimitive.boolean)
+    }
     @Test fun unconfirmedSubmissionBlocksFurtherWork()=runBlocking {
         assumeTrue("POSIX subprocess failure fixture",!System.getProperty("os.name").startsWith("Windows"))
         val folder=Files.createTempDirectory("hyperl-metal-failure-test-")

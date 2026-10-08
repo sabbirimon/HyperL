@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 
 @Serializable data class MetalMetrics(val format:String,val device:String,val storageMode:String,val gpuCompletionConfirmed:Boolean,val compileMs:Double,val submitAndWaitMs:Double,val gpuMs:Double?=null)
-@Serializable data class MetalResult(val backend:String="METAL_GPU",val result:FloatArray,val device:String,val cpuVerified:Boolean=true,val metrics:MetalMetrics,val scope:String="This bounded elementwise request only; verification/copy/compile costs included, no speed claim")
+// Required wire fields: the default JSON encoder omits properties with default values.
+@Serializable data class MetalResult(val backend:String,val result:FloatArray,val device:String,val cpuVerified:Boolean,val metrics:MetalMetrics,val scope:String="This bounded elementwise request only; verification/copy/compile costs included, no speed claim")
 
 /** Explicit reviewed Metal executable. Device discovery never qualifies execution. */
 class MetalBridge(private val executable:Path){
@@ -46,7 +47,7 @@ class MetalBridge(private val executable:Path){
             val file=dir.resolve("result.bin");require(Files.size(file)==n.toLong()*4){"Invalid Metal result length"}
             val bytes=ByteBuffer.wrap(Files.readAllBytes(file)).order(ByteOrder.LITTLE_ENDIAN)
             val result=FloatArray(n){i->bytes.float.also{v->require(v.isFinite() && abs(v.toDouble()-expected[i])<=1e-6*maxOf(1.0,abs(expected[i].toDouble()))){"Metal CPU-reference mismatch at $i"}}}
-            MetalResult(result=result,device=name,metrics=metadata)
+            MetalResult(backend="METAL_GPU",result=result,device=name,cpuVerified=true,metrics=metadata)
         }
     }
     private fun boundedText(file:Path):String {require(Files.size(file)<=65536){"Metal output limit"};return Files.readString(file)}

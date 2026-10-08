@@ -6,6 +6,28 @@ import argparse,json,os,platform,subprocess,tempfile,time
 from datetime import datetime,timezone
 from pathlib import Path
 
+def validate_result_metadata(result,name):
+    """Require explicit execution evidence; missing fields never imply success."""
+    if not isinstance(result,dict):raise ValueError('Metal result must be an object')
+    if result.get('backend')!='METAL_GPU':raise ValueError('Metal backend missing or mismatched')
+    if result.get('device')!=name:raise ValueError('Metal device mismatch')
+    if result.get('cpuVerified') is not True:raise ValueError('Metal cpuVerified missing or not true')
+    metrics=result.get('metrics')
+    if not isinstance(metrics,dict):raise ValueError('Metal metrics missing or invalid')
+    if metrics.get('format')!='hyperl-metal-result/1':raise ValueError('Metal metrics format mismatch')
+    if metrics.get('device')!=name:raise ValueError('Metal metrics device mismatch')
+    if metrics.get('gpuCompletionConfirmed') is not True:raise ValueError('Metal completion missing or not confirmed')
+    if metrics.get('storageMode') not in ('shared','managed'):raise ValueError('Metal storage mode invalid')
+
+def result_evidence(result,elements):
+    """Keep only bounded metadata for diagnostics, never the full result array."""
+    if not isinstance(result,dict):return {'elements':elements,'resultType':type(result).__name__}
+    def scalar(value):
+        return value[:256] if isinstance(value,str) else value if value is None or isinstance(value,(bool,int,float)) else '<invalid type>'
+    metrics=result.get('metrics')
+    return {'elements':elements,**{key:scalar(result.get(key)) for key in ('backend','device','cpuVerified')},
+            'nativeMetrics':{key:scalar(metrics.get(key)) for key in ('format','device','storageMode','gpuCompletionConfirmed','compileMs','submitAndWaitMs','gpuMs')} if isinstance(metrics,dict) else None}
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cli',required=True,type=Path)
@@ -44,7 +66,8 @@ def main():
                     cpu,cpu_ms=command(['run',program_file,inputs_file]);gpu,wall_ms=command(['metal-run',args.bridge,name,program_file,inputs_file])
                     if cpu.returncode or gpu.returncode:raise ValueError((cpu.stderr+gpu.stderr)[:2048])
                     reference=json.loads(cpu.stdout);result=json.loads(gpu.stdout)
-                    if result.get('device')!=name or result.get('cpuVerified') is not True or result.get('metrics',{}).get('gpuCompletionConfirmed') is not True:raise ValueError('Device or completion mismatch')
+                    report['lastMetalResult']=result_evidence(result,n)
+                    validate_result_metadata(result,name)
                     actual=result['result']
                     if len(actual)!=n or len(reference)!=n or any(abs(a-b)>1e-6*max(1,abs(b)) for a,b in zip(actual,reference)):raise ValueError('CPU-reference mismatch')
                     report['cases'].append({'elements':n,'status':'pass','cpuCliWallMs':cpu_ms,'metalCliWallMsIncludingCpuVerification':wall_ms,'nativeMetrics':result['metrics'],'sample':actual[:3]})
@@ -54,7 +77,9 @@ def main():
                 p,wall_ms=command(['metal-run',args.bridge,name,program_file,inputs_file])
                 if p.returncode:raise ValueError(p.stderr[:2048])
                 result=json.loads(p.stdout)
-                if result['device']!=name or result['result']!=[0,0,0,0,14] or not result['cpuVerified']:raise ValueError('Add-chain mismatch')
+                report['lastMetalResult']=result_evidence(result,5)
+                validate_result_metadata(result,name)
+                if result['result']!=[0,0,0,0,14]:raise ValueError('Add-chain mismatch')
                 report['cases'].append({'elements':5,'status':'pass','operation':'multiply/add/relu','metalCliWallMsIncludingCpuVerification':wall_ms,'nativeMetrics':result['metrics']})
                 # Rejected by the CPU preflight before any overflowing GPU request.
                 program['instructions'].pop(1);program['instructions'][-1]['inputs']=['value'];program_file.write_text(json.dumps(program))

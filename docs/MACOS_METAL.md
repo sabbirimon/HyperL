@@ -91,3 +91,23 @@ not established here; restricted process/device access is a possibility. The
 session harness reports **unrun**, with no hardware dispatch or performance claim.
 CPU/pre-dispatch/error tests pass; actual GPU tests skip. The owner's request now
 authorizes testing this Mac's GPU; phone/two-device validation remains paused.
+
+### Terminal discovery and post-alpha.4 result-format fix
+
+The owner's normal Terminal probe exposes both the AMD Radeon Pro 560X and Intel
+UHD Graphics 630. The first qualification attempt failed with `Device or completion
+mismatch`, before recording any passed cases. This differs from the empty device
+list in the agent's process; broader file/network access does not itself establish
+GPU visibility.
+
+The alpha.4 CLI encoded `backend` and `cpuVerified` as default-valued properties.
+Its JSON serializer omitted those fields, although the harness requires an explicit
+verification flag. The source fix makes both fields required and sets them only
+after native completion and CPU comparison succeed. A serialization regression
+test reproduces the omission without claiming hardware execution. The harness
+continues to reject absent/false verification, wrong devices or incomplete commands,
+and now retains bounded metadata with a specific failure reason.
+
+Rebuild `installDist` from the corrected source before retrying, and choose a **new**
+report path. The published alpha.4 archives retain their original contents; this
+source fix does not replace them. A successful full hardware rerun is still pending.
