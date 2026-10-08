@@ -4,6 +4,8 @@ build/
 *.iml
 native/hyperl-opencl
 native/hyperl-opencl.exe
+native/hyperl-metal
+a1990-metal-*-report.json
 __pycache__/
 *.pyc
 .kotlin/

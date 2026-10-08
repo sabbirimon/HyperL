@@ -6,6 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object Workspace {
+    const val VERSION="0.1.0-alpha.4"
     const val MAX_JSON_BYTES=16*1024*1024
     val json=Json { prettyPrint=true; ignoreUnknownKeys=false }
     const val EXAMPLE_PROGRAM="""{"format":"hyperl/1","inputs":["x","w"],"instructions":[{"output":"value","operation":"multiply","inputs":["x","w"]},{"output":"positive","operation":"relu","inputs":["value"]}],"output":"positive"}"""
@@ -40,11 +41,12 @@ object Workspace {
     }
     fun result(values:FloatArray):String=json.encodeToString(JsonArray(values.map{JsonPrimitive(it)}))
     fun capabilities():String=buildJsonObject {
-        put("version","0.1.0-alpha.2");put("language","hyperl/1")
+        put("version",VERSION);put("language","hyperl/1")
         put("os",System.getProperty("os.name"));put("architecture",System.getProperty("os.arch"))
         put("java",System.getProperty("java.version"))
         put("cpuReferenceAvailable",true);put("automaticGpuFallback",false)
         put("nativeBridgeRequiresExplicitPath",true);put("telecomCertified",false)
+        put("metalBridgeAvailableAsSource",true);put("metalHardwareQualified",false)
         put("iosPackageAvailable",false)
         put("memoryAwareCpuAdmission",true)
         put("memory",json.encodeToJsonElement(MemoryPlanner.observe()))

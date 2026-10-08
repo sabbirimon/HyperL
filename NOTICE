@@ -32,3 +32,7 @@ resources pinned through FlatLaf tag 3.7.2) and JetBrains Mono Regular v2.304
 (JetBrains Mono Project Authors), both SIL Open Font License 1.1. Preserve the
 complete upstream copyright/license texts under docs/licenses. Source paths and
 SHA-256 digests are recorded in docs/FONT_PROVENANCE.md. No runtime font download.
+
+The macOS Metal host is original Objective-C++ code using Apple's system SDK
+interfaces. Apple frameworks/toolchains retain their separate license terms;
+no Apple or NVIDIA implementation source is copied or redistributed here.

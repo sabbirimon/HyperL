@@ -66,8 +66,8 @@ object CodeDiagnostics {
         if(p!=null&&values!=null){
             try{memory=MemoryPlanner.plan(p,values,budget);if(!memory.admitted)issue("MEMORY_ADMISSION","memory",memory.reason,"Partition the work or adjust your explicit budget within observed JVM headroom; no automatic spill.")}
             catch(e:Exception){issue("INPUT_SHAPE_BINDING","inputs",e.message?:"Input shape/binding mismatch","Use exactly the declared inputs and equal vector lengths for add/multiply; broadcasting is unavailable.")}
-            if(backend=="OPENCL_GPU"&&p.instructions.any{it.operation=="sum"})issue("GPU_REDUCTION","program.instructions","The current OpenCL bridge has no reduction dispatch","Explicitly choose CPU_REFERENCE for this program or wait for a qualified reduction adapter.")
-            if(backend !in setOf("CPU_REFERENCE","OPENCL_GPU"))issue("BACKEND_UNAVAILABLE","backend","Backend is not installed in this workbench","Use an explicitly available backend; source emission alone does not install one.")
+            if(backend in setOf("OPENCL_GPU","METAL_GPU")&&p.instructions.any{it.operation=="sum"})issue("GPU_REDUCTION","program.instructions","The selected GPU bridge has no reduction dispatch","Explicitly choose CPU_REFERENCE for this program or wait for a qualified reduction adapter.")
+            if(backend !in setOf("CPU_REFERENCE","OPENCL_GPU","METAL_GPU"))issue("BACKEND_UNAVAILABLE","backend","Backend is not installed in this workbench","Use an explicitly available backend; source emission alone does not install one.")
         }
         var checked=false
         if(p!=null&&values!=null&&issues.none{it.severity=="ERROR"}){

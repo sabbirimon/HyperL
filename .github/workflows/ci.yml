@@ -16,13 +16,13 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: JVM checks and distribution
-        shell: bash
-        run: ./gradlew --no-daemon test distZip
       - name: Portable C SDK
         run: cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build/native --config Release
       - run: ctest --test-dir build/native -C Release --output-on-failure
+      - name: JVM checks and distribution
+        shell: bash
+        run: ./gradlew --no-daemon test distZip
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

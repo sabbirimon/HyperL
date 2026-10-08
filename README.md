@@ -8,7 +8,7 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/Source-Apache--2.0-72e0ce)](LICENSE)
 [![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
-[![Release: alpha.3](https://img.shields.io/badge/Release-0.1.0--alpha.3-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.3)
+[![Release: alpha.4](https://img.shields.io/badge/Release-0.1.0--alpha.4-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.4)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
 [Download](https://github.com/sabbirimon/HyperL/releases) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
@@ -21,8 +21,8 @@ authoring tools and explicit memory, device and numerical contracts, while letti
 qualified native backends use each platform's capabilities.
 
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
-bounded f32 CPU reference, portable C ABI preview, backend source emitters, an optional
-OpenCL bridge, memory-aware CPU admission and encrypted local dataset streaming.
+bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
+OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
 A small Python/C ABI and tensor-copying preview adds reusable preprocessing helpers.
 The broader native compiler, Python-like text language, full SDK, mobile packages and
 enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
@@ -55,10 +55,10 @@ the current f32 kernels are not an encryption primitive or complete model engine
 
 ## Developer workbench
 
-![HyperL workbench with actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.3/workbench-alpha3-preview.png)
+![HyperL workbench with actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.4/workbench-alpha4-preview.png)
 
 An original navy/graphite theme uses subtle teal/violet gradients, rounded panels,
-clear status cards, **Inter** interface typography and **JetBrains Mono** code.
+thin header/status strips, **Inter** interface typography and **JetBrains Mono** code.
 The editor gets a wider initial split and compact spacing. Optional glass-inspired
 surface highlights can be switched off in the header; code/output stay dark and opaque.
 The screenshot renders the actual Swing panel headlessly after a real CPU run;
@@ -76,6 +76,30 @@ it does not establish a native GUI session or GPU execution.
 
 [Workbench design](docs/UI_DESIGN_PLAN.md) · [Developer tools](docs/DEVELOPER_TOOLS_PLAN.md) · [Diagnostics](docs/CODE_DIAGNOSTICS.md) · [Font provenance](docs/FONT_PROVENANCE.md)
 
+## HyperL software platform
+
+HyperL has nine architecture layers, from one local workstation to planned AI
+clusters. They group code and roadmap interfaces; only the documented local tools
+are delivered today. Read the [complete stack and deployment profiles](docs/SOFTWARE_STACK.md).
+
+| Layer | Current delivery | Next milestone |
+|---|---|---|
+| Core | Bounded f32 CPU execution and C ABI preview | Optimized C/C++ kernels and tensor primitives |
+| Developer Tools | CLI, workbench, validation and reviewed fixes | SDK, LSP, IDE plugins, debugger/profiler |
+| SDK and Libraries | Python/native preview, NumPy/CPU Torch copies, recipes | Model/framework import and explicit zero-copy ownership |
+| Compute Adapters | Six source emitters; OpenCL/Metal host previews | Vendor-by-vendor hardware qualification |
+| Memory and Data | CPU admission and encrypted local streaming | HBM/VRAM/NUMA/CXL accounting and encrypted spill |
+| AI Services | Small preprocessing recipes | Full model inference, training, vision and serving |
+| Control Services | Configuration and read-only node observations | Rust fleet services, quotas, durable jobs and acknowledged stop |
+| Fabric | IPv6/IPv4/DNS endpoint configuration and HTTPS probe | Collective communication and qualified fabric transports |
+| Security and Operations | Local authenticated encryption and cancellation | Enterprise identity, RBAC, audit and measured telemetry |
+
+**Support counts:** two CPU implementations, six source emitters, two GPU host
+previews, and **zero NVIDIA architecture families hardware-qualified**.
+See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
+[AMD ROCm/AI matrix](docs/AMD_COMPATIBILITY.md), [AI Services plan](docs/AI_SERVICES_PLAN.md), and
+[AMD Mac / Metal build and test guide](docs/MACOS_METAL.md).
+
 ## What runs now?
 
 | Area | Current alpha behavior |
@@ -85,7 +109,7 @@ it does not establish a native GUI session or GPU execution.
 | Python libraries | Native CPU recipes, NumPy/CPU Torch copying bridges and optional verified PyTorch elementwise path; CUDA requires separate hardware validation |
 | Memory planning | Observed JVM heap/environment plus full-array estimate/admission; not VRAM reservation or a hard RSS limit |
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
-| Optional GPU | Explicitly installed OpenCL bridge, supported elementwise requests verified against CPU; no GPU available on local validation host |
+| Optional GPU | Explicit OpenCL/macOS Metal hosts; bounded elementwise requests verified against CPU. Metal compiles, but this local process sees no GPU; hardware execution unrun |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
@@ -107,7 +131,7 @@ flowchart LR
     class E,F source
 ```
 
-The optional OpenCL path needs a reviewed local executable, installed runtime/driver
+The optional OpenCL/Metal paths need a reviewed local executable, installed runtime/driver
 and a supported GPU. It never silently substitutes CPU hardware. Java memory policy
 and the C ABI have different ownership scopes; source generation is a separate path.
 See [platform support and qualification](docs/PLATFORMS.md).
@@ -162,7 +186,7 @@ on Windows/Linux/macOS instead of assuming a new UI language speeds up inference
 ## Library compatibility and easy migration
 
 Use a standard Python API first; keep existing NumPy/PyTorch workflows and migrate
-supported preprocessing regions gradually. The alpha.3 preview includes an explicit
+supported preprocessing regions gradually. The alpha.4 preview includes an explicit
 native-library loader, versioned bounded programs and reusable `weighted_relu`,
 `residual_relu` and `positive_sum` helpers. NumPy/CPU Torch arrays can be copied into
 HyperL and exported back. An optional installed-PyTorch path runs selected elementwise
@@ -235,17 +259,17 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local alpha.3 checks: **32 JVM tests pass, one unavailable-GPU test skips, zero failures**;
-portable C CTest **one pass** and installer **two passes**. GUI checks execute the real
+Local alpha.4 checks: **36 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **two passes (CPU contract and Metal discovery)** and installer **two passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Local alpha.3 JVM checks - 33 cases
-    "Passed" : 32
-    "Skipped - GPU unavailable" : 1
+    title Local alpha.4 JVM checks - 38 cases
+    "Passed" : 36
+    "Skipped - GPU unavailable" : 2
 ```
 
 This chart counts checks; it does not measure speed, reliability of a production
@@ -279,6 +303,11 @@ maintenance policy, qualified targets and maintainers exist.
 
 | Documentation | Purpose |
 |---|---|
+| [Software stack](docs/SOFTWARE_STACK.md) | Platform layers, deployment profiles, support counts and delivery boundaries |
+| [NVIDIA compatibility](docs/NVIDIA_COMPATIBILITY.md) | Eight tracked architecture families and software integration gates |
+| [AMD compatibility](docs/AMD_COMPATIBILITY.md) | ROCm/HIP, frameworks, serving, EPYC, Ryzen NPU and FPGA tracks |
+| [AI Services plan](docs/AI_SERVICES_PLAN.md) | Proposed model/runtime/serving contracts and integration gates |
+| [Mac Metal](docs/MACOS_METAL.md) | Intel/AMD and Apple silicon host preview; exact-device Terminal qualification |
 | [Install, use and program](docs/USER_GUIDE.md) | CLI/GUI, examples, C ABI, installation and troubleshooting |
 | [Library interoperability](docs/LIBRARY_INTEROPERABILITY.md) | Native Python preview, recipes, tensor copying and framework/provider migration |
 | [Developer experience](docs/DEVELOPER_EXPERIENCE_PLAN.md) | Python-style language/API goals, onboarding and SDK ergonomics |

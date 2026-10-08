@@ -22,6 +22,14 @@ else()
   target_compile_options(hyperl_cpu_test PRIVATE -UNDEBUG)
 endif()
 add_test(NAME hyperl_cpu_contract COMMAND hyperl_cpu_test)
+if(APPLE)
+  enable_language(OBJCXX)
+  add_executable(hyperl_metal native/metal_bridge.mm)
+  set_target_properties(hyperl_metal PROPERTIES OUTPUT_NAME hyperl-metal OBJCXX_STANDARD 17)
+  target_compile_options(hyperl_metal PRIVATE -fobjc-arc -Wall -Wextra -Wno-deprecated-declarations)
+  target_link_libraries(hyperl_metal PRIVATE "-framework Foundation" "-framework Metal")
+  add_test(NAME hyperl_metal_probe COMMAND hyperl_metal --probe)
+endif()
 install(TARGETS hyperl_cpu hyperl_cpu_runtime EXPORT HyperLTargets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

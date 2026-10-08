@@ -132,3 +132,34 @@ Intel/AMD/Ascend libraries, phone package, enterprise service or full SDK is qua
 The source archive includes Python preview and native source, not precompiled
 universal native libraries or vendor runtimes. Enterprise/mobile/performance/SDK
 interoperability documents record plans; they are not successful deployments.
+
+## Thin-strip workbench and Metal host preview — alpha.4
+
+The final local JVM command succeeds in **38s**: **38 cases, 36 pass, two GPU
+execution skips, zero failures/errors**. OpenCL and Metal actual GPU tests skip
+because neither API sees a device in this session. The Metal bridge compiles
+with AppleClang 17; CTest reports **two passes** (C CPU contract and Metal discovery).
+An explicit fault-injection host leaves a submission marker; the real frontend
+rejects it and blocks further Metal requests when completion is uncertain. This
+fixture never invokes a GPU or fabricates successful hardware output. One new test
+initially had a non-void JUnit signature; it was corrected before this passing run.
+
+Python installer checks: **two pass**. Actual shared C/NumPy/recipe checks: **nine
+cases, seven pass, two uninstalled PyTorch/CUDA skips**, zero failures/errors.
+The earlier Linux CI Torch CPU result remains historical until alpha.4 CI completes.
+The source release includes an original Objective-C++ Metal host and a bounded
+exact-device Terminal harness; compiled vendor runtimes/drivers are not bundled.
+
+The owner identifies A1990; macOS lists Radeon Pro 560X and Intel UHD 630 with
+Metal support. Actual Metal and OpenCL process probes expose no GPU; the cause is
+not established. The local Radeon harness returns **unrun (exit 3)** with no GPU
+cases executed, no fallback and no performance claim. The owner authorized this
+Mac's GPU test; phone/two-phone hardware acceptance stays paused. See
+[Metal guide](MACOS_METAL.md) for a concrete normal-Terminal qualification command.
+
+The actual Swing CPU panel renders correctly at 1280x820 and 1000x700 with thin
+header/status strips, retaining approximately 75 additional pixels of editor
+height versus alpha.3. Headless rendering does not qualify native GUI interaction.
+The [platform overview](SOFTWARE_STACK.md), [AMD matrix](AMD_COMPATIBILITY.md),
+[NVIDIA matrix](NVIDIA_COMPATIBILITY.md) and [AI Services plan](AI_SERVICES_PLAN.md)
+record implementation status separately from proposed enterprise/model services.

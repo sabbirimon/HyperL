@@ -28,8 +28,8 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
   "x": [-1, 2, 3],
   "w": [2, 3, 4]
 }""")
-    val output=DesktopTheme.editor("Ready to build.\n\nRun the CPU example or inspect its memory plan.\nSource emission does not qualify an accelerator.\n\nOpenCL execution requires an explicitly installed bridge.",false)
-    val backend=JComboBox(arrayOf("CPU_REFERENCE","OPENCL_GPU"))
+    val output=DesktopTheme.editor("Ready to build.\n\nRun the CPU example or inspect its memory plan.\nSource emission does not qualify an accelerator.\n\nGPU execution requires an explicitly installed OpenCL/Metal bridge.",false)
+    val backend=JComboBox(arrayOf("CPU_REFERENCE","OPENCL_GPU","METAL_GPU"))
     val sourceTarget=JComboBox(arrayOf("LLVM_CPU","CUDA","ROCM_HIP","OPENCL_SPIRV","METAL","VULKAN_SPIRV"))
     val bridge=JTextField("",24);val device=JSpinner(SpinnerNumberModel(0,0,127,1))
     val memoryBudget=JTextField(MemoryPlanner.DEFAULT_BUDGET.toString(),10)
@@ -49,34 +49,29 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
     private val configurationControls=listOf<JComponent>(backend,sourceTarget,bridge,device,memoryBudget,findText,examples)
     private val actions=listOf(run,emit,probe,memory,validate,format,open,save,export,find,loadExample,analyze,review)
     init {
-        background=DesktopTheme.background;border=EmptyBorder(12,14,10,14)
+        background=DesktopTheme.background;border=EmptyBorder(8,12,8,12)
         output.syntaxEditingStyle=SyntaxConstants.SYNTAX_STYLE_NONE
         output.font=DesktopTheme.codeFont(13)
         actions.forEach{DesktopTheme.button(it,it===run)};DesktopTheme.button(stop);stop.foreground=DesktopTheme.error;stop.isEnabled=false
-        backend.toolTipText="Only CPU reference and an explicitly installed OpenCL bridge execute."
+        backend.toolTipText="CPU reference, or explicitly installed reviewed OpenCL/Metal bridges. GPU hardware qualification is separate."
         memoryBudget.toolTipText="CPU byte budget; GPU VRAM is not measured by this policy."
-        bridge.toolTipText="An absolute path to your reviewed, installed OpenCL bridge; never downloaded automatically."
+        bridge.toolTipText="An absolute path to the reviewed bridge for your selected GPU backend; never downloaded automatically."
         findText.accessibleContext.accessibleName="Literal search in focused editor"
-        bridge.accessibleContext.accessibleName="OpenCL bridge executable path"
+        bridge.accessibleContext.accessibleName="Reviewed GPU bridge executable path"
         memoryBudget.accessibleContext.accessibleName="CPU memory budget in bytes"
-        val header=DesktopTheme.panel(BorderLayout(18,0),hero=true)
-        header.border=EmptyBorder(8,12,8,12)
-        val brand=JPanel(BorderLayout(12,0));brand.isOpaque=false
-        val logo=DesktopTheme.badge("HL");logo.font=DesktopTheme.uiFont(21,true);logo.border=EmptyBorder(8,10,8,10)
-        brand.add(logo,BorderLayout.WEST)
-        val title=JPanel(BorderLayout(0,4));title.isOpaque=false
-        val titleLine=JPanel(FlowLayout(FlowLayout.LEFT,12,0));titleLine.isOpaque=false
-        titleLine.add(DesktopTheme.label("HyperL",26,bold=true));titleLine.add(DesktopTheme.label("DEVELOPER WORKBENCH",10,DesktopTheme.muted,true))
-        title.add(titleLine,BorderLayout.NORTH);title.add(DesktopTheme.label("From idea to a verified kernel.",12,DesktopTheme.muted),BorderLayout.SOUTH)
-        brand.add(title);header.add(brand)
-        val edition=JPanel(BorderLayout(0,8));edition.isOpaque=false
-        edition.add(DesktopTheme.label("LOCAL STUDIO  /  ALPHA.3",10,DesktopTheme.muted),BorderLayout.NORTH)
+        val header=DesktopTheme.panel(BorderLayout(12,0),hero=true)
+        header.border=EmptyBorder(4,8,4,8)
+        val brand=JPanel(FlowLayout(FlowLayout.LEFT,8,0));brand.isOpaque=false
+        val logo=DesktopTheme.badge("HL");logo.font=DesktopTheme.uiFont(14,true);logo.border=EmptyBorder(3,6,3,6)
+        brand.add(logo);brand.add(DesktopTheme.label("HyperL",18,bold=true));brand.add(DesktopTheme.label("WORKBENCH",9,DesktopTheme.muted,true))
+        header.add(brand,BorderLayout.WEST)
         val appearance=JPanel(FlowLayout(FlowLayout.RIGHT,8,0));appearance.isOpaque=false
         val glass=JCheckBox("Glass",DesktopTheme.glassEnabled);glass.isOpaque=false;glass.font=DesktopTheme.uiFont(11);glass.foreground=DesktopTheme.muted
         glass.toolTipText="Subtle static surface tint and highlights; turn off for solid panels."
         glass.addActionListener{DesktopTheme.glassEnabled=glass.isSelected;repaint()}
-        appearance.add(glass);appearance.add(state);edition.add(appearance,BorderLayout.SOUTH);header.add(edition,BorderLayout.EAST)
-        val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(8))
+        state.border=BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(DesktopTheme.line),EmptyBorder(3,8,3,8))
+        appearance.add(DesktopTheme.label("LOCAL / ALPHA.4",9,DesktopTheme.muted));appearance.add(glass);appearance.add(state);header.add(appearance,BorderLayout.EAST)
+        val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(6))
         val snapshot=MemoryPlanner.observe()
         val environment=JPanel(GridLayout(1,4,8,0));environment.isOpaque=false
         environment.add(environmentCard("HOST", "${System.getProperty("os.name")} · ${System.getProperty("os.arch")}",DesktopTheme.foreground))
@@ -151,13 +146,17 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
         run.addActionListener {
             val text=program.text;val inputText=inputs.text;val selected=backend.selectedItem as String;val binary=bridge.text;val index=device.value as Int;val budget=memoryBudget.text
             start {val p=Workspace.program(text);val values=Workspace.inputs(inputText);val bytes=budget.toLong()
-                val result=if(selected=="CPU_REFERENCE")HyperLCpuBackend(bytes).execute(p,values) else {MemoryPlanner.requireAdmission(MemoryPlanner.plan(p,values,bytes));OpenClBridge(Path.of(binary)).executeVerified(index,p,values)}
-                "Backend: $selected\nResult: ${Workspace.result(result)}\n\nOpenCL verifies each request against CPU; no speed claim."
+                if(selected=="METAL_GPU"){
+                    MemoryPlanner.requireAdmission(MemoryPlanner.plan(p,values,bytes));Workspace.json.encodeToString(MetalBridge(Path.of(binary)).executeVerified(index,p,values))
+                }else{
+                    val result=if(selected=="CPU_REFERENCE")HyperLCpuBackend(bytes).execute(p,values) else {MemoryPlanner.requireAdmission(MemoryPlanner.plan(p,values,bytes));OpenClBridge(Path.of(binary)).executeVerified(index,p,values)}
+                    "Backend: $selected\nResult: ${Workspace.result(result)}\n\nGPU requests require CPU verification; no speed claim."
+                }
             }
         }
         emit.addActionListener {val text=program.text;val target=HyperLTarget.valueOf(sourceTarget.selectedItem as String);start(SyntaxConstants.SYNTAX_STYLE_C){PortableEmitter.emit(Workspace.program(text),target).source}}
         memory.addActionListener {val text=program.text;val values=inputs.text;val budget=memoryBudget.text;start{Workspace.json.encodeToString(MemoryPlanner.plan(Workspace.program(text),Workspace.inputs(values),budget.toLong()))}}
-        probe.addActionListener {val binary=bridge.text;start{OpenClBridge(Path.of(binary)).probe()}}
+        probe.addActionListener {val binary=bridge.text;val selected=backend.selectedItem as String;start{if(selected=="METAL_GPU")MetalBridge(Path.of(binary)).probe() else OpenClBridge(Path.of(binary)).probe()}}
         validate.addActionListener {val p=program.text;val i=inputs.text;start{DeveloperWorkspace.encode(p,i);"Valid hyperl/1 workspace.\nDependencies, finite inputs and shapes passed.\nUse Memory plan for admission and Run for actual execution."}}
         format.addActionListener {val p=program.text;val i=inputs.text;start{val doc=DeveloperWorkspace.parse(DeveloperWorkspace.encode(p,i));SwingUtilities.invokeAndWait{program.text=doc.program;inputs.text=doc.inputs};"Workspace validated and JSON formatted."}}
         analyze.addActionListener {val p=program.text;val i=inputs.text;val budget=memoryBudget.text;val selected=backend.selectedItem as String;start{val report=CodeDiagnostics.analyze(p,i,budget.toLong(),selected);SwingUtilities.invokeAndWait{diagnosticReport=report};Workspace.json.encodeToString(report)}}
@@ -178,10 +177,10 @@ class HyperLPanel: JPanel(BorderLayout(0,10)) {
         stop.addActionListener{job?.cancel();DesktopTheme.status(state,"STOPPING");output.text="Stop requested; awaiting local task/native cleanup. Remote termination is not implied."}
     }
     override fun paintComponent(g:Graphics){DesktopTheme.paintBackdrop(this,g)}
-    private fun environmentCard(title:String,value:String,color:Color)=DesktopTheme.panel(BorderLayout(0,4)).also{
-        it.border=EmptyBorder(8,10,8,10)
-        it.add(DesktopTheme.label(title,9,DesktopTheme.muted,true),BorderLayout.NORTH)
-        it.add(DesktopTheme.label(value,12,color,true),BorderLayout.SOUTH)
+    private fun environmentCard(title:String,value:String,color:Color)=DesktopTheme.panel(BorderLayout(6,0)).also{
+        it.border=EmptyBorder(4,8,4,8)
+        it.add(DesktopTheme.label(title,9,DesktopTheme.muted,true),BorderLayout.WEST)
+        it.add(DesktopTheme.label(value,11,color,true),BorderLayout.CENTER)
     }
     private fun editorCard(title:String,detail:String,editor:org.fife.ui.rsyntaxtextarea.RSyntaxTextArea)=DesktopTheme.panel(BorderLayout(0,8)).also{
         val heading=JPanel(BorderLayout());heading.isOpaque=false;heading.add(DesktopTheme.label(title,11,DesktopTheme.muted));heading.add(DesktopTheme.label(detail,11,DesktopTheme.cyan),BorderLayout.EAST);it.add(heading,BorderLayout.NORTH);it.add(DesktopTheme.scroll(editor))

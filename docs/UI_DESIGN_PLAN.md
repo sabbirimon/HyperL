@@ -147,3 +147,12 @@ Glass checkbox turns these highlights/translucency off; `-Dhyperl.ui.glass=false
 sets an opaque initial appearance. No desktop capture, background blur, animation
 timer, native permission or new runtime dependency is introduced. System-level
 accessibility setting integration and native visual qualification remain later work.
+
+## Thin strips — alpha.4
+
+The owner's latest screenshot requests less banner height. Use a single-line
+header and horizontal label/value status strips. Keep the Glass toggle, version,
+real task state and readable 14px editor text. At the checked 1280x820 layout this
+frees approximately 75 vertical pixels relative to alpha.3, with the code pane
+still getting 70% of the initial split. Check the same layout at 1000x700; all
+controls remain available and the divider remains adjustable.

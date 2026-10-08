@@ -1,6 +1,6 @@
 # HyperL installation, usage and programming guide
 
-For `0.1.0-alpha.3`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
+For `0.1.0-alpha.4`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what
 is tested. This alpha is a developer experiment, not a CUDA-compatible SDK or a
@@ -29,9 +29,9 @@ Linux:
 
 ```sh
 java -version
-sha256sum hyperl-0.1.0-alpha.3.zip
-unzip hyperl-0.1.0-alpha.3.zip
-cd hyperl-0.1.0-alpha.3
+sha256sum hyperl-0.1.0-alpha.4.zip
+unzip hyperl-0.1.0-alpha.4.zip
+cd hyperl-0.1.0-alpha.4
 bin/hyperl capabilities
 bin/hyperl gui
 ```
@@ -40,9 +40,9 @@ macOS:
 
 ```sh
 java -version
-shasum -a 256 hyperl-0.1.0-alpha.3.zip
-unzip hyperl-0.1.0-alpha.3.zip
-cd hyperl-0.1.0-alpha.3
+shasum -a 256 hyperl-0.1.0-alpha.4.zip
+unzip hyperl-0.1.0-alpha.4.zip
+cd hyperl-0.1.0-alpha.4
 bin/hyperl run examples/elementwise.json examples/inputs.json
 bin/hyperl gui
 ```
@@ -51,9 +51,9 @@ Windows PowerShell:
 
 ```powershell
 java -version
-Get-FileHash .\hyperl-0.1.0-alpha.3.zip -Algorithm SHA256
-Expand-Archive .\hyperl-0.1.0-alpha.3.zip -DestinationPath .\hyperl-download
-Set-Location .\hyperl-download\hyperl-0.1.0-alpha.3
+Get-FileHash .\hyperl-0.1.0-alpha.4.zip -Algorithm SHA256
+Expand-Archive .\hyperl-0.1.0-alpha.4.zip -DestinationPath .\hyperl-download
+Set-Location .\hyperl-download\hyperl-0.1.0-alpha.4
 .\bin\hyperl.bat capabilities
 .\bin\hyperl.bat gui
 ```
@@ -70,13 +70,13 @@ After inspecting the downloaded script and verifying its source, pass the archiv
 a **new** selected installation prefix and exact SHA-256:
 
 ```sh
-python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.3.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
+python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.4.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
 ```
 
 PowerShell equivalent:
 
 ```powershell
-python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.3.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
+python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.4.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
 ```
 
 The placeholder is not a real checksum. The installer checks hashes, paths, special
@@ -256,6 +256,15 @@ No JIT-compiled source from a web page is automatically accepted by this fronten
 This local Mac's probe reported no OpenCL GPU; successful bridge compilation is
 not GPU execution proof. Apple mobile GPUs need Metal, Android GPUs generally
 need qualified Vulkan/OEM paths, and NPUs require separate providers. See PLATFORMS.md.
+
+### Optional macOS Metal host
+
+Metal supports compatible Intel Macs (including AMD/Intel GPUs) and Apple silicon.
+HyperL now provides an original source host preview with explicit device-name
+selection, managed/shared buffer handling and mandatory CPU result verification.
+The adapter compiles here, but the actual process sees no Metal GPU; execution is
+unrun. Follow the [Metal build/CLI/GUI and Radeon Terminal test guide](MACOS_METAL.md).
+Source emission, hardware discovery and CPU checks do not establish GPU execution.
 
 ## 6. Embed the portable C SDK
 
@@ -440,7 +449,7 @@ same structured diagnostics and context suggestions for scripts. See
 [CODE_DIAGNOSTICS.md](CODE_DIAGNOSTICS.md) for scope, exit codes and sample-only
 evidence. It is a HyperL analyzer, with full language-server/AI tooling staged later.
 
-## Alpha.3 layout and deployment plans
+## Alpha.4 layout and deployment plans
 
 The desktop workbench groups controls into Execution, Source emission and GPU setup
 tabs. Select the tab for Run/Stop/budget, target source generation or reviewed bridge
@@ -448,7 +457,7 @@ configuration. The footer explains the selected path. Local font resources provi
 Inter/JetBrains Mono typography with system fallback and no runtime download.
 The editor starts with 70% of the horizontal split, constrained by the output pane's
 minimum width. Drag the divider to change the allocation. Compact margins preserve
-code space. Toggle **Glass** in the header for solid panel surfaces, or launch with
+code space. The header and four status cards now use thin horizontal strips. Toggle **Glass** in the header for solid panel surfaces, or launch with
 `JAVA_OPTS=-Dhyperl.ui.glass=false` on Linux/macOS (PowerShell:
 `$env:JAVA_OPTS='-Dhyperl.ui.glass=false'`). The subtle glass-inspired tint/sheens are
 static cross-platform painting; they do not use Apple's native Liquid Glass or blur
@@ -460,6 +469,9 @@ the desktop. Code and output remain opaque in either mode.
 [Python-style developer experience](DEVELOPER_EXPERIENCE_PLAN.md) record later
 implementation plans. They do not change the current execution/platform contracts.
 
-The alpha.3 [Python/native library preview](LIBRARY_INTEROPERABILITY.md) contains
+The alpha.4 [Python/native library preview](LIBRARY_INTEROPERABILITY.md) contains
 small reusable recipes and explicit framework bridges. It needs a separately built
 reviewed shared C library and selected Python environment; the full SDK remains later.
+
+See the [software stack overview](SOFTWARE_STACK.md) for layers and deployment profiles,
+and [NVIDIA coverage](NVIDIA_COMPATIBILITY.md) for architecture/library qualification.

@@ -8,7 +8,7 @@ import kotlin.system.exitProcess
 fun main(args:Array<String>) {
     try {
         when(args.firstOrNull() ?: "help") {
-            "help","--help","-h"->println("""HyperL 0.1.0-alpha.2 — experimental portable AI kernels
+            "help","--help","-h"->println("""HyperL ${Workspace.VERSION} — experimental portable AI kernels
 Usage:
   hyperl gui
   hyperl capabilities
@@ -21,6 +21,8 @@ Usage:
   hyperl emit TARGET PROGRAM.json
   hyperl gpu-probe /absolute/path/to/hyperl-opencl
   hyperl gpu-run /absolute/path/to/hyperl-opencl DEVICE_INDEX PROGRAM.json INPUTS.json
+  hyperl metal-probe /absolute/path/to/hyperl-metal
+  hyperl metal-run /absolute/path/to/hyperl-metal "EXACT METAL DEVICE NAME" PROGRAM.json INPUTS.json
   hyperl telecom-plan PROFILE.json
   hyperl cluster-plan PROFILE.json
   hyperl node-probe ORIGIN TOKEN_FILE
@@ -28,7 +30,7 @@ Usage:
   hyperl data-import SOURCE DATASET_DIRECTORY KEYFILE MAX_BYTES
   hyperl data-export DATASET_DIRECTORY DESTINATION KEYFILE MAX_BYTES
 Targets: LLVM_CPU, CUDA, ROCM_HIP, OPENCL_SPIRV, METAL, VULKAN_SPIRV.
-Only CPU_REFERENCE and the explicitly supplied OpenCL bridge execute; emission is source only.
+CPU_REFERENCE and explicitly supplied OpenCL/Metal bridges can execute; actual GPU qualification is separate. Emission is source only.
 Network access only through explicit authenticated node-probe; no shell, auto installs, radio or privileges.""")
             "gui"->{require(args.size==1);SwingUtilities.invokeLater{HyperLWindow.show()}}
             "capabilities"->{require(args.size==1);println(Workspace.capabilities())}
@@ -40,6 +42,8 @@ Network access only through explicit authenticated node-probe; no shell, auto in
             "memory-plan"->{require(args.size in 3..4);println(Workspace.json.encodeToString(MemoryPlanner.plan(Workspace.program(Workspace.read(Path.of(args[1]))),Workspace.inputs(Workspace.read(Path.of(args[2]))),args.getOrNull(3)?.toLong()?:MemoryPlanner.DEFAULT_BUDGET)))}
             "emit"->{require(args.size==3);println(PortableEmitter.emit(Workspace.program(Workspace.read(Path.of(args[2]))),HyperLTarget.valueOf(args[1])).source)}
             "gpu-probe"->{require(args.size==2);println(runBlocking { OpenClBridge(Path.of(args[1])).probe() })}
+            "metal-probe"->{require(args.size==2);println(runBlocking { MetalBridge(Path.of(args[1])).probe() })}
+            "metal-run"->{require(args.size==5);println(runBlocking {Workspace.json.encodeToString(MetalBridge(Path.of(args[1])).executeVerified(args[2],Workspace.program(Workspace.read(Path.of(args[3]))),Workspace.inputs(Workspace.read(Path.of(args[4])))))})}
             "gpu-run"->{require(args.size==5);val bridge=OpenClBridge(Path.of(args[1]));println(runBlocking {
                 Workspace.result(bridge.executeVerified(args[2].toInt(),Workspace.program(Workspace.read(Path.of(args[3]))),Workspace.inputs(Workspace.read(Path.of(args[4])))))
             })}
