@@ -115,9 +115,19 @@ existing program import, copy ownership and real recipes are checked. An initial
 recipe fixture incorrectly expected ReLU(-1+2) to be zero; its expected value was
 corrected to one before the passing run. Installer checks still pass (**two cases**).
 
-CI adds pinned NumPy 2.3.3 across three OS jobs and pinned PyTorch 2.9.1 CPU on Linux
-for actual framework dispatch checks. These new jobs must complete before claiming
-framework/matrix results for this increment. No actual CUDA GPU, vendor-specific
+CI [37705354983](https://github.com/sabbirimon/HyperL/actions/runs/37705354983)
+passes all Windows, Ubuntu and macOS jobs for source `2d58892`. It uses pinned NumPy
+2.3.3 across all three OS jobs and PyTorch 2.9.1 CPU on Linux. Actual Python native
+and tensor tests report **eight pass, one unavailable CUDA skip on Linux** and
+**seven pass, two uninstalled PyTorch/CUDA skips on Windows/macOS**, with no failures.
+The C contract case and JVM/distribution checks pass on each OS. The subsequent
+darker, wider and glass-inspired UI pass requires its own source checks and renders.
+That final local pass succeeds in **29s**, retaining **33 JVM cases: 32 pass, one
+unavailable OpenCL GPU skip, zero failures/errors**. ZIP/TAR and installed distribution
+build successfully. Actual CPU-result renders are checked at 1280x820 and 1000x700,
+including Source emission and GPU setup tabs at the smaller size; the wider code
+pane, reduced spacing, darker surfaces and restrained glass chrome remain readable.
+No actual CUDA GPU, vendor-specific
 Intel/AMD/Ascend libraries, phone package, enterprise service or full SDK is qualified.
 The source archive includes Python preview and native source, not precompiled
 universal native libraries or vendor runtimes. Enterprise/mobile/performance/SDK

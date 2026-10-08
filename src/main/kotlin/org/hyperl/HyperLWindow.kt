@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 
 /** Real local developer tools share the CLI's validation and execution contracts. */
-class HyperLPanel: JPanel(BorderLayout(0,14)) {
+class HyperLPanel: JPanel(BorderLayout(0,10)) {
     private val initializedTheme=DesktopTheme.install()
     val program=DesktopTheme.editor("""{
   "format": "hyperl/1",
@@ -49,7 +49,7 @@ class HyperLPanel: JPanel(BorderLayout(0,14)) {
     private val configurationControls=listOf<JComponent>(backend,sourceTarget,bridge,device,memoryBudget,findText,examples)
     private val actions=listOf(run,emit,probe,memory,validate,format,open,save,export,find,loadExample,analyze,review)
     init {
-        background=DesktopTheme.background;border=EmptyBorder(18,22,14,22)
+        background=DesktopTheme.background;border=EmptyBorder(12,14,10,14)
         output.syntaxEditingStyle=SyntaxConstants.SYNTAX_STYLE_NONE
         output.font=DesktopTheme.codeFont(13)
         actions.forEach{DesktopTheme.button(it,it===run)};DesktopTheme.button(stop);stop.foreground=DesktopTheme.error;stop.isEnabled=false
@@ -60,28 +60,32 @@ class HyperLPanel: JPanel(BorderLayout(0,14)) {
         bridge.accessibleContext.accessibleName="OpenCL bridge executable path"
         memoryBudget.accessibleContext.accessibleName="CPU memory budget in bytes"
         val header=DesktopTheme.panel(BorderLayout(18,0),hero=true)
-        header.border=EmptyBorder(10,16,10,16)
-        val brand=JPanel(BorderLayout(16,0));brand.isOpaque=false
-        val logo=DesktopTheme.badge("HL");logo.font=DesktopTheme.uiFont(23,true);logo.border=EmptyBorder(10,12,10,12)
+        header.border=EmptyBorder(8,12,8,12)
+        val brand=JPanel(BorderLayout(12,0));brand.isOpaque=false
+        val logo=DesktopTheme.badge("HL");logo.font=DesktopTheme.uiFont(21,true);logo.border=EmptyBorder(8,10,8,10)
         brand.add(logo,BorderLayout.WEST)
         val title=JPanel(BorderLayout(0,4));title.isOpaque=false
         val titleLine=JPanel(FlowLayout(FlowLayout.LEFT,12,0));titleLine.isOpaque=false
-        titleLine.add(DesktopTheme.label("HyperL",28,bold=true));titleLine.add(DesktopTheme.label("DEVELOPER WORKBENCH",10,DesktopTheme.muted,true))
-        title.add(titleLine,BorderLayout.NORTH);title.add(DesktopTheme.label("From idea to a verified kernel.",13,DesktopTheme.muted),BorderLayout.SOUTH)
+        titleLine.add(DesktopTheme.label("HyperL",26,bold=true));titleLine.add(DesktopTheme.label("DEVELOPER WORKBENCH",10,DesktopTheme.muted,true))
+        title.add(titleLine,BorderLayout.NORTH);title.add(DesktopTheme.label("From idea to a verified kernel.",12,DesktopTheme.muted),BorderLayout.SOUTH)
         brand.add(title);header.add(brand)
         val edition=JPanel(BorderLayout(0,8));edition.isOpaque=false
         edition.add(DesktopTheme.label("LOCAL STUDIO  /  ALPHA.3",10,DesktopTheme.muted),BorderLayout.NORTH)
-        edition.add(state,BorderLayout.SOUTH);header.add(edition,BorderLayout.EAST)
-        val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(12))
+        val appearance=JPanel(FlowLayout(FlowLayout.RIGHT,8,0));appearance.isOpaque=false
+        val glass=JCheckBox("Glass",DesktopTheme.glassEnabled);glass.isOpaque=false;glass.font=DesktopTheme.uiFont(11);glass.foreground=DesktopTheme.muted
+        glass.toolTipText="Subtle static surface tint and highlights; turn off for solid panels."
+        glass.addActionListener{DesktopTheme.glassEnabled=glass.isSelected;repaint()}
+        appearance.add(glass);appearance.add(state);edition.add(appearance,BorderLayout.SOUTH);header.add(edition,BorderLayout.EAST)
+        val top=JPanel();top.layout=BoxLayout(top,BoxLayout.Y_AXIS);top.isOpaque=false;top.add(header);top.add(Box.createVerticalStrut(8))
         val snapshot=MemoryPlanner.observe()
-        val environment=JPanel(GridLayout(1,4,12,0));environment.isOpaque=false
+        val environment=JPanel(GridLayout(1,4,8,0));environment.isOpaque=false
         environment.add(environmentCard("HOST", "${System.getProperty("os.name")} · ${System.getProperty("os.arch")}",DesktopTheme.foreground))
         environment.add(environmentCard("JVM HEAP LIMIT", "${snapshot.heapLimitBytes/(1024*1024)} MiB",DesktopTheme.foreground))
         environment.add(environmentCard("CPU RUNTIME", "Reference ready",DesktopTheme.accent))
         environment.add(environmentCard("GPU RUNTIME", "Probe required",DesktopTheme.violet))
         top.add(environment);add(top,BorderLayout.NORTH)
 
-        val tools=JPanel(GridLayout(2,1,0,7));tools.isOpaque=false
+        val tools=JPanel(GridLayout(2,1,0,5));tools.isOpaque=false
         val fileTools=JPanel(FlowLayout(FlowLayout.LEFT,7,0));fileTools.isOpaque=false
         listOf(open,save,validate,format).forEach(fileTools::add)
         val exampleTools=JPanel(FlowLayout(FlowLayout.LEFT,7,0));exampleTools.isOpaque=false
@@ -89,18 +93,27 @@ class HyperLPanel: JPanel(BorderLayout(0,14)) {
         tools.add(fileTools);tools.add(exampleTools)
         val editors=JTabbedPane();editors.addTab("Program",editorCard("KERNEL PROGRAM","hyperl/1 · JSON",program));editors.addTab("Inputs",editorCard("INPUT VECTORS","finite f32 · JSON",inputs))
         editors.minimumSize=Dimension(330,240)
-        val left=JPanel(BorderLayout(0,10));left.isOpaque=false;left.add(tools,BorderLayout.NORTH);left.add(editors)
+        val left=JPanel(BorderLayout(0,6));left.isOpaque=false;left.minimumSize=Dimension(330,240);left.add(tools,BorderLayout.NORTH);left.add(editors)
         val search=JPanel(FlowLayout(FlowLayout.LEFT,7,0));search.isOpaque=false;search.add(DesktopTheme.label("Search",11,DesktopTheme.muted));search.add(findText);search.add(find);left.add(search,BorderLayout.SOUTH)
-        val right=DesktopTheme.panel(BorderLayout(0,10));right.minimumSize=Dimension(320,240)
+        val right=DesktopTheme.panel(BorderLayout(0,8));right.minimumSize=Dimension(320,240)
         val resultHeader=JPanel(BorderLayout());resultHeader.isOpaque=false
         val resultTitle=JPanel(BorderLayout(0,5));resultTitle.isOpaque=false
         resultTitle.add(DesktopTheme.label("Output & diagnostics",15,bold=true),BorderLayout.NORTH)
         resultTitle.add(DesktopTheme.label("RESULTS · SOURCE · MEMORY · ANALYSIS",9,DesktopTheme.muted),BorderLayout.SOUTH)
         resultHeader.add(resultTitle);resultHeader.add(export,BorderLayout.EAST);right.add(resultHeader,BorderLayout.NORTH);right.add(DesktopTheme.scroll(output))
-        val split=JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,right);split.resizeWeight=0.54;split.dividerSize=14;split.border=null;split.background=DesktopTheme.background;split.isOpaque=false
+        val split=object:JSplitPane(HORIZONTAL_SPLIT,left,right){
+            private var initialLayout=true
+            override fun doLayout(){
+                if(initialLayout && width>=left.minimumSize.width+right.minimumSize.width+dividerSize){
+                    dividerLocation=(width*0.70).toInt().coerceIn(left.minimumSize.width,width-right.minimumSize.width-dividerSize)
+                    initialLayout=false
+                }
+                super.doLayout()
+            }
+        };split.resizeWeight=0.70;split.dividerSize=8;split.border=null;split.background=DesktopTheme.background;split.isOpaque=false
         add(split)
 
-        val bottom=JPanel(BorderLayout(0,8));bottom.isOpaque=false
+        val bottom=JPanel(BorderLayout(0,6));bottom.isOpaque=false
         val execution=DesktopTheme.panel(BorderLayout(0,7))
         val commands=JPanel(FlowLayout(FlowLayout.LEFT,8,0));commands.isOpaque=false
         commands.add(DesktopTheme.label("BACKEND",10,DesktopTheme.muted,true));commands.add(backend);commands.add(run);commands.add(stop)
@@ -166,11 +179,11 @@ class HyperLPanel: JPanel(BorderLayout(0,14)) {
     }
     override fun paintComponent(g:Graphics){DesktopTheme.paintBackdrop(this,g)}
     private fun environmentCard(title:String,value:String,color:Color)=DesktopTheme.panel(BorderLayout(0,4)).also{
-        it.border=EmptyBorder(10,14,10,14)
+        it.border=EmptyBorder(8,10,8,10)
         it.add(DesktopTheme.label(title,9,DesktopTheme.muted,true),BorderLayout.NORTH)
         it.add(DesktopTheme.label(value,12,color,true),BorderLayout.SOUTH)
     }
-    private fun editorCard(title:String,detail:String,editor:org.fife.ui.rsyntaxtextarea.RSyntaxTextArea)=DesktopTheme.panel(BorderLayout(0,10)).also{
+    private fun editorCard(title:String,detail:String,editor:org.fife.ui.rsyntaxtextarea.RSyntaxTextArea)=DesktopTheme.panel(BorderLayout(0,8)).also{
         val heading=JPanel(BorderLayout());heading.isOpaque=false;heading.add(DesktopTheme.label(title,11,DesktopTheme.muted));heading.add(DesktopTheme.label(detail,11,DesktopTheme.cyan),BorderLayout.EAST);it.add(heading,BorderLayout.NORTH);it.add(DesktopTheme.scroll(editor))
     }
     private fun allowDiscard()=!dirty||JOptionPane.showConfirmDialog(this,"Replace unsaved editor changes?","HyperL workspace",JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION

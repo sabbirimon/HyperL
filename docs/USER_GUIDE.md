@@ -446,6 +446,13 @@ The desktop workbench groups controls into Execution, Source emission and GPU se
 tabs. Select the tab for Run/Stop/budget, target source generation or reviewed bridge
 configuration. The footer explains the selected path. Local font resources provide
 Inter/JetBrains Mono typography with system fallback and no runtime download.
+The editor starts with 70% of the horizontal split, constrained by the output pane's
+minimum width. Drag the divider to change the allocation. Compact margins preserve
+code space. Toggle **Glass** in the header for solid panel surfaces, or launch with
+`JAVA_OPTS=-Dhyperl.ui.glass=false` on Linux/macOS (PowerShell:
+`$env:JAVA_OPTS='-Dhyperl.ui.glass=false'`). The subtle glass-inspired tint/sheens are
+static cross-platform painting; they do not use Apple's native Liquid Glass or blur
+the desktop. Code and output remain opaque in either mode.
 
 [Native performance architecture](NATIVE_PERFORMANCE_ARCHITECTURE.md),
 [enterprise services](ENTERPRISE_AND_CLUSTER_PLAN.md),

@@ -59,6 +59,8 @@ the current f32 kernels are not an encryption primitive or complete model engine
 
 An original navy/graphite theme uses subtle teal/violet gradients, rounded panels,
 clear status cards, **Inter** interface typography and **JetBrains Mono** code.
+The editor gets a wider initial split and compact spacing. Optional glass-inspired
+surface highlights can be switched off in the header; code/output stay dark and opaque.
 The screenshot renders the actual Swing panel headlessly after a real CPU run;
 it does not establish a native GUI session or GPU execution.
 

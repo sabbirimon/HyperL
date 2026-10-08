@@ -127,3 +127,23 @@ controls, scrollbars, output and contrast. Also render the source/GPU tabs befor
 release. Headless QA does not prove native file-dialog, accessibility, IME or HiDPI
 behavior. The reference dashboards motivate useful enterprise views only when
 [real services and telemetry exist](ENTERPRISE_AND_CLUSTER_PLAN.md).
+
+The owner requested a darker final pass: reduce ambient wash intensity, deepen
+background/editor surfaces and keep foreground, focus, success/error colors readable.
+
+The next layout pass gives the program/input pane 70% of the initial split, subject
+to the console's 320px minimum; users can drag the divider afterward. Outer margins,
+card borders, editor insets and header/tool spacing shrink without shrinking code
+text. Resizing keeps the same allocation preference rather than resetting a manual
+divider position on every repaint.
+
+For the owner's requested glass polish, the header and card chrome use a restrained
+translucent tint, static top sheen and luminous edge. Code and output remain opaque
+dark surfaces. This is original cross-platform Swing painting inspired by
+[Apple's adoption guidance](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass),
+not Apple's native Liquid Glass implementation. The guidance motivates sparing use,
+legibility, fluid column sizing and reduced-transparency options. The header's
+Glass checkbox turns these highlights/translucency off; `-Dhyperl.ui.glass=false`
+sets an opaque initial appearance. No desktop capture, background blur, animation
+timer, native permission or new runtime dependency is introduced. System-level
+accessibility setting integration and native visual qualification remain later work.
