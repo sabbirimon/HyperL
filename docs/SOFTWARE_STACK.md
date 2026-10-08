@@ -12,7 +12,7 @@ and operators can scan, while keeping current code separate from future products
 | **HyperL Core** | Versioned program/precision contracts and deterministic reference behavior | Working bounded `hyperl/1` f32 DAG: add, multiply, ReLU, ordered sum; JVM reference and native C ABI/static/shared preview |
 | **HyperL Developer Tools** | Write, inspect, validate and fix supported local programs | Working CLI/workbench, JSON schema, examples, syntax highlighting, formatting, search, workspace IO, contextual diagnostics and reviewed fixes |
 | **HyperL SDK and Libraries** | Easy Python authoring and gradual migration of existing code | Small Python/native C preview; NumPy/CPU PyTorch copies and three recipes work. Full SDK, text language, tensor/model import and zero-copy interop are planned |
-| **HyperL Compute Adapters** | Execute through the API supported by each device | OpenCL host bridge and macOS Metal host preview exist; hardware execution remains unqualified locally. CUDA/HIP/Metal/OpenCL/Vulkan/C99 source emission exists; direct CUDA/HIP/SYCL/NPU/FPGA dispatch is planned |
+| **HyperL Compute Adapters** | Execute through the API supported by each device | OpenCL/macOS Metal host previews exist; four bounded Metal cases pass on Radeon Pro 560X. CUDA/HIP/Metal/OpenCL/Vulkan/C99 source emission exists; direct CUDA/HIP/SYCL/NPU/FPGA dispatch is planned |
 | **HyperL Memory and Data** | Admission, bounded datasets and explicit ownership | Working CPU estimates/admission and authenticated encrypted local streaming. HBM/VRAM/NUMA/CXL accounting, direct IO and automatic encrypted SSD/NVMe spill are planned |
 | **HyperL AI Services** | Inference, evaluation, serving, vision and reusable AI workflows | Only small preprocessing recipes today. Full model runtimes, training, autograd, serving APIs, model registry and provider connectors are planned |
 | **HyperL Control Services** | Manage jobs, quotas, tenants, device fleets and emergency stops | Configuration bounds and authenticated read-only node observations exist. Rust control services, durable scheduling/leases and acknowledged fleet stop are planned |
@@ -97,7 +97,7 @@ unconfirmed; fleet isolation and recovery need the later control protocol.
 
 | HyperL profile | Intended use | Available now / later gate |
 | --- | --- | --- |
-| **Local Workstation** | One developer PC/Mac; offline tools and optional local GPU | CLI/GUI/native CPU work today; actual GPU qualification is still required |
+| **Local Workstation** | One developer PC/Mac; offline tools and optional local GPU | CLI/GUI/native CPU work today; four Radeon Pro 560X Metal cases pass. Other exact GPUs and full models need qualification |
 | **Mobile and Edge** | One phone/tablet or an opt-in edge worker; optional remote capacity | Native Android/iOS packaging, battery/thermal limits and device tests planned; desktop ZIP is not a phone installer |
 | **Research Cluster** | Independent 3–5-host controlled pilot | Planned Rust control/worker services; durable work, security and stop/lease acceptance first |
 | **Enterprise AI Cluster** | Multi-tenant datacenter inference/data/compute | Planned rollout to measured 16/64/256-worker trials; no current operating-capacity/SLA claim |
@@ -112,8 +112,10 @@ measured on real devices before becoming available execution capabilities.
 
 - **Two CPU implementations:** Kotlin/JVM reference and native C reference preview.
 - **Six source emitters:** C99/CPU, CUDA, HIP, OpenCL C, Metal MSL and Vulkan GLSL.
-- **Two GPU host bridges:** OpenCL and macOS Metal preview. **Zero GPU families
-  qualified by actual hardware execution on this local validation session.**
+- **Two GPU host bridges:** OpenCL and macOS Metal preview. **One exact GPU has
+  workload evidence:** Radeon Pro 560X passes four bounded Metal cases and one
+  expected rejection in the owner's Terminal. This is not vendor/family-wide
+  support. [Hardware record](A1990_METAL_VALIDATION.md).
 - **Two framework copying bridges:** actual NumPy and CPU PyTorch paths; the latter
   is checked by Linux CI. Optional PyTorch CUDA dispatch exists but is unrun.
 - **Zero NVIDIA architecture families qualified**, and no complete NVIDIA

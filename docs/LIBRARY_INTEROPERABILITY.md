@@ -134,13 +134,13 @@ None of the planned entries below is imported into the alpha as a full engine.
 | PyTorch / LibTorch | Tensors both directions, native custom ops later, explicit CUDA/other device provider | Elementwise verification preview; not autograd/torch.compile/model compatibility |
 | NVIDIA CUDA | Public CUDA host adapter, selected cuBLAS/cuDNN/TensorRT calls under their licenses | CUDA source emission; PyTorch CUDA path awaits actual device validation; no generic CUDA binary importer |
 | Intel | x86 SIMD/NUMA, oneDNN, SYCL/oneAPI DPC++/Level Zero and OpenVINO model/provider adapters | Planned; CPU brand does not imply GPU/NPU/operator compatibility |
-| AMD | x86 SIMD/NUMA, ROCm/HIP, rocBLAS/MIOpen and MIGraphX/provider adapters | HIP source emission; native libraries/device execution unqualified |
+| AMD | x86 SIMD/NUMA, ROCm/HIP, rocBLAS/MIOpen and MIGraphX/provider adapters | HIP source emission; ROCm/HIP libraries and execution unqualified. Separate Metal Radeon evidence is documented in the Apple row |
 | Huawei / Ascend | CANN/AscendCL provider plus MindSpore/MindSpore Lite graph/data pathways | Planned; SDK/driver/device-version/license qualification required |
 | Baidu PaddlePaddle | Paddle Inference/Lite and operator/model interchange | Planned C++/Python/provider boundary, not arbitrary Paddle program import |
 | Alibaba MNN | Native mobile/edge model/runtime adapter and supported conversions | Planned; no bundled engine or model conversion result |
 | Tencent ncnn / TNN | Native CPU/Vulkan/mobile inference adapter where useful | Planned; layout/operator/precision mapping and hardware checks first |
 | TensorFlow / JAX | Selected tensor/graph interoperability, model format and StableHLO pathways | Planned after actual tensor/compiler support |
-| Apple | Native Metal/Core ML/MPS bridges and approved iOS wrappers | Metal source only; runtime/mobile qualification later |
+| Apple | Native Metal/Core ML/MPS bridges and approved iOS wrappers | Metal host passes four bounded Radeon Pro 560X cases; Core ML/MPS, other devices and mobile qualification later |
 | Microsoft | ONNX Runtime/DirectML and Windows packaging/native bindings | Planned; runtime/OS/provider-specific validation required |
 | Qualcomm / ARM / other mobile | OEM NPU/Vulkan/OpenCL interfaces and native wrappers | Planned per actual chipset/driver and OS, not vendor-wide support |
 

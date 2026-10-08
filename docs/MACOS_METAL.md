@@ -110,4 +110,9 @@ and now retains bounded metadata with a specific failure reason.
 
 Rebuild `installDist` from the corrected source before retrying, and choose a **new**
 report path. The published alpha.4 archives retain their original contents; this
-source fix does not replace them. A successful full hardware rerun is still pending.
+source fix does not replace them. The owner's subsequent Terminal rerun **passed
+all listed cases on AMD Radeon Pro 560X**: four GPU requests with CPU comparison,
+managed-buffer synchronization and confirmed completion, plus expected overflow
+rejection before dispatch. See [the hardware record](A1990_METAL_VALIDATION.md) for
+provenance, timings and remaining acceptance. Intel/Apple silicon execution, full
+models and general performance qualification remain separate.

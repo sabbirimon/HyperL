@@ -184,6 +184,30 @@ qualification. No native kernel, numerical tolerance or device fallback was chan
 
 An initial Gradle invocation could not create its local socket under the current
 sandbox (`Operation not permitted`); it ran after the specific network permission
-was granted. This permission does not demonstrate GPU access. The full Radeon
-Terminal rerun and this fix's new OS CI results remain pending. Published alpha.4
+was granted. This permission does not demonstrate GPU access. The Radeon
+Terminal rerun was pending at this build; its subsequent result is recorded below.
+This fix's new OS CI results were also pending at this build. Published alpha.4
 archives are unchanged; the corrected working-source distribution must be rebuilt.
+
+The subsequent [OS CI run 37714848101](https://github.com/sabbirimon/HyperL/actions/runs/37714848101)
+passes all Windows, Ubuntu and macOS jobs at source `37a8081`, including the JSON
+regression and script contract checks. CI runner tests remain separate from the
+owner's physical Radeon execution below.
+
+## Owner-Terminal Radeon Metal execution — 2026-10-08
+
+The saved retry report records **`passed-listed-cases` on AMD Radeon Pro 560X** at
+07:54:17 Bangladesh time. Inspection confirms four passed GPU cases (3, 257 and
+65,536-element multiply/ReLU; 5-element multiply/add/ReLU), exact Radeon metadata,
+managed storage and confirmed completion. The strict harness verifies CPU results.
+Overflow before ReLU is the fifth case: expected rejection with no GPU dispatch.
+The [hardware record](A1990_METAL_VALIDATION.md) preserves the report's hash,
+provenance and observed timings. The initial failed report remains unchanged.
+
+At 65,536 elements, the report observes approximately **0.094 ms GPU interval**,
+**2.160 ms submit/wait** and **462.787 ms full CLI wall time**. Startup, IO,
+compilation, transfers and CPU verification are included in the CLI measurement;
+one run does not establish throughput or a CPU speedup. The restricted agent/JVM
+test context's two GPU skips remain separate from this owner's hardware run.
+This qualifies these workloads on this exact Radeon, not all AMD devices, Intel
+UHD 630 execution, full models, ROCm/HIP or cluster capacity. Phone tests stay paused.

@@ -54,7 +54,7 @@ certification, support contracts or a license to redistribute proprietary softwa
 
 ## Delivery order
 
-1. Finish local AMD Mac Metal qualification without substituting another GPU.
+1. Expand the local Radeon's four passing Metal cases with wider conformance and measured performance; do not substitute another GPU.
 2. Qualify one available NVIDIA GPU through the installed framework preview.
 3. Add a native CUDA adapter with stable ownership/precision/error contracts.
 4. Add selected matrix/model primitives through proven libraries and qualify them.

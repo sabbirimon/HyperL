@@ -109,7 +109,7 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Python libraries | Native CPU recipes, NumPy/CPU Torch copying bridges and optional verified PyTorch elementwise path; CUDA requires separate hardware validation |
 | Memory planning | Observed JVM heap/environment plus full-array estimate/admission; not VRAM reservation or a hard RSS limit |
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
-| Optional GPU | Explicit OpenCL/macOS Metal hosts; bounded elementwise requests verified against CPU. Metal compiles, but this local process sees no GPU; hardware execution unrun |
+| Optional GPU | Explicit OpenCL/macOS Metal hosts; four bounded Metal cases passed on AMD Radeon Pro 560X, with CPU verification and expected overflow rejection. Other GPUs and full models need separate qualification |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
@@ -259,24 +259,28 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local alpha.4 checks: **36 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
-native CTest **two passes (CPU contract and Metal discovery)** and installer **two passes**. GUI checks execute the real
+Local post-alpha.4 source checks: **37 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **two passes (CPU contract and Metal discovery)** and Python scripts **six passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Local alpha.4 JVM checks - 38 cases
-    "Passed" : 36
+    title Local post-alpha.4 JVM checks - 39 cases
+    "Passed" : 37
     "Skipped - GPU unavailable" : 2
 ```
 
 This chart counts checks; it does not measure speed, reliability of a production
 service or hardware capacity. [CI](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 runs JVM/C/installer checks on Windows, Linux and macOS; consult the run for the exact
-commit. Native GUI sessions, mobile/ARM/RISC-V targets, vendor accelerators and live
-multi-host/provider paths require separate evidence.
+commit. Separately, the owner's Terminal completed **four Metal GPU cases on AMD
+Radeon Pro 560X** and an expected overflow rejection. See the
+[hardware case and timing record](docs/A1990_METAL_VALIDATION.md). These working-source
+results include the JSON fix after the published alpha.4 archives. Native GUI sessions,
+mobile/ARM/RISC-V targets, other accelerators and live multi-host/provider paths need
+separate evidence.
 
 ## Roadmap
 

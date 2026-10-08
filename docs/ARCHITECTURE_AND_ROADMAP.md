@@ -14,7 +14,7 @@ This document records requirements; linked upstream material is evidence, not in
 | Desktop CLI/GUI | Kotlin/JVM 17+, Swing, structured cancellable jobs | Practical portable tools. It is not the final low-latency execution engine; native CLI packages can share the IR/ABI later |
 | Linux hardware/transports | Original OpenCL bridge in C; other backends unavailable | C/C++ SDK plugins for CUDA/HIP/CANN, LLVM/MLIR, UCX/RDMA/AF_XDP/DPDK, NUMA/affinity; privileged code separately installed and qualified |
 | Windows | JVM tools and buildable C SDK | Native C++ ONNX Runtime/DirectML/provider adapters, IOCP and signed packaging; no DirectML implementation yet |
-| Apple | JVM macOS tools and emitted Metal source | Swift or Objective-C++ Metal host adapter, C ABI, MPS/Core ML where qualified. Native iOS app/library; no iOS JVM installer |
+| Apple | JVM macOS tools, Metal source and Objective-C++ host; four bounded Radeon Pro 560X Metal cases pass | Wider Metal/other-device qualification, C ABI, MPS/Core ML where qualified. Native iOS app/library; no iOS JVM installer |
 | Android/mobile | C ABI/emitted Vulkan/OpenCL/Metal formats | JNI/NDK Vulkan and OEM-qualified OpenCL; iOS Metal separate. GPU vendor name does not qualify driver/operators |
 | Native service safety | Versioned ownership/cancellation and explicit adapter descriptors | Owner-approved Rust cluster services, separated from C/C++ native kernels/adapters; stable C ABI and explicit ownership/concurrency boundaries. Qualify with actual benchmarks |
 
@@ -44,7 +44,8 @@ parallel reductions and relaxed checks require explicit semantics and conformanc
 3. **One GPU backend at a time:** OpenCL, then Metal/Vulkan and CUDA/HIP according
    to available hardware. Measure upload/compile/dispatch/download separately and
    together. Verify multiple shapes, extreme values, failures, buffer ownership and
-   device loss. Current host has no available OpenCL GPU; hardware proof is pending.
+   device loss. Four bounded Radeon Pro 560X Metal cases now pass in the owner's
+   Terminal; wider qualification and actual OpenCL execution remain pending.
 4. **Tensor and model execution:** shape/stride IR, matmul/conv/attention/reductions,
    ONNX/StableHLO imports, operator partitioning, precision contracts, real model
    outputs and training/autograd only after correctness. Source generation alone

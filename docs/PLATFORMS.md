@@ -2,7 +2,7 @@
 
 | Platform | Available source/tooling | Qualification still needed |
 |---|---|---|
-| macOS x86-64 | Locally tested JVM CLI/GUI panel, C CPU library, C99 kernel execution; OpenCL and Objective-C++ Metal hosts compiled/probed | Native window interaction; GPU probe returned no devices; no GPU execution proof |
+| macOS x86-64 | Tested JVM CLI/GUI panel, C CPU library/C99 execution; Metal passes four bounded Radeon Pro 560X cases in the owner's Terminal | Native window/GPU interaction, wider Metal conformance; OpenCL execution and other exact GPUs |
 | Linux x86-64/ARM64 | JVM distribution; C/CMake SDK; OpenCL source bridge for installed runtime | CI and actual devices; CUDA/HIP/CANN/transports not integrated |
 | Windows x86-64/ARM64 | JVM `.bat` launcher/installer; C SDK CMake/MSVC path | CI, actual native GUI/installer and accelerator tests |
 | Apple Silicon macOS | JVM/C source and macOS Metal host source preview | ARM64/Metal hardware runs, signing and package checks |
@@ -35,7 +35,10 @@ architectures, desktop interaction, accelerators and signing remain separate.
 
 The macOS host uses system Metal and supports explicit compatible Intel/AMD or
 Apple silicon device selection. Local AppleClang 17 builds it successfully, but
-this process sees no GPUs; compilation and discovery do not qualify execution.
-Use the [Mac/Metal guide](MACOS_METAL.md) for a bounded, exact-Radeon Terminal test.
+the agent's process sees no GPUs. The owner's Terminal passes four bounded Radeon
+Pro 560X GPU cases with CPU comparison and one expected overflow rejection.
+See [the hardware record](A1990_METAL_VALIDATION.md) and
+[Mac/Metal guide](MACOS_METAL.md); other GPUs, full models and performance need
+separate evidence.
 See [NVIDIA architecture/software coverage](NVIDIA_COMPATIBILITY.md) and the
 [full HyperL platform](SOFTWARE_STACK.md) for current versus future interfaces.

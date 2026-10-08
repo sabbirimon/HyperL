@@ -262,8 +262,11 @@ need qualified Vulkan/OEM paths, and NPUs require separate providers. See PLATFO
 Metal supports compatible Intel Macs (including AMD/Intel GPUs) and Apple silicon.
 HyperL now provides an original source host preview with explicit device-name
 selection, managed/shared buffer handling and mandatory CPU result verification.
-The adapter compiles here, but the actual process sees no Metal GPU; execution is
-unrun. Follow the [Metal build/CLI/GUI and Radeon Terminal test guide](MACOS_METAL.md).
+Four bounded cases now pass on Radeon Pro 560X in the owner's Terminal, with CPU
+comparison, confirmed completion and expected overflow rejection. See the
+[hardware record](A1990_METAL_VALIDATION.md) and
+[Metal build/CLI/GUI and Radeon Terminal test guide](MACOS_METAL.md). Use corrected
+source after alpha.4; the published alpha.4 archives precede the JSON contract fix.
 Source emission, hardware discovery and CPU checks do not establish GPU execution.
 
 ## 6. Embed the portable C SDK
