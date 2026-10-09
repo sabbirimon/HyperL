@@ -70,14 +70,15 @@ class DistributedTest {
         assertArrayEquals(HyperLCpuBackend().execute(p, input), result.result, 0f); assertEquals(1f, result.result.single(), 0f)
     }
     @Test fun invalidShapeAndInternalReductionAreRejectedBeforeNetworking(): Unit = runBlocking {
-        val unreachable = DistributedSettings(workers = listOf(WorkerEndpoint("no", "http://127.0.0.1:1", "/missing/key")))
+        val absentKey = Path.of("missing-test-key").toAbsolutePath().toString()
+        val unreachable = DistributedSettings(workers = listOf(WorkerEndpoint("no", "http://127.0.0.1:1", absentKey)))
         try { DistributedExecutor.run(program, mapOf("x" to floatArrayOf(1f), "w" to floatArrayOf(1f, 2f)), unreachable); fail() } catch (e: IllegalArgumentException) { assertTrue(e.message!!.contains("equal lengths")) }
         val p = HyperLProgram(inputs = setOf("x"), instructions = listOf(HyperLInstruction("total", "sum", listOf("x")), HyperLInstruction("r", "relu", listOf("total"))), output = "r")
         try { DistributedExecutor.run(p, mapOf("x" to floatArrayOf(1f)), unreachable); fail() } catch (e: IllegalArgumentException) { assertTrue(e.message!!.contains("terminal")) }
         assertThrows(IllegalArgumentException::class.java) { ShardProtocol.origin("http://localhost:8091") }
         assertThrows(IllegalArgumentException::class.java) { ShardProtocol.origin("http://192.168.1.2:8091") }
-        assertThrows(IllegalArgumentException::class.java) { WorkerSettings(id="no", bind="0.0.0.0", tokenFile="/key").validate() }
-        assertThrows(IllegalArgumentException::class.java) { WorkerSettings(id="no", tokenFile="/key", backend=HyperLTarget.NPU_STABLEHLO).validate() }
+        assertThrows(IllegalArgumentException::class.java) { WorkerSettings(id="no", bind="0.0.0.0", tokenFile=absentKey).validate() }
+        assertThrows(IllegalArgumentException::class.java) { WorkerSettings(id="no", tokenFile=absentKey, backend=HyperLTarget.NPU_STABLEHLO).validate() }
     }
     @Test fun orderedReductionCannotSilentlyMixApproximateGpuValues(): Unit = fixture("a") { worker, key ->
         val p = program.copy(instructions=program.instructions + HyperLInstruction("total","sum",listOf(program.output)), output="total")
@@ -117,6 +118,40 @@ class DistributedTest {
             try { DistributedExecutor.run(program, Workspace.inputs(Workspace.EXAMPLE_INPUTS), settings(worker to key)); fail() }
             catch (e: IllegalArgumentException) { assertTrue(e.message!!.contains("numerical contract")) }
             assertEquals(1, calls.get())
+        }
+    }
+    @Test fun busyWorkerRejectsConcurrentExecutionThenAcceptsANewJob(): Unit {
+        val entered = CountDownLatch(1); val released = CountDownLatch(1); val calls = AtomicInteger()
+        val adapter = object: ShardComputeAdapter { override val target = HyperLTarget.CPU_REFERENCE
+            override suspend fun execute(program: HyperLProgram, inputs: Map<String, FloatArray>): FloatArray {
+                if (calls.incrementAndGet() == 1) {
+                    entered.countDown()
+                    withContext(Dispatchers.IO) { check(released.await(5, TimeUnit.SECONDS)) }
+                }
+                return HyperLCpuBackend().execute(program, inputs)
+            }
+        }
+        fixture("a", adapter) { worker, key ->
+            val client = HttpClient.newHttpClient()
+            fun request(): HttpRequest {
+                val id = java.util.UUID.randomUUID().toString()
+                val bytes = ShardProtocol.encodeRequest(ShardRequest(jobId=id,start=0,end=3,program=program,workerInstanceId=worker.capabilities().instanceId),Workspace.inputs(Workspace.EXAMPLE_INPUTS))
+                return HttpRequest.newBuilder(URI(worker.origin+"/hyperl/execute"))
+                    .header("Authorization","Bearer "+ShardProtocol.token(key)).header("Content-Type",ShardProtocol.CONTENT_TYPE)
+                    .header("X-HyperL-Job",id).header("X-HyperL-SHA256",ShardProtocol.digest(bytes))
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(bytes)).build()
+            }
+            val first = client.sendAsync(request(),HttpResponse.BodyHandlers.discarding())
+            try {
+                withContext(Dispatchers.IO) { assertTrue(entered.await(5,TimeUnit.SECONDS)) }
+                assertEquals(429,client.send(request(),HttpResponse.BodyHandlers.discarding()).statusCode())
+                assertEquals(1,calls.get())
+            } finally { released.countDown() }
+            assertEquals(200,first.get(5,TimeUnit.SECONDS).statusCode())
+            assertEquals(200,client.send(request(),HttpResponse.BodyHandlers.discarding()).statusCode())
+            assertEquals(2,calls.get())
+            withTimeout(5000) { while(worker.capabilities().activeJobs != 0) delay(10) }
+            assertEquals(worker.capabilities().configuredBudgetBytes,worker.capabilities().availableAdmissionBytes)
         }
     }
     @Test fun timedOutJobCancelsWorkerAndReleasesCredits(): Unit {

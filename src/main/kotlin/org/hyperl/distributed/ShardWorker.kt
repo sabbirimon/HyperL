@@ -151,7 +151,10 @@ class ShardWorker(private val settings: WorkerSettings, adapter: ShardComputeAda
                     // 202 acknowledges cancellation requested, never remote termination.
                 }
                 path == "/hyperl/execute" && exchange.requestMethod == "POST" -> {
-                    if (!slots.tryAcquire()) { status(exchange, 429); return }
+                    // The client may receive the previous body's last byte before its handler
+                    // releases credits/slot. A bounded admission wait fences that cleanup race
+                    // without replaying work or permitting unbounded queued computation.
+                    if (!slots.tryAcquire(100, TimeUnit.MILLISECONDS)) { status(exchange, 429); return }
                     var lease = 0L; var id: String? = null
                     try {
                         require(exchange.requestHeaders.getFirst("Content-Type") == ShardProtocol.CONTENT_TYPE)

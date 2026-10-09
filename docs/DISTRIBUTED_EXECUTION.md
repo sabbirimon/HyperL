@@ -130,6 +130,8 @@ This service does not solve carrier NAT or transport native model layers over
 Meshlit's P2P chat.
 
 Bodies, metadata, queues, jobs, replay records and responses are bounded.
+Worker admission waits at most 100 ms for the prior handler's cleanup, then
+rejects a busy worker without executing or automatically retrying the request.
 Deadlines reject slow operations. On failure, sibling requests are cancelled
 and an authenticated cancellation request is attempted. HTTP `202` means
 **cancellation requested**, not terminated. Lost connectivity or a killed GPU

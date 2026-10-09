@@ -2,13 +2,14 @@
 
 ## Distributed vector execution — 2026-10-09, unreleased alpha.6
 
-Current `test installDist distZip` passes: **60 JVM cases, 58 passed, two
-unavailable-GPU skips, zero failures/errors**. Eleven distributed cases use actual
+Current `test installDist distZip` passes: **61 JVM cases, 59 passed, two
+unavailable-GPU skips, zero failures/errors**. Twelve distributed cases use actual
 HTTP workers for split/gather, overlapping bounded dispatch, graphs exceeding
 single-reference retention, exact ordered terminal reduction, shape rejection,
 bad authentication, altered/replayed frames, false output, deadlines and credit
 cleanup, stale worker identity, effective concurrency and rejection of approximate
-GPU shards for exact ordered reduction. Strict native CMake/CTest passes three existing cases; fourteen Python
+GPU shards for exact ordered reduction and genuine busy-worker rejection without
+replay. Strict native CMake/CTest passes three existing cases; fourteen Python
 installer/qualification contract tests pass. The updated OpenCL probe compiles
 with strict warnings and reports no available GPU here; that is no new GPU pass.
 
@@ -32,6 +33,11 @@ Internet/NAT, Linux NUMA hardware, mixed GPU/NPU, production tenancy, durable
 recovery or low-latency fabric evidence. No speedup or VRAM/storage pooling is
 claimed. Reported total includes control, transfer, verification and execution.
 The Windows/Linux/macOS CI step is added; new-head remote CI is separate.
+The initial CI identified a Unix-only missing-key test path and a response/slot
+cleanup race causing HTTP 429 on consecutive shards. The test uses the current
+platform's absolute path; worker admission now waits at most 100 ms for cleanup
+and still rejects genuine concurrent overload. The corrected local full suite
+passes; the corrected remote head needs its own result.
 See [implementation and ownership limits](DISTRIBUTED_EXECUTION.md).
 
 ## Cross-language/native/data hardening — unreleased alpha.6
