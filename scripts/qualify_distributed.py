@@ -124,7 +124,17 @@ def qualify(cli, output, bundled=False):
             print(json.dumps(evidence, indent=2))
         finally:
             for process, stderr in processes:
-                process.terminate()
+                if os.name == "nt" and process.poll() is None:
+                    # The Gradle .bat launcher owns a child JVM. Terminating only
+                    # cmd.exe leaks the listener and keeps fixture files locked.
+                    # Kill this fixture's exact live process tree, never all Java.
+                    taskkill = Path(os.environ["SystemRoot"]) / "System32" / "taskkill.exe"
+                    stopped = subprocess.run([str(taskkill), "/PID", str(process.pid), "/T", "/F"],
+                                             capture_output=True, timeout=10)
+                    if stopped.returncode != 0 and process.poll() is None:
+                        raise RuntimeError("Could not stop the owned Windows worker process tree")
+                elif process.poll() is None:
+                    process.terminate()
                 try:
                     process.wait(timeout=5)
                 except subprocess.TimeoutExpired:

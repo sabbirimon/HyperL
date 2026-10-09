@@ -38,6 +38,10 @@ cleanup race causing HTTP 429 on consecutive shards. The test uses the current
 platform's absolute path; worker admission now waits at most 100 ms for cleanup
 and still rejects genuine concurrent overload. The corrected local full suite
 passes; the corrected remote head needs its own result.
+The corrected Windows computation/TLS checks subsequently pass but expose a
+fixture cleanup failure: stopping the batch wrapper left its JVM holding stderr
+open. The helper now stops only each exact live fixture process tree on Windows.
+Windows cleanup qualification remains tied to its new CI result.
 See [implementation and ownership limits](DISTRIBUTED_EXECUTION.md).
 
 ## Cross-language/native/data hardening — unreleased alpha.6
