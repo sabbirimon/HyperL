@@ -71,6 +71,12 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s scripts -p "test_*.py" -v
+      - name: Independent distributed CPU workers and trusted TLS
+        shell: bash
+        run: |
+          launcher=build/install/hyperl/bin/hyperl
+          if [[ "$RUNNER_OS" = Windows ]]; then launcher="$launcher.bat"; fi
+          python scripts/qualify_distributed.py --cli "$launcher" --output build/distributed-qualification.json
       - name: Pinned optional NumPy bridge checks
         run: python -m pip install numpy==2.3.3
       - name: Pinned PyTorch CPU bridge dependency
@@ -109,3 +115,4 @@ jobs:
           path: |
             build/distributions/*.zip
             build/wheels/*.whl
+            build/distributed-qualification.json

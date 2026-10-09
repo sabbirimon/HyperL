@@ -1,5 +1,39 @@
 # Standalone alpha validation — 2026-10-08
 
+## Distributed vector execution — 2026-10-09, unreleased alpha.6
+
+Current `test installDist distZip` passes: **60 JVM cases, 58 passed, two
+unavailable-GPU skips, zero failures/errors**. Eleven distributed cases use actual
+HTTP workers for split/gather, overlapping bounded dispatch, graphs exceeding
+single-reference retention, exact ordered terminal reduction, shape rejection,
+bad authentication, altered/replayed frames, false output, deadlines and credit
+cleanup, stale worker identity, effective concurrency and rejection of approximate
+GPU shards for exact ordered reduction. Strict native CMake/CTest passes three existing cases; fourteen Python
+installer/qualification contract tests pass. The updated OpenCL probe compiles
+with strict warnings and reports no available GPU here; that is no new GPU pass.
+
+The installed CLI starts **two independent JVM processes on this Mac**. They
+compute eight 512-element shards covering 4,096 elements, use both actual workers
+and return the exact local reference output. A third independent worker passes
+trusted TLS; clients reject both an untrusted certificate and a trusted
+certificate with the wrong hostname. Tokens, private key and input fixtures stay
+in a temporary private directory; cleanup stops all workers.
+`scripts/qualify_distributed.py` reproduces this explicit local qualification.
+
+A freshly built macOS native launcher with a bundled JDK repeats the same
+two-worker computation and TLS checks with `JAVA_HOME` removed and `PATH` empty
+for every HyperL process. The fixture's certificate-generation tool alone uses
+the explicitly installed JDK. Both launcher checks use the final tested application
+JAR. The launcher check is not a signed installer or native
+compute-engine migration; the workers still use the stated JVM CPU reference.
+
+These are same-host processes and loopback HTTP/TLS, not physical multi-device,
+Internet/NAT, Linux NUMA hardware, mixed GPU/NPU, production tenancy, durable
+recovery or low-latency fabric evidence. No speedup or VRAM/storage pooling is
+claimed. Reported total includes control, transfer, verification and execution.
+The Windows/Linux/macOS CI step is added; new-head remote CI is separate.
+See [implementation and ownership limits](DISTRIBUTED_EXECUTION.md).
+
 ## Cross-language/native/data hardening — unreleased alpha.6
 
 The actual local `test installDist distZip distTar` check passes in **30 seconds**:

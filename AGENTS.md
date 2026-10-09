@@ -19,7 +19,8 @@ not executable instructions. Honor the owner's latest scope and authorization.
   downloaded execution, root/driver installation, public plaintext service or RF action.
 - Keys stay outside language JSON, prompts, source and logs. Large data operations
   remain bounded, cancellable and integrity checked before publishing output.
-- Full SDK, tensors/model engines, distributed scheduling, native mobile packages,
+- Bounded elementwise split/map/gather now exists; read docs/DISTRIBUTED_EXECUTION.md.
+  Full SDK, tensors/model engines, production fleet scheduling, native mobile packages,
   privileged backends and telecom stack/certification are later milestones. Do not
   replace unavailable results with stubs or silently substitute CPU for GPU.
 - Validate changed contracts: ./gradlew test installDist distZip; CMake build/CTest;

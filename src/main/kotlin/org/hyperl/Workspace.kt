@@ -37,6 +37,8 @@ object Workspace {
         put("iosPackageAvailable",false)
         put("memoryAwareCpuAdmission",true)
         put("memory",json.encodeToJsonElement(MemoryPlanner.observe()))
+        put("distributedElementwiseAvailable",true);put("distributedWorkerRequiresExplicitConfig",true)
+        put("distributedModelLayersAvailable",false);put("pooledAddressSpace",false)
     }.toString()
 }
 

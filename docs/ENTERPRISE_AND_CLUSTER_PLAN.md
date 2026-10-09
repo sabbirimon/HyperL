@@ -11,7 +11,9 @@ Today: standalone Java 17+ desktop CLI/GUI, bounded f32 CPU reference, portable 
 preview, source emission, optional explicitly installed OpenCL bridge, encrypted
 local dataset streaming, memory admission, cluster-profile validation and read-only
 node metadata probing. No actual GPU is qualified on the local host. The full SDK,
-phone packages, server control plane and distributed execution are not delivered.
+phone packages and a production fleet control plane are not delivered. Alpha.6
+adds a separate [bounded vector shard executor](DISTRIBUTED_EXECUTION.md), which
+does not qualify enterprise scheduling, model partitions or the scale below.
 
 Use one versioned program/artifact format, adapter negotiation and numerical contract
 across these profiles; add optional services around it rather than requiring every

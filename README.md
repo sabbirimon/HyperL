@@ -37,6 +37,8 @@ qualified native backends use each platform's capabilities.
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
 OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
+Alpha.6 adds authenticated worker processes, memory-sized elementwise shards,
+bounded parallel dispatch and checked gather. [Distributed execution](docs/DISTRIBUTED_EXECUTION.md).
 Twelve ready-made recipes are available through Kotlin/JSON, the CLI and Python/C ABI preview.
 Native desktop installer previews bundle Java; the separate Meshlit port adds a local
 recipe workbench with per-function and emergency stop controls.
@@ -66,8 +68,8 @@ or pretending every accelerator behaves the same.
 | Easy as Python to start | Small examples, useful errors, sensible defaults and later Python-like syntax/API | Local editor/diagnostics and small Python preview exist; full authoring/SDK later |
 | Native compute where it matters | Explicit buffers, fused/compiled kernels and target-specific adapters | C99 preview exists; optimized C/C++ engine and speedups require benchmarks |
 | One program contract across devices | Reuse validation and precision rules instead of unrelated per-vendor semantics | `hyperl/1` f32 reference/source format exists; tensor/import/runtime support expands later |
-| Memory-aware large-data work | Predict cost, reject oversized work, stream encrypted data and plan future spill | CPU estimate/admission and local chunk IO exist; HBM/VRAM accounting and automatic spill are planned |
-| Single-device through cluster deployment | Keep offline local use useful while adding optional remote capacity | Desktop works today; phone and enterprise packages have separate qualification gates |
+| Memory-aware large-data work | Predict cost, reject oversized work, stream encrypted data and plan future spill | CPU admission, per-domain observations and local chunk IO exist; hard VRAM reservations and automatic spill are planned |
+| Single-device through cluster deployment | Keep offline local use useful while adding optional remote capacity | Bounded distributed vector workers exist; phone adapters and enterprise fleet services have separate qualification gates |
 | Human control and enterprise operations | Tenant quotas, audit, scoped agents and acknowledged emergency stops | Enterprise services/control protocol are planned, not deployed by this release |
 | Available source and reproducible evidence | Study code, contribute adapters, reproduce correctness and measure real performance | Community/enterprise terms for new rights; prior Apache and dependency grants preserved |
 
@@ -128,7 +130,8 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Android GPU experiment | Samsung Galaxy A20s / Adreno 506 executes generated Vulkan kernels: 11 CPU-verified outputs and two expected overflow rejections. Native test runner; Meshlit GPU wiring and mobile installers remain separate. [Build and evidence](docs/ANDROID_VULKAN.md) |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication; alpha.6 adds typed HLM2 records, grouped chunks and explicit rekey |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
-| Cluster profile | Validates IPv6/IPv4/DNS HTTPS configuration and limits; does not enroll, schedule or dispatch nodes |
+| Cluster profile | Earlier inventory validator; separate alpha.6 execution dispatches real bounded shards to explicitly configured workers |
+| Distributed execution (alpha.6) | Split/map/gather, authenticated CPU or checked OpenCL/Metal worker adapters, per-domain admission and ordered terminal reduction; see [distributed guide](docs/DISTRIBUTED_EXECUTION.md) |
 | Telecom research | Disabled/uncertified research profiles and a full-stack research plan; no RF or carrier stack activation |
 
 ```mermaid

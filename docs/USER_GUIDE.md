@@ -408,9 +408,12 @@ it never sets inference-qualified. Numeric `http://[::1]:PORT` and
 plaintext host is accepted. IPv6 link-local zone IDs are currently rejected.
 
 The existing companion protocol is reused rather than inventing another discovery
-format. This alpha does not start a node server, enroll devices, transfer datasets
-remotely or dispatch distributed kernels. Independent hosts, trusted TLS and
-large-scale/failure behavior remain qualification work.
+format. Published alpha.5 does not start a worker or dispatch kernels. Alpha.6
+development adds separate explicit `worker`, `distributed-plan` and
+`distributed-run` commands for bounded vector shards. See
+[distributed execution](DISTRIBUTED_EXECUTION.md) for adapters, tokens, TLS,
+memory ownership and cancellation. Enrollment, remote datasets, independent
+device qualification and fleet scale remain later.
 
 ## 9. Telecom and extensions
 

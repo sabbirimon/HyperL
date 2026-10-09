@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import javax.swing.SwingUtilities
 import kotlin.system.exitProcess
+import org.hyperl.distributed.*
 
 fun main(args:Array<String>) {
     try {
@@ -30,13 +31,17 @@ Usage:
   hyperl telecom-plan PROFILE.json
   hyperl cluster-plan PROFILE.json
   hyperl node-probe ORIGIN TOKEN_FILE
+  hyperl worker-token NEW_PRIVATE_TOKEN_FILE
+  hyperl worker WORKER_CONFIG.json
+  hyperl distributed-plan DISTRIBUTED_CONFIG.json PROGRAM.json INPUTS.json
+  hyperl distributed-run DISTRIBUTED_CONFIG.json PROGRAM.json INPUTS.json
   hyperl keygen KEYFILE
   hyperl data-import SOURCE DATASET_DIRECTORY KEYFILE MAX_BYTES
   hyperl data-export DATASET_DIRECTORY DESTINATION KEYFILE MAX_BYTES
   hyperl data-rekey DATASET_DIRECTORY NEW_DATASET_DIRECTORY OLD_KEYFILE NEW_KEYFILE MAX_BYTES
 Targets: LLVM_CPU, CUDA, ROCM_HIP, OPENCL_SPIRV, METAL, VULKAN_SPIRV.
 CPU_REFERENCE and explicitly supplied OpenCL/Metal bridges can execute; actual GPU qualification is separate. Emission is source only.
-Network access only through explicit authenticated node-probe; no shell, auto installs, radio or privileges.""")
+Network access requires explicit node-probe or distributed worker settings; no shell, auto installs, radio or privileges.""")
             "gui"->{require(args.size==1);SwingUtilities.invokeLater{HyperLWindow.show()}}
             "capabilities"->{require(args.size==1);println(Workspace.capabilities())}
             "library"->{require(args.size==1);HyperLLibrary.ids.forEach{id->val recipe=HyperLLibrary.recipe(id);println("$id · ${recipe.title} · ${recipe.purpose} · ${if(recipe.elementwiseOnly)"elementwise source eligible; hardware qualification separate" else "CPU reduction"}")}}
@@ -59,6 +64,14 @@ Network access only through explicit authenticated node-probe; no shell, auto in
             "telecom-plan"->{require(args.size==2);println(TelecomPlanner.plan(Workspace.json.decodeFromString<TelecomProfile>(Workspace.read(Path.of(args[1])))))}
             "cluster-plan"->{require(args.size==2);println(ClusterPlanner.plan(Workspace.json.decodeFromString<ClusterProfile>(Workspace.read(Path.of(args[1])))))}
             "node-probe"->{require(args.size==3);println(NodeProbe.observe(args[1],Path.of(args[2])))}
+            "worker-token"->{require(args.size==2);TokenFiles.create(Path.of(args[1]));println("Private worker token created; keep it outside programs, prompts and source")}
+            "worker"->{require(args.size==2);val settings=ShardProtocol.json.decodeFromString<WorkerSettings>(Workspace.read(Path.of(args[1])));settings.validate()
+                val worker=ShardWorker(settings).start();Runtime.getRuntime().addShutdownHook(Thread{worker.close()})
+                println("HyperL shard worker ${settings.id} listening at ${worker.origin}; backend=${settings.backend}; explicit pure-vector requests only")
+                java.util.concurrent.CountDownLatch(1).await()}
+            "distributed-plan","distributed-run"->{require(args.size==4);val settings=ShardProtocol.json.decodeFromString<DistributedSettings>(Workspace.read(Path.of(args[1])));settings.validate()
+                val (plan,result)=runBlocking{DistributedExecutor.run(Workspace.program(Workspace.read(Path.of(args[2]))),Workspace.inputs(Workspace.read(Path.of(args[3]))),settings,args[0]=="distributed-plan")}
+                println(if(result==null)ShardProtocol.json.encodeToString(plan)else ShardProtocol.json.encodeToString(result))}
             "keygen"->{require(args.size==2);LargeData.keygen(Path.of(args[1]));println("Key created; keep it private and separate from datasets")}
             "data-import"->{require(args.size==5);println(runBlocking{LargeData.import(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}
             "data-export"->{require(args.size==5);println(runBlocking{LargeData.export(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}

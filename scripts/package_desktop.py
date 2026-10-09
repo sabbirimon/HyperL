@@ -96,6 +96,7 @@ def build(root, distribution, native, destination, jdk, types):
                    "--main-class", "org.hyperl.MainKt", "--arguments", "gui",
                    "--app-version", installer_version, "--vendor", "HyperL contributors",
                    "--description", f"HyperL {version} experimental developer workbench",
+                   "--add-modules", "java.desktop,java.net.http,java.management,jdk.management,jdk.httpserver,java.naming,java.prefs,jdk.crypto.ec,jdk.unsupported",
                    "--java-options", "-Xmx512m", "--add-launcher", f"hyperl-cli={properties}"]
         if host == "Darwin":
             command += ["--mac-package-identifier", "org.hyperl.workbench", "--mac-package-name", "HyperL"]
@@ -138,7 +139,14 @@ def build(root, distribution, native, destination, jdk, types):
                 options += ["--linux-package-name", "hyperl", "--linux-shortcut", "--linux-menu-group", "Development",
                             "--linux-app-release", f"alpha{version.rsplit('.', 1)[1]}"]
                 if package_type == "rpm":
-                    options += ["--linux-rpm-license-type", "Apache-2.0"]
+                    license_text = (root / "LICENSE").read_text()
+                    if license_text.startswith("HyperL Community and Enterprise License"):
+                        rpm_license = "LicenseRef-HyperL-Community-1.0"
+                    elif license_text.lstrip().startswith("Apache License"):
+                        rpm_license = "Apache-2.0"
+                    else:
+                        raise ValueError("Unrecognized root licence; review RPM metadata explicitly")
+                    options += ["--linux-rpm-license-type", rpm_license]
                 else:
                     options += ["--linux-deb-maintainer", "30753145+sabbirimon@users.noreply.github.com"]
             run(options)

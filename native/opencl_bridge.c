@@ -98,6 +98,22 @@ int main(int argc, char **argv) {
             info(devices[i], CL_DRIVER_VERSION);
             printf(",\"runtime\":");
             info(devices[i], CL_DEVICE_VERSION);
+            /* New alpha.6 observation: LicenseRef-HyperL-Community-1.0.
+               Capacity is not an allocation reservation; keep earlier Apache grants. */
+            cl_ulong capacity = 0, allocation = 0;
+            cl_bool unified = CL_FALSE;
+            printf(",\"globalMemoryBytes\":");
+            if (clGetDeviceInfo(devices[i], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(capacity), &capacity, NULL) == CL_SUCCESS)
+                printf("%llu", (unsigned long long)capacity);
+            else printf("null");
+            printf(",\"maxAllocationBytes\":");
+            if (clGetDeviceInfo(devices[i], CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(allocation), &allocation, NULL) == CL_SUCCESS)
+                printf("%llu", (unsigned long long)allocation);
+            else printf("null");
+            printf(",\"hasUnifiedMemory\":");
+            if (clGetDeviceInfo(devices[i], CL_DEVICE_HOST_UNIFIED_MEMORY, sizeof(unified), &unified, NULL) == CL_SUCCESS)
+                printf("%s", unified ? "true" : "false");
+            else printf("null");
             printf("}");
         }
         puts("]}");

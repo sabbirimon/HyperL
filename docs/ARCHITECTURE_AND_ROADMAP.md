@@ -32,6 +32,12 @@ parallel reductions and relaxed checks require explicit semantics and conformanc
 
 ## Ordered implementation plan
 
+Alpha.6 includes an experimental JDK transport/orchestration prototype:
+[authenticated split/map/gather workers](DISTRIBUTED_EXECUTION.md), per-domain
+admission and ordered terminal reduction, with explicit CPU/checked OpenCL/Metal
+adapters. It does not replace planned Rust fleet services or deliver typed
+model-layer/tensor partitions, collectives or a native low-latency fabric.
+
 1. **Standalone foundation (this alpha):** desktop CLI/GUI, CPU contracts, C ABI,
    source emission, memory-aware CPU admission and headroom observation,
    optional bounded OpenCL bridge, streaming encrypted local

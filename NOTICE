@@ -1,6 +1,9 @@
 HyperL — original experimental AI compute tools
 Copyright 2026 Sabbir Hassan Imon and contributors.
 Newly covered rights: HyperL Community and Enterprise License 1.0; see LICENSE.
+New distributed orchestration in src/main/kotlin/org/hyperl/distributed and
+new OpenCL probe memory fields use that licence. Prior Apache foundations and
+dependencies retain their grants; see docs/LICENSE_HISTORY.md.
 Earlier Apache-2.0 grants are preserved, including pre-transition source through
 67b30e09741f4bba1672a891644fc73abb1f9855 and released alpha.5 material.
 See docs/LICENSE_HISTORY.md and docs/licenses/Apache-2.0.txt.

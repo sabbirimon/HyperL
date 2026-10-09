@@ -1,5 +1,11 @@
 # Licence scope and history
 
+The new distributed implementation under `src/main/kotlin/org/hyperl/distributed`
+and new alpha.6 OpenCL probe memory observations use the Community/Enterprise
+licence. Unchanged OpenCL execution and other earlier Apache foundations keep
+their prior grants. New protocol clients do not automatically copy restricted
+implementation into an Apache project.
+
 The pre-transition tree is commit
 `67b30e09741f4bba1672a891644fc73abb1f9855` ([source](https://github.com/sabbirimon/HyperL/tree/67b30e09741f4bba1672a891644fc73abb1f9855)).
 HyperL material offered there under Apache 2.0 keeps those grants. Published
