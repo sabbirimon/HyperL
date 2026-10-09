@@ -42,6 +42,11 @@ The corrected Windows computation/TLS checks subsequently pass but expose a
 fixture cleanup failure: stopping the batch wrapper left its JVM holding stderr
 open. The helper now stops only each exact live fixture process tree on Windows.
 Windows cleanup qualification remains tied to its new CI result.
+At runtime/source `88b0405`, [Windows, Ubuntu, macOS, Android and sanitizer CI](https://github.com/sabbirimon/HyperL/actions/runs/37947439442)
+all pass, including independent workers, trusted/untrusted TLS, hostname checks
+and Windows process-tree cleanup. [All four native installer build/smoke jobs](https://github.com/sabbirimon/HyperL/actions/runs/37947439511)
+also pass. Publication is intentionally skipped. These runner checks do not
+establish physical mixed-device/GPU execution or installed GUI lifecycle.
 See [implementation and ownership limits](DISTRIBUTED_EXECUTION.md).
 
 ## Cross-language/native/data hardening — unreleased alpha.6
