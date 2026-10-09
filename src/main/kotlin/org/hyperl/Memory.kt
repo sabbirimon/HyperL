@@ -23,7 +23,7 @@ object MemoryPlanner {
     }
     fun plan(program:HyperLProgram,inputs:Map<String,FloatArray>,budgetBytes:Long=DEFAULT_BUDGET,snapshot:MemorySnapshot=observe()):MemoryPlan {
         program.validate();require(inputs.keys==program.inputs);require(budgetBytes in 1..(1024L*1024*1024))
-        require(inputs.values.all{it.size in 1..262144})
+        require(inputs.values.all{it.size in 1..HyperLContract.MAX_VECTOR_ELEMENTS})
         val lengths=inputs.mapValues{it.value.size}.toMutableMap()
         val inputElements=inputs.values.sumOf{it.size.toLong()};var retained=inputElements
         program.instructions.forEach{step->
@@ -33,8 +33,8 @@ object MemoryPlanner {
         }
         val estimated=(inputElements+retained+lengths.getValue(program.output))*4+32L*(inputs.size*2+program.instructions.size+1)+65536
         val available=minOf(budgetBytes,snapshot.availableBytes())
-        val reason=when {retained>1048576->"Retained vector format limit exceeded";estimated>available->"Selected budget or observed JVM heap headroom insufficient";else->"Admitted for bounded CPU arrays; memory is not reserved"}
-        return MemoryPlan(inputElements*4,retained*4,estimated,budgetBytes,available,retained<=1048576 && estimated<=available,reason,snapshot,listOf(MemoryTier("JVM_HEAP",true,snapshot.heapLimitBytes),MemoryTier("SYSTEM_RAM",snapshot.environmentTotalBytes?.let{true},snapshot.environmentTotalBytes),MemoryTier("HBM"),MemoryTier("GDDR"),MemoryTier("DDR_LPDDR"),MemoryTier("UNIFIED_GPU"),MemoryTier("SRAM"),MemoryTier("CXL_NUMA"),MemoryTier("SSD_NVME")),snapshot.environmentFreeBytes?.let{it<estimated})
+        val reason=when {retained>HyperLContract.MAX_RETAINED_ELEMENTS->"Retained vector format limit exceeded";estimated>available->"Selected budget or observed JVM heap headroom insufficient";else->"Admitted for bounded CPU arrays; memory is not reserved"}
+        return MemoryPlan(inputElements*4,retained*4,estimated,budgetBytes,available,retained<=HyperLContract.MAX_RETAINED_ELEMENTS && estimated<=available,reason,snapshot,listOf(MemoryTier("JVM_HEAP",true,snapshot.heapLimitBytes),MemoryTier("SYSTEM_RAM",snapshot.environmentTotalBytes?.let{true},snapshot.environmentTotalBytes),MemoryTier("HBM"),MemoryTier("GDDR"),MemoryTier("DDR_LPDDR"),MemoryTier("UNIFIED_GPU"),MemoryTier("SRAM"),MemoryTier("CXL_NUMA"),MemoryTier("SSD_NVME")),snapshot.environmentFreeBytes?.let{it<estimated})
     }
     fun requireAdmission(plan:MemoryPlan){require(plan.admitted){"Memory admission rejected: ${plan.reason}; estimated=${plan.estimatedArrayAndWorkspaceBytes}, available=${plan.observedAdmissionBytes}"}}
     fun requireStreamingHeadroom(){require(observe().availableBytes()>=32L*1024*1024){"Insufficient observed memory headroom for bounded encrypted dataset buffers"}}

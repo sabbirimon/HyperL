@@ -6,11 +6,13 @@ import ctypes as c
 import math
 import re
 from collections.abc import Mapping, Sequence
+from .contract import (MAX_VECTOR_ELEMENTS, MAX_RETAINED_ELEMENTS, MAX_INPUTS,
+                       MAX_STEPS, IDENTIFIER_PATTERN, OPS, OPERAND_COUNTS,
+                       LANGUAGE_FORMAT, RUNTIME_REVISION)
 
-MAX_VECTOR = 262144
-MAX_RETAINED = 1048576
-OPS = {"add": 1, "multiply": 2, "relu": 3, "sum": 4}
-_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}\Z")
+MAX_VECTOR = MAX_VECTOR_ELEMENTS
+MAX_RETAINED = MAX_RETAINED_ELEMENTS
+_NAME = re.compile(IDENTIFIER_PATTERN)
 
 
 def f32(values):
@@ -42,9 +44,9 @@ class Program:
     output: str
 
     def __post_init__(self):
-        if not isinstance(self.inputs, tuple) or not 1 <= len(self.inputs) <= 8:
+        if not isinstance(self.inputs, tuple) or not 1 <= len(self.inputs) <= MAX_INPUTS:
             raise ValueError("program requires a tuple of 1..8 inputs")
-        if not isinstance(self.steps, tuple) or not 1 <= len(self.steps) <= 64:
+        if not isinstance(self.steps, tuple) or not 1 <= len(self.steps) <= MAX_STEPS:
             raise ValueError("program requires a tuple of 1..64 steps")
         names = set()
         for name in self.inputs:
@@ -56,7 +58,7 @@ class Program:
                 raise ValueError("invalid or duplicate step output")
             if not isinstance(step.operation, str) or step.operation not in OPS:
                 raise ValueError("unsupported operation")
-            count = 2 if step.operation in ("add", "multiply") else 1
+            count = OPERAND_COUNTS[step.operation]
             if not isinstance(step.inputs, tuple) or len(step.inputs) != count or any(not isinstance(x, str) or x not in names for x in step.inputs):
                 raise ValueError("operands must reference earlier values with correct arity")
             names.add(step.output)
@@ -66,9 +68,12 @@ class Program:
     @classmethod
     def from_dict(cls, data):
         """Import the existing declarative hyperl/1 shape, not executable Python."""
-        if not isinstance(data, dict) or set(data) != {"format", "inputs", "instructions", "output"} or data["format"] != "hyperl/1":
+        required = {"inputs", "instructions", "output"}
+        if (not isinstance(data, dict) or not required <= set(data) or
+                set(data) - required - {"format"} or
+                data.get("format", LANGUAGE_FORMAT) != LANGUAGE_FORMAT):
             raise ValueError("expected exact hyperl/1 fields")
-        if not isinstance(data["inputs"], list) or not 1 <= len(data["inputs"]) <= 8 or not isinstance(data["instructions"], list) or not 1 <= len(data["instructions"]) <= 64:
+        if not isinstance(data["inputs"], list) or not 1 <= len(data["inputs"]) <= MAX_INPUTS or not isinstance(data["instructions"], list) or not 1 <= len(data["instructions"]) <= MAX_STEPS:
             raise ValueError("program declaration bounds exceeded")
         steps = []
         for item in data["instructions"]:
@@ -111,6 +116,12 @@ _Cancel = c.CFUNCTYPE(c.c_int, c.c_void_p)
 
 class NativeCpu:
     """Loads only the owner's explicit absolute reviewed library path. ABI 1."""
+    @classmethod
+    def bundled(cls, budget_bytes=16 * 1024 * 1024):
+        """Explicitly choose the installed platform wheel's hash-checked CPU binary."""
+        from .bundled import bundled_native_path
+        return cls(bundled_native_path(), budget_bytes=budget_bytes)
+
     def __init__(self, library, budget_bytes=16 * 1024 * 1024):
         path = Path(library)
         if not path.is_absolute() or not path.is_file():
@@ -121,10 +132,46 @@ class NativeCpu:
         self._lib = c.CDLL(str(path.resolve()))
         self._lib.hl_version.argtypes = []
         self._lib.hl_version.restype = c.c_char_p
-        if self._lib.hl_version() != b"hyperl-cpu/1":
+        if self._lib.hl_version() != RUNTIME_REVISION.encode('ascii'):
             raise ValueError("unsupported native ABI/version")
         self._lib.hl_execute.argtypes = [c.POINTER(_Vector), c.c_size_t, c.POINTER(_Step), c.c_size_t, c.c_size_t, c.POINTER(c.c_float), c.c_size_t, c.POINTER(c.c_size_t), _Cancel, c.c_void_p]
         self._lib.hl_execute.restype = c.c_int
+        self._precise = getattr(self._lib, 'hl_sum_precise', None)
+        if self._precise is not None:
+            self._precise.argtypes = [c.POINTER(_Vector), c.POINTER(c.c_float), _Cancel, c.c_void_p]
+            self._precise.restype = c.c_int
+
+    def precise_sum(self, values, cancelled=None):
+        """Separate precise-sum/1 primitive; does not change v1 graph reductions."""
+        if self._precise is None:
+            raise RuntimeError('precise-sum/1 unavailable in selected native library')
+        if cancelled is not None and not callable(cancelled):
+            raise TypeError('cancelled must be callable')
+        if (not isinstance(values, array) or values.typecode != 'f' or
+                values.itemsize != 4 or not 1 <= len(values) <= MAX_VECTOR):
+            raise ValueError("convert bounded values explicitly with f32")
+        if 8 * len(values) + 65540 > self.budget_bytes:
+            raise MemoryError('precise sum snapshot exceeds selected budget')
+        owned = f32(values)
+        buffer = (c.c_float * len(owned)).from_buffer(owned)
+        vector = _Vector(buffer, len(owned))
+        output = c.c_float(0)
+        failures = []
+        def check(_):
+            try:
+                return int(bool(cancelled()))
+            except BaseException as exc:
+                if not failures:
+                    failures.append(exc)
+                return 1
+        callback = _Cancel(check) if cancelled is not None else _Cancel(0)
+        status = self._precise(c.byref(vector), c.byref(output), callback, None)
+        if failures:
+            raise RuntimeError('cancellation callback failed; native call completed') from failures[0]
+        if status:
+            raise RuntimeError({1: 'native input invalid', 3: 'native nonfinite result',
+                                4: 'native work cancelled'}.get(status, 'unknown native status'))
+        return array('f', [output.value])
 
     def execute(self, program, inputs, cancelled=None):
         if not isinstance(program, Program):

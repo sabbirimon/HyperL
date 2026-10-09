@@ -1,5 +1,205 @@
 # Standalone alpha validation — 2026-10-08
 
+## Distributed vector execution — 2026-10-09, unreleased alpha.6
+
+Current `test installDist distZip` passes: **61 JVM cases, 59 passed, two
+unavailable-GPU skips, zero failures/errors**. Twelve distributed cases use actual
+HTTP workers for split/gather, overlapping bounded dispatch, graphs exceeding
+single-reference retention, exact ordered terminal reduction, shape rejection,
+bad authentication, altered/replayed frames, false output, deadlines and credit
+cleanup, stale worker identity, effective concurrency and rejection of approximate
+GPU shards for exact ordered reduction and genuine busy-worker rejection without
+replay. Strict native CMake/CTest passes three existing cases; fourteen Python
+installer/qualification contract tests pass. The updated OpenCL probe compiles
+with strict warnings and reports no available GPU here; that is no new GPU pass.
+
+The installed CLI starts **two independent JVM processes on this Mac**. They
+compute eight 512-element shards covering 4,096 elements, use both actual workers
+and return the exact local reference output. A third independent worker passes
+trusted TLS; clients reject both an untrusted certificate and a trusted
+certificate with the wrong hostname. Tokens, private key and input fixtures stay
+in a temporary private directory; cleanup stops all workers.
+`scripts/qualify_distributed.py` reproduces this explicit local qualification.
+
+A freshly built macOS native launcher with a bundled JDK repeats the same
+two-worker computation and TLS checks with `JAVA_HOME` removed and `PATH` empty
+for every HyperL process. The fixture's certificate-generation tool alone uses
+the explicitly installed JDK. Both launcher checks use the final tested application
+JAR. The launcher check is not a signed installer or native
+compute-engine migration; the workers still use the stated JVM CPU reference.
+
+These are same-host processes and loopback HTTP/TLS, not physical multi-device,
+Internet/NAT, Linux NUMA hardware, mixed GPU/NPU, production tenancy, durable
+recovery or low-latency fabric evidence. No speedup or VRAM/storage pooling is
+claimed. Reported total includes control, transfer, verification and execution.
+The Windows/Linux/macOS CI step is added; new-head remote CI is separate.
+The initial CI identified a Unix-only missing-key test path and a response/slot
+cleanup race causing HTTP 429 on consecutive shards. The test uses the current
+platform's absolute path; worker admission now waits at most 100 ms for cleanup
+and still rejects genuine concurrent overload. The corrected local full suite
+passes; the corrected remote head needs its own result.
+The corrected Windows computation/TLS checks subsequently pass but expose a
+fixture cleanup failure: stopping the batch wrapper left its JVM holding stderr
+open. The helper now stops only each exact live fixture process tree on Windows.
+Windows cleanup qualification remains tied to its new CI result.
+At runtime/source `88b0405`, [Windows, Ubuntu, macOS, Android and sanitizer CI](https://github.com/sabbirimon/HyperL/actions/runs/37947439442)
+all pass, including independent workers, trusted/untrusted TLS, hostname checks
+and Windows process-tree cleanup. [All four native installer build/smoke jobs](https://github.com/sabbirimon/HyperL/actions/runs/37947439511)
+also pass. Publication is intentionally skipped. These runner checks do not
+establish physical mixed-device/GPU execution or installed GUI lifecycle.
+See [implementation and ownership limits](DISTRIBUTED_EXECUTION.md).
+
+## Cross-language/native/data hardening — unreleased alpha.6
+
+The actual local `test installDist distZip distTar` check passes in **30 seconds**:
+**49 JVM cases, 47 passed, two unavailable OpenCL/Metal execution skips, zero
+failures/errors**. New tests cover separate precise reduction, independently
+encrypted legacy HLM1 export/rotation, HLM2 multi-chunk rotation, authenticated
+invalid record types/fields/numbers, retained source, wrong-key and no-overwrite
+publication. An initial HLM2 writer omitted default-valued types; its two failing
+tests were retained and the corrected writer explicitly serializes record types
+before this passing run.
+
+Strict AppleClang 17 Release CMake/CTest: **three passes** (CPU contract, 4,096
+seeded stress cases covering all sixteen declared categories, Metal availability
+probe). Debug ASan/UBSan CTest also reports three passes; only the C targets are
+instrumented. Local macOS leak detection is off because this sanitizer runtime
+does not support it. The separate Ubuntu CI sanitizer job enables leak detection;
+its new-head result is separate from the local run. The deterministic corpus is
+not exhaustive or a claim of coverage-guided fuzzing.
+
+Actual Python/native preview: **ten cases, eight passed, two uninstalled
+PyTorch/CUDA skips**. Cross-language conformance: three test methods pass,
+covering sixteen same-JSON cases through actual JVM/Python/C, 120 seeded DAGs
+against NumPy 2.3.3 ordered-f32 arithmetic, and precise reduction/cancellation/
+overflow cases. Fourteen existing installer/GPU-harness script tests pass.
+Generated contract/schema consistency passes. [Measured CPU baseline](CPU_BENCHMARK.md)
+records real overhead and the distinct cost scopes rather than claiming a speedup.
+
+A local macOS 15/x86-64 native platform wheel builds and installs in a clean
+virtual environment: **three installed-package checks pass**, including actual
+native execution/cancellation and rejection of corrupt binary/path/target metadata.
+An older-SDK Python's initial pip attempt rejected the macOS 15 wheel because it
+reported compatibility version 10.16; the retry with `SYSTEM_VERSION_COMPAT=0`
+uses the actual host OS and passes without retagging the artifact. Wheel metadata
+retains the development licence and prior Apache notices. No index/release upload
+or other architecture claim follows from this local installation.
+
+The formatted/current Android Vulkan host compiles under NDK 28.2.13676358 with
+strict warnings; all thirteen generated shaders compile and validate. **No phone
+is visible in this fresh ADB inventory**, so there is no new physical-device pass.
+Historical exact Samsung/Radeon evidence below remains distinct. New-head OS CI,
+installer signing and fresh hardware execution require their own results.
+
+[Implemented review fixes and next gates](FOUNDATION_HARDENING.md) ·
+[Encrypted format and publication semantics](DATASET_FORMAT.md).
+
+## Community/enterprise licence transition — unreleased alpha.6
+
+The affected JVM/package check passes in **39 seconds**: 44 JVM cases, 42 passed,
+two unavailable-GPU skips, zero failures/errors; installDist, ZIP and TAR build.
+The actual installed CLI reports `0.1.0-alpha.6` and retains `hyperl/1`. Native
+CMake build/CTest passes two checks (CPU contract and Metal probe); fourteen
+packaging/qualification script checks pass. The Metal probe is availability
+evidence, not a newly qualified GPU.
+
+Actual ZIP/TAR inspection confirms ten licence/history/Python metadata files
+match current source. A Python wheel builds as `hyperl-experimental 0.1.0a6`, with
+`License-Expression: LicenseRef-HyperL-Community-1.0` and four accompanying files:
+LICENSE, NOTICE, Apache-2.0.txt and LICENSE_HISTORY.md. Each matches its package
+source; the original Apache text is byte-identical to pre-transition commit
+`67b30e09741f4bba1672a891644fc73abb1f9855`. No release/tag, historical alpha.5 asset,
+Meshlit grant or dependency licence is replaced. These local packages are not
+published installers, signing evidence or proof of legal enforceability.
+
+[Licence scope and legal-review limits](LICENSING.md) explain the free uses,
+group thresholds, six-calendar-month production trial and prior Apache rights.
+Qualified counsel review remains required before commercial enforcement. No
+automated check establishes patent clearance or every contributor's authority.
+
+The owner-authorized main ruleset is Active, targets only `main`, blocks deletion
+and force pushes, requires pull requests/resolved review conversations and eight
+strict GitHub Actions checks. No bypass actor or second-person approval is set;
+the single owner can merge their own checked PR. `dev` remains unprotected.
+The configuration does not merge a PR or change release/licence history.
+
+## Workbench themes and editor focus
+
+The actual `test installDist distZip` run succeeds in 1m41s: **44 JVM cases,
+42 passed, two unavailable-GPU skips, zero failures/errors**. The new GUI check
+switches the real component tree to Paper, verifies saved preferences, retains
+edited code/input, toggles editor Focus, and executes the real CPU result `[12]`.
+Actual Swing panel renders at 1360×840 were visually inspected in Graphite, Aurora,
+Paper and Focus. These are offscreen component renders, not native OS-window or
+GPU execution evidence. The current installers/release screenshots predate this UI
+increment; source packaging and installer publication are separate.
+
+## Physical Samsung GPU qualification
+
+The owner resumed single-phone GPU testing. The original ARM64 C++17 Vulkan host
+compiles with NDK 28.2.13676358/API 24 and `-Wall -Wextra -Werror`; all thirteen
+generated shaders compile and pass SPIR-V validation. On Samsung Galaxy A20s
+SM-A207F, Android 11/API 30, **Adreno 506 / Vulkan 1.1.128**, eleven finite-output
+cases pass CPU comparison and two explicitly dispatched overflow cases reject
+without publishing results. Completion and temporary-device cleanup are confirmed.
+[Full scope, hashes, commands and observations](ANDROID_VULKAN.md).
+
+Local required JVM/package check succeeds in 15s (`test` reuses the previously
+passing unchanged JVM suite; installDist/distZip execute). CMake/CTest: two pass.
+Script checks: fourteen pass, including eight new fail-closed metadata/integrity
+checks; these unit fixtures do not replace the actual phone evidence above.
+Initial ADB enumeration was empty because the session-started macOS daemon could
+not use USB interfaces. After the owner started ADB in normal Terminal and
+authorized the Samsung, the existing loopback client reached the real device.
+No permissions or root authorization were bypassed. No APK/JNI adapter, full
+model, sustained-load/thermal, CPU speedup or other mobile GPU is qualified.
+The published alpha.5 installers predate this test-runner increment.
+
+## Alpha.5 production-hardening candidate
+
+Local JVM/package checks pass in 48 seconds: **43 tests, 41 pass, two unavailable
+GPU tests skip, zero failures/errors**. Native C/Metal-probe CTest: **two pass**;
+the probe detects no GPU in the restricted agent shell. Script checks: **six pass**.
+Python/native preview: **ten tests, eight pass, two optional Torch checks skip**;
+the real shared C library and NumPy execute locally. The twelve-recipe test checks
+actual outputs, including dot/sum/energy, and ordered intermediate-overflow rejection.
+An initial Python test imported a library inventory under the existing binary-path
+variable name; this test-name collision was repaired before the passing rerun.
+
+New JVM checks cover full-graph admission before copies, actual recipe values,
+strict malformed-input rejection, capacity/deadline/cancellation and overflow.
+Coordination fixtures are explicitly identified; they do not qualify a backend.
+The C contract additionally rejects a nonfinite ordered partial sum without
+publishing a changed caller output. Language and native ABI remain version 1.
+
+The Intel macOS jpackage app image builds and its bundled-runtime CLI checks pass:
+capabilities/version, twelve library entries and weighted ReLU `[0,6,12]` with
+JAVA_HOME removed and PATH empty. Native DMG creation fails at `hdiutil create`
+in this restricted session. Earlier packaging attempts exposed macOS's positive
+version constraint and case-insensitive launcher collisions; both are fixed.
+OS-specific installer CI is separate evidence, recorded in release packaging
+reports. No native GUI, interactive install/uninstall, signing/notarization or new
+GPU qualification is inferred from the app image. Historical alpha.4 Radeon
+Terminal results remain exactly scoped in [their hardware report](A1990_METAL_VALIDATION.md).
+
+See [native installers](DESKTOP_INSTALLERS.md), [twelve-library use cases](USE_CASES.md)
+and [production/Meshlit gates](PRODUCTION_AND_MESHLIT_PLAN.md). The Meshlit source
+port is reviewed and tested separately in its own repository; phones remain paused.
+
+Alpha.5 native installers are now published. The immutable tag source is
+`d330d2bc46c427421c9d3dc04aec9ec2e9170b76`. All four
+[target package jobs](https://github.com/sabbirimon/HyperL/actions/runs/37721587473)
+pass; their initial publication step failed because it assumed flat artifact
+directories. The corrected collector reused the exact tagged artifacts and
+[publication recovery passes](https://github.com/sabbirimon/HyperL/actions/runs/37722682361).
+No tag or older release was replaced. All five published installer sizes/digests
+match their target-build reports. Windows/Linux/macOS source checks also pass at
+`fda4d92`, `d330d2b` and `415d7de`; workflow-only cleanup is separate from runtime
+qualification. The published `desktop-validation.json` and `SHA256SUMS` retain
+the complete per-target evidence. Interactive lifecycle/signing gates remain open.
+
+## Historical foundation evidence
+
 Actual local host: macOS/x86-64, Homebrew OpenJDK 21.0.12, Apple Clang 17,
 Gradle 9.4.1, Kotlin 2.4.10. No Android SDK is required by this standalone build.
 This evidence concerns HyperL standalone, not the separate Meshlit Android app.

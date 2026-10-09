@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hyperl-experimental"
-version = "0.1.0a4"
+version = "0.1.0a6"
 description = "Bounded experimental HyperL Python/C ABI bridge and preprocessing recipes"
 requires-python = ">=3.10"
-license = "Apache-2.0"
-license-files = ["LICENSE", "NOTICE"]
+license = "LicenseRef-HyperL-Community-1.0"
+license-files = ["LICENSE", "NOTICE", "Apache-2.0.txt", "LICENSE_HISTORY.md"]
 keywords = ["ai", "native", "cpu", "numpy", "pytorch", "hyperl"]
 dependencies = []
 

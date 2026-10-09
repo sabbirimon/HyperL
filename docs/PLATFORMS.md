@@ -7,7 +7,7 @@
 | Windows x86-64/ARM64 | JVM `.bat` launcher/installer; C SDK CMake/MSVC path | CI, actual native GUI/installer and accelerator tests |
 | Apple Silicon macOS | JVM/C source and macOS Metal host source preview | ARM64/Metal hardware runs, signing and package checks |
 | iOS/iPadOS | C API and Metal source suitable for native integration | Swift/Objective-C host, Xcode/device qualification, sandbox lifecycle and installable app/library |
-| Android ARM64/x86-64 | Portable C API and Vulkan/OpenCL source | JNI/NDK runtime/package, actual Adreno/Mali/Immortalis/Samsung/other driver checks. Desktop Swing is not an Android app |
+| Android ARM64/x86-64 | Portable C API and Vulkan/OpenCL source; ARM64 Vulkan qualification runner passes 11 outputs/two expected rejections on Galaxy A20s / Adreno 506 | App-UID JNI/runtime/package, broader f32/lifecycle/thermal tests, x86-64 and other OEM GPUs. Desktop Swing is not an Android app |
 | RISC-V/other CPUs | C99 source and versioned ABI; JVM tools where a supported JRE exists | Toolchain/ISA/ABI/float conformance, hardware execution and actual packages |
 | FPGA/embedded/RTOS/bare-metal | C core integration surface | Allocator/OS/driver/isolation adapters, toolchain and cancellation; no direct/kernel backend exists |
 
@@ -42,3 +42,12 @@ See [the hardware record](A1990_METAL_VALIDATION.md) and
 separate evidence.
 See [NVIDIA architecture/software coverage](NVIDIA_COMPATIBILITY.md) and the
 [full HyperL platform](SOFTWARE_STACK.md) for current versus future interfaces.
+
+## Android Vulkan experiment — 2026-10-08
+
+Owner-authorized single-phone tests now execute generated kernels on Samsung
+SM-A207F, Android 11/API 30, Adreno 506, Vulkan 1.1.128. Eleven outputs match the
+CPU reference; two overflow checks reject, with temporary files removed. This is
+an ADB-shell native runner, not Meshlit GPU integration or a phone installer.
+[Reproduce and inspect the scope](ANDROID_VULKAN.md). Other phone/cluster tests
+remain separate acceptance gates.

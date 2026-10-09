@@ -3,6 +3,50 @@ on: [push, pull_request]
 permissions:
   contents: read
 jobs:
+  native-sanitizers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strict native compiler and sanitizers
+        run: cmake -S . -B build/sanitizers -DCMAKE_BUILD_TYPE=Debug -DHYPERL_SANITIZERS=ON -DHYPERL_WARNINGS_AS_ERRORS=ON
+      - run: cmake --build build/sanitizers --parallel 2
+      - run: ctest --test-dir build/sanitizers --output-on-failure
+  android-vulkan-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Android command-line tools explicitly
+        # android-actions/setup-android v4; runner images need not expose sdkmanager.
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd
+        with:
+          cmdline-tools-version: '12266719'
+          accept-android-sdk-licenses: 'false'
+          packages: ''
+      - name: Explicit pinned Android qualification toolchain
+        run: sdkmanager --install 'ndk;28.2.13676358'
+      - name: Build the CLI and original Android Vulkan cases
+        run: |
+          ./gradlew --no-daemon installDist
+          python scripts/build_android_vulkan.py \
+            --ndk "$ANDROID_HOME/ndk/28.2.13676358" \
+            --cli "$PWD/build/install/hyperl/bin/hyperl" \
+            --output "$PWD/build/android-vulkan"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-vulkan-build-not-device-tested
+          path: build/android-vulkan
   check:
     strategy:
       fail-fast: false
@@ -22,11 +66,17 @@ jobs:
       - run: ctest --test-dir build/native -C Release --output-on-failure
       - name: JVM checks and distribution
         shell: bash
-        run: ./gradlew --no-daemon test distZip
+        run: ./gradlew --no-daemon test installDist distZip
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s scripts -p "test_*.py" -v
+      - name: Independent distributed CPU workers and trusted TLS
+        shell: bash
+        run: |
+          launcher=build/install/hyperl/bin/hyperl
+          if [[ "$RUNNER_OS" = Windows ]]; then launcher="$launcher.bat"; fi
+          python scripts/qualify_distributed.py --cli "$launcher" --output build/distributed-qualification.json
       - name: Pinned optional NumPy bridge checks
         run: python -m pip install numpy==2.3.3
       - name: Pinned PyTorch CPU bridge dependency
@@ -34,6 +84,10 @@ jobs:
         run: python -m pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cpu
       - name: Install local Python preview
         run: python -m pip install ./python
+      - name: Pinned local wheel build tools
+        run: python -m pip install setuptools==80.9.0 wheel==0.45.1
+      - name: Generated contract consistency
+        run: python scripts/generate_contract.py --check
       - name: Actual Python native and tensor bridge checks
         shell: bash
         run: |
@@ -43,8 +97,22 @@ jobs:
           libraries = [p.resolve() for p in Path('build/native').rglob('*hyperl_cpu_runtime*') if p.is_file() and p.suffix in ('.dll', '.dylib', '.so')]
           assert len(libraries) == 1, libraries
           subprocess.run([sys.executable, 'python/tests/test_preview.py', '--library', str(libraries[0]), '-v'], check=True)
+          launcher = Path('build/install/hyperl/bin/hyperl' + ('.bat' if sys.platform == 'win32' else '')).resolve()
+          subprocess.run([sys.executable, 'python/tests/test_conformance.py', '--library', str(libraries[0]), '--cli', str(launcher), '-v'], check=True)
+          subprocess.run([sys.executable, 'scripts/build_native_wheel.py', '--library', str(libraries[0]), '--output', str(Path('build/wheels').resolve())], check=True)
+          import os, venv
+          environment = Path('build/wheel-smoke').resolve()
+          venv.EnvBuilder(with_pip=True).create(environment)
+          python = environment / ('Scripts/python.exe' if sys.platform == 'win32' else 'bin/python')
+          wheel, = Path('build/wheels').glob('*.whl')
+          environment_vars = {**os.environ, 'SYSTEM_VERSION_COMPAT': '0'}
+          subprocess.run([str(python), '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheel.resolve())], check=True, env=environment_vars)
+          subprocess.run([str(python), '-I', 'python/tests/test_bundled.py', '-v'], check=True, env=environment_vars)
           PYTHON
       - uses: actions/upload-artifact@v4
         with:
           name: hyperl-${{ matrix.os }}
-          path: build/distributions/*.zip
+          path: |
+            build/distributions/*.zip
+            build/wheels/*.whl
+            build/distributed-qualification.json
