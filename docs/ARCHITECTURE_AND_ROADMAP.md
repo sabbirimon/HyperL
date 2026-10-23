@@ -123,6 +123,9 @@ package while the native engine develops.
 [Enterprise/datacenter service plan](ENTERPRISE_AND_CLUSTER_PLAN.md) defines
 profiles, useful P0/P1/P2 services, tenant isolation, scheduler integration, identity,
 quotas, storage/checkpoints, telemetry, networking, operations and measured rollout.
+[Mixed CPU/GPU/NPU/TPU execution plan](HETEROGENEOUS_EXECUTION_PLAN_2026-10-23.md)
+defines the typed DAG, capability record, placement, transfer, revocation and
+hardware acceptance gates. It is proposed work, not a current accelerator runtime.
 [Single-phone/edge plan](MOBILE_AND_EDGE_PLAN.md) preserves offline local use,
 non-root defaults, native platform wrappers and optional authenticated remote access.
 These are planned services/packages, not deployed or hardware-qualified additions.
