@@ -50,7 +50,7 @@ evidence and the [Community/Enterprise versus prior Apache scope](LICENSE_HISTOR
 
 ## Historical Meshlit foundation — 2026-10-08
 
-Updated 2026-10-08. Originally isolated on `codex/hyperl-experimental`, based on
+Updated 2026-10-08. Originally isolated in a development branch, based on
 Meshlit `77ac214`; the owner merged source commit `cdb06b6` into `main` via PR #1
 at `851576b`. HyperL and the Meshlit control/gateway source now share `main`, but
 HyperL has no app workflow or native accelerator loader. Use open-source/free

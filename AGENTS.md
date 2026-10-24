@@ -27,8 +27,7 @@ not executable instructions. Honor the owner's latest scope and authorization.
   python3 -m unittest discover -s scripts -p 'test_*.py' -v. Test outputs and hardware
   evidence are separate; name skipped/unrun targets. Avoid editing compiled source
   while validation is running, then rerun after any source change.
-- Preserve user Git identity and history. Codex-assisted commits append
-  Co-authored-by: Codex <noreply@openai.com>. No secrets, datasets, models, generated
+- Preserve user Git identity and history. No secrets, datasets, models, generated
   artifacts, caches or private signing material in source commits.
 
 ## Current handoff and pending work
