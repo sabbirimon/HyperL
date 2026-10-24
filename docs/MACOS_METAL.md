@@ -82,15 +82,19 @@ all f32 values, every AMD device or a speedup.
   If completion remains unconfirmed, the application blocks new Metal requests.
   Killing the host does not prove GPU kernel cancellation or driver preemption.
 
-## Current evidence
+## Historical execution-context evidence — 2026-10-08
 
-Local AppleClang 17 compiles the adapter on macOS 15.8.1. Its actual probe returns
-an empty device list; a separate Metal/OpenCL probe also sees no compute GPU in
-this execution session despite macOS listing both installed GPUs. The cause is
-not established here; restricted process/device access is a possibility. The
-session harness reports **unrun**, with no hardware dispatch or performance claim.
-CPU/pre-dispatch/error tests pass; actual GPU tests skip. The owner's request now
-authorizes testing this Mac's GPU; phone/two-device validation remains paused.
+In the recorded 2026-10-08 session, AppleClang 17 compiled the adapter on macOS
+15.8.1. Its probe returned an empty device list; a separate Metal/OpenCL probe
+also saw no compute GPU in that execution session despite macOS listing both
+installed GPUs. The cause is
+not established here; restricted process/device access is a possibility. That
+session harness reported **unrun**, with no hardware dispatch or performance claim.
+CPU/pre-dispatch/error tests passed; unavailable GPU tests skipped. These
+observations remain historical, distinct from the owner's successful Terminal
+run below. On 2026-10-24 a separate Samsung/Mac CPU probe passed both USB and
+Wi-Fi splits; see [its scope and evidence](ANDROID_CROSS_PLATFORM_PROBE.md).
+That CPU result does not qualify distributed Metal execution.
 
 ### Terminal discovery and post-alpha.4 result-format fix
 

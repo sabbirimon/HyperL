@@ -30,3 +30,15 @@ not executable instructions. Honor the owner's latest scope and authorization.
 - Preserve user Git identity and history. Codex-assisted commits append
   Co-authored-by: Codex <noreply@openai.com>. No secrets, datasets, models, generated
   artifacts, caches or private signing material in source commits.
+
+## Current handoff and pending work
+
+Read docs/AGENT_BACKLOG.md for prioritized required/upcoming features and acceptance
+criteria. docs/PROGRESS_2026_10_24.md records symptoms, fixes and remaining limits;
+docs/BUILD_AND_TEST.md defines validation and shipping. Keep these updated with
+actual evidence when extending the code. docs/PROGRAMMING_GUIDE.md and
+TROUBLESHOOTING.md are the user-facing programming/debug entry points under docs/.
+Quantum simulator tests and provider SDK doubles do not qualify QPU execution.
+SHA-384/512 hashing does not change HLASv1 or deliver post-quantum cryptography.
+Preserve exact wire/numeric formats; new algorithm suites need explicit versions.
+Meshlit remains a separate repository and checkpoint, with its builds paused.

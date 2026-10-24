@@ -18,3 +18,14 @@ credit; the template is not evidence anyone signed.
 
 Licensing and contribution questions: sabbirimon@gmail.com.
 Do not send credentials or private datasets.
+
+## Implementation and documentation workflow
+
+Start with the [programming guide](docs/PROGRAMMING_GUIDE.md),
+[build/test runbook](docs/BUILD_AND_TEST.md), and
+[pending-feature handoff](docs/AGENT_BACKLOG.md). Record each fix's symptom, cause,
+regression check and remaining target limits in the progress/validation documents.
+Keep historical measurements and licensing records intact. For debugging, use
+[the troubleshooting guide](docs/TROUBLESHOOTING.md) and submit redacted minimal
+reproducers. A provider mock, device inventory or emitted kernel is not hardware
+execution evidence.

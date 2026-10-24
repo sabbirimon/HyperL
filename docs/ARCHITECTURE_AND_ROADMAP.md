@@ -36,8 +36,10 @@ Alpha.6 includes an experimental JDK transport/orchestration prototype:
 [authenticated split/map/gather workers](DISTRIBUTED_EXECUTION.md), per-domain
 admission and ordered terminal reduction, with explicit CPU/checked OpenCL/Metal
 adapters. Two independent JVM workers and trusted/untrusted TLS were tested on one
-Mac, with separate OS CI evidence. This is actual process execution; physical
-multi-device/mixed-accelerator execution and durable fleet recovery remain unqualified.
+Mac, with separate OS CI evidence. A separate foreground Android probe also passes
+fixed Samsung ARM64/Mac x86-64 CPU vector splits over wired and Wi-Fi TLS;
+[physical evidence](ANDROID_CROSS_PLATFORM_PROBE.md) is narrowly scoped. Mixed
+accelerators, general planner dispatch and durable fleet recovery remain unqualified.
 
 ### Sharding priority update — 2026-10-24
 
@@ -59,6 +61,15 @@ generated cross-language contracts, HLM2 dataset rotation, Android Vulkan eviden
 and alpha.5 packaging; these are inherited foundations, not new work in this plan.
 New orchestration retains the [Community/Enterprise licence scope](LICENSE_HISTORY.md)
 alongside earlier Apache grants. The older broad list below remains the platform roadmap.
+
+Supercomputer and hyperscale workloads are primary targets in the
+[precision/HPC plan](PRECISION_AND_HPC_PLAN.md). Current graphs remain f32; compensated
+binary64 summation still returns f32. Typed f64, BF16, binary128 and arbitrary
+binary/decimal engines need separate implementation and numerical gates.
+The [quantum prototype](QUANTUM_EXTENSION_PLAN.md) adds separate bounded Python
+circuits, classical simulation and optional SDK bridges, including
+[OriginQ](ORIGINQ_ADAPTER.md). No QPU execution, quantum advantage or change to the
+f32 vector ABI follows from those bridges.
 
 1. **Standalone foundation (this alpha):** desktop CLI/GUI, CPU contracts, C ABI,
    source emission, memory-aware CPU admission and headroom observation,

@@ -9,13 +9,39 @@ formal certification is implied.
 
 | Need | Implemented operation | What it establishes |
 | --- | --- | --- |
-| Detect a byte change | Streamed SHA-256 | A digest comparison; an untrusted digest alone does not establish origin |
+| Detect a byte change | `HyperLHashes.hash`, JCA SHA-256 default or explicit SHA-384/SHA-512 | A digest comparison; an untrusted digest alone does not establish origin |
 | Authenticate artifact metadata and bytes | `HyperLArtifactSignatures.sign` / `verify`, Ed25519 plus SHA-256 | Integrity relative to an independently trusted public key and expected identity/context |
 | Inspect signed metadata only | `verifyManifest` | Signature, expected identity/context and declared-size validation; artifact bytes are not read |
 | Encrypt a local dataset | `keygen`, `data-import`, `data-export`, AES-256-GCM | Confidentiality and integrity of the stored chunks/manifest relative to the secret dataset key |
 
 Signatures do not encrypt artifacts. AES-GCM dataset keys are not Ed25519 keys.
 Neither operation starts a worker, installs a plugin or authorizes execution.
+
+## Separate SHA-384 and SHA-512 artifact hashing
+
+```kotlin
+import java.nio.file.Path
+import org.hyperl.HyperLHashAlgorithm
+import org.hyperl.HyperLHashes
+
+suspend fun hashArtifact(source: Path) = HyperLHashes.hash(
+    source, 64L * 1024 * 1024, HyperLHashAlgorithm.SHA512
+)
+```
+
+The result contains `algorithm`, observed `bytes` and lowercase `hexDigest`.
+Omitting the algorithm selects SHA-256; SHA-384 and SHA-512 must be selected
+explicitly. `HyperLHashAlgorithm.fromIdentifier` accepts only `SHA-256`, `SHA-384`
+and `SHA-512`; unsupported names or unavailable JCA algorithms fail without fallback.
+Each call streams 64 KiB buffers, requires an existing regular file, rejects a
+symlink at the final path component and enforces a caller quota from zero to 4 TiB.
+Zero allows only an empty file. Cancellation is checked between reads and before
+returning; blocking filesystem/JCA calls need not stop immediately. Trusted parent
+directories and control of the file after hashing remain the caller's responsibility.
+This API does not change HLAS v1, HLM2, worker digests or their wire contracts.
+Longer hashes are not encryption, trusted signatures or post-quantum key exchange.
+See [the cryptography evolution plan](CRYPTOGRAPHY_EVOLUTION_PLAN.md) for the
+ML-KEM/ML-DSA/SLH-DSA provider gates and explicit versioned migration rules.
 
 ## Ed25519 artifact API
 
@@ -171,6 +197,12 @@ rotation, malformed authenticated records and corruption rejection. Consult
 [validation](VALIDATION.md) for runs actually completed and
 their exact source scope. Test coverage is not a security audit, hardware-provider
 qualification, side-channel evaluation or certification. General crypto operators,
-complex-number math, full model sharding and production fleet identity/key
+typed complex vector operators, full model sharding and production fleet identity/key
 management remain separate milestones. Existing bounded TLS worker transport
 has its own tests and independent-host/hardware acceptance gates.
+
+The separate [quantum simulator/provider interfaces](QUANTUM_EXTENSION_PLAN.md)
+do not replace these cryptographic algorithms or add a post-quantum cryptography
+implementation. Simulator complex values are computational state, not secret-key
+storage or a general-purpose crypto primitive. See the
+[programming guide](PROGRAMMING_GUIDE.md) for the distinct API boundaries.

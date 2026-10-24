@@ -20,7 +20,7 @@ first correct result and usable local tools before introducing entire IDE servic
 | Version control | Source is a normal Git project usable with existing installed Git/IDE tools | Optional reviewed Git diff/history panel; commit/push remain explicit owner actions |
 | Terminal/package tools | Use existing independently installed terminal/build tools manually | Scoped executable/workspace allowlists, command previews, bounded jobs and package/license provenance |
 | API/AI helpers | No chat/provider accounts or automatic code changes added | Optional owner-configured assistant/provider, reviewable diffs, tests and separate agent grants; secrets never in source/prompts |
-| Cluster/remote development | CLI profile validation and explicitly authenticated node probe | Approved workspaces/nodes, leases, remote build caches, result provenance and Stop acknowledgments |
+| Cluster/remote development | CLI profile validation, authenticated node probes and bounded distributed vector execution | Durable jobs, remote build caches, tenant isolation and production Stop acknowledgments |
 | Documentation/onboarding | Packaged install/programming/memory/UI guides and examples | Searchable offline API reference, tutorials, generated SDK docs and migration/conformance guides |
 
 ## Implementation order
@@ -48,3 +48,8 @@ unknown. A high-quality UI explains a failure and the next concrete step.
 
 [Code diagnostics](CODE_DIAGNOSTICS.md) records the implemented bounded local
 analysis, contextual suggestions, sample overflow detection and review-only fixes.
+The [programming guide](PROGRAMMING_GUIDE.md) separates runnable vector, precision
+and quantum examples. Python quantum simulation and provider bridges are separate
+APIs; the workbench has no quantum compiler/debugger/provider panel. Optional SDK
+bridges have contract-double tests; actual SDK/QPU qualification remains unperformed.
+See [quantum extension scope](QUANTUM_EXTENSION_PLAN.md) for the planned lifecycle tools.

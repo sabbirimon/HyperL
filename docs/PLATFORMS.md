@@ -7,7 +7,7 @@
 | Windows x86-64/ARM64 | JVM `.bat` launcher/installer; C SDK CMake/MSVC path | CI, actual native GUI/installer and accelerator tests |
 | Apple Silicon macOS | JVM/C source and macOS Metal host source preview | ARM64/Metal hardware runs, signing and package checks |
 | iOS/iPadOS | C API and Metal source suitable for native integration | Swift/Objective-C host, Xcode/device qualification, sandbox lifecycle and installable app/library |
-| Android ARM64/x86-64 | Portable C API and Vulkan/OpenCL source; ARM64 Vulkan qualification runner passes 11 outputs/two expected rejections on Galaxy A20s / Adreno 506 | App-UID JNI/runtime/package, broader f32/lifecycle/thermal tests, x86-64 and other OEM GPUs. Desktop Swing is not an Android app |
+| Android ARM64/x86-64 | Portable C API and Vulkan/OpenCL source; ARM64 Vulkan qualification runner passes 11 outputs/two expected rejections on Galaxy A20s / Adreno 506; separate foreground debug APK passes local CPU and fixed desktop splits | Production package, native JNI/runtime, broader f32/lifecycle/thermal tests, x86-64 and other OEM GPUs. Desktop Swing is not an Android app |
 | RISC-V/other CPUs | C99 source and versioned ABI; JVM tools where a supported JRE exists | Toolchain/ISA/ABI/float conformance, hardware execution and actual packages |
 | FPGA/embedded/RTOS/bare-metal | C core integration surface | Allocator/OS/driver/isolation adapters, toolchain and cancellation; no direct/kernel backend exists |
 
@@ -22,6 +22,15 @@ Kirin HiAI, MediaTek NeuroPilot/Neuron and Apple Core ML/ANE are separate SDK/pr
 milestones. XRING public NPU SDK availability remains unverified. NPUs are not
 generic device GPUs. SDK detection, free research access and source emission are
 not license/redistribution grants or inference qualification.
+
+The [Android CPU probe](ANDROID_CROSS_PLATFORM_PROBE.md) qualifies Samsung ARM64
+with a Mac x86-64 worker over wired/Wi-Fi TLS; it is not general mixed-accelerator
+or mobile production support. [Higher precision/HPC](PRECISION_AND_HPC_PLAN.md)
+requires per-dtype/operator/backend evidence. The separate
+[quantum prototype](QUANTUM_EXTENSION_PLAN.md) includes classical Python simulation
+and optional SDK routes; no physical QPU or all-platform provider SDK support is
+qualified. [OriginQ](ORIGINQ_ADAPTER.md) additionally requires its pinned SDK and an
+explicit approved HTTPS endpoint.
 
 ## First standalone CI result
 

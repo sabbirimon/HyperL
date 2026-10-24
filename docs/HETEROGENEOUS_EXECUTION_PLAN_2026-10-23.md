@@ -15,6 +15,13 @@ failure recovery and evidence gates. It is the implementation plan for this
 increment; the platform rows below remain qualification tracks, not delivered
 mixed-accelerator support.
 
+Enterprise/supercomputer profiles are primary targets; see the
+[precision/HPC plan](PRECISION_AND_HPC_PLAN.md) for future f64/BF16/binary128 and
+arbitrary-precision contracts. Current f32 graphs and the compensated-sum helper
+are not those engines. [Quantum circuits and SDK routes](QUANTUM_EXTENSION_PLAN.md)
+form a separate hybrid-workflow boundary; a classical simulator or provider bridge
+does not qualify a QPU as a vector worker or create cross-device quantum connectivity.
+
 - Preserve the fixed physical Samsung ARM64/Mac x86-64 CPU probe and extend
   independent-host execution with general placement and durable recovery;
   then prove a real model's layers/state split across devices. Replicated model

@@ -40,6 +40,10 @@ Approximate GPU shards cannot participate in this reduction contract. Partial su
 rounding/overflow behavior. Internal reductions, broadcasting, tensors, matmul,
 attention, model layers and all-reduce are not delivered. Meshlit's separate
 llama.cpp model/RPC pipeline is not HyperL's vector runtime.
+The separate Python quantum circuit/provider interfaces also remain outside
+`hyperl-shard/1`: counts, quantum states and provider jobs are not f32 shard payloads.
+See [quantum scope](QUANTUM_EXTENSION_PLAN.md) and the
+[precision plan](PRECISION_AND_HPC_PLAN.md) before designing a new typed wire contract.
 
 The coordinator owns its input snapshot/output. Each worker owns temporary
 buffers under application credit leases. There is no cross-device pointer,
@@ -152,3 +156,6 @@ and [cancellable HTTP exchanges](https://docs.oracle.com/en/java/javase/21/docs/
 Memory metadata follows [OpenCL device observations](https://registry.khronos.org/OpenCL/specs/unified/refpages/man/html/clGetDeviceInfo.html)
 and [Metal working-set recommendations](https://developer.apple.com/documentation/metal/mtldevice/recommendedmaxworkingsetsize).
 See [validation](VALIDATION.md) for actual qualification.
+The [programming guide](PROGRAMMING_GUIDE.md) collects current API/CLI examples;
+[Samsung/Mac probe evidence](ANDROID_CROSS_PLATFORM_PROBE.md) records one fixed
+CPU split over USB forwarding and direct Wi-Fi, with no general fleet-speedup claim.

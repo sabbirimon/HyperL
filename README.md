@@ -11,7 +11,7 @@
 [![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
-[Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
+[Documentation](docs/README.md) · [Programming & diagrams](docs/PROGRAMMING_GUIDE.md) · [Debugging](docs/TROUBLESHOOTING.md) · [Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
 </div>
 
@@ -60,6 +60,22 @@ These changes are not yet part of the published alpha.5 installers.
 
 Created by **Sabbir Hassan Imon (IMON)** with Codex assistance. HyperL is independent;
 [Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
+
+## New programming and operations guides
+
+Start with the [detailed programming guide](docs/PROGRAMMING_GUIDE.md) for JSON,
+Python, C, workers and quantum circuits, including flow and sequence diagrams.
+[Build/test](docs/BUILD_AND_TEST.md) · [Troubleshoot](docs/TROUBLESHOOTING.md) ·
+[Progress and fixes](docs/PROGRESS_2026_10_24.md) · [Pending features](docs/AGENT_BACKLOG.md).
+
+The Python package now includes a bounded, dependency-free classical quantum
+simulator and optional IBM, Google Engine, Azure IonQ and OriginQ submission
+bridges. Simulator tests execute actual local math; provider tests use SDK doubles.
+No physical QPU or live cloud service is qualified. OriginQ requires explicit
+HTTPS configuration. [Quantum API and limits](docs/QUANTUM_EXTENSION_PLAN.md).
+Explicit SHA-384/SHA-512 hashing joins default SHA-256; Ed25519 signatures and
+AES-GCM datasets retain their existing formats. [Crypto API](docs/CRYPTOGRAPHY.md) ·
+[Post-quantum migration plan](docs/CRYPTOGRAPHY_EVOLUTION_PLAN.md).
 
 ## Why build HyperL?
 
@@ -166,6 +182,8 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
 | Optional GPU | Explicit OpenCL/macOS Metal hosts; four bounded Metal cases passed on AMD Radeon Pro 560X, with CPU verification and expected overflow rejection. Other GPUs and full models need separate qualification |
 | Android GPU experiment | Samsung Galaxy A20s / Adreno 506 executes generated Vulkan kernels: 11 CPU-verified outputs and two expected overflow rejections. Native test runner; Meshlit GPU wiring and mobile installers remain separate. [Build and evidence](docs/ANDROID_VULKAN.md) |
+| Quantum experiments (alpha.6) | Bounded local classical simulator; optional SDK submission bridges with scoped opt-in; no live QPU qualification |
+| Cryptographic integrity (alpha.6) | JCA SHA-256/384/512 hashing and Ed25519 artifact signatures; caller-managed trust and keys |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication; alpha.6 adds typed HLM2 records, grouped chunks and explicit rekey |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Earlier inventory validator; separate alpha.6 execution dispatches real bounded shards to explicitly configured workers |
@@ -321,16 +339,16 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local integrated alpha.6 checks: **82 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
-native CTest **three passes (CPU contract, seeded stress and Metal discovery)** and Python scripts **eighteen passes**. GUI checks execute the real
+Local integrated alpha.6 checks: **87 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **three passes (CPU contract, seeded stress and Metal discovery)** and Python scripts **53 passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Current local JVM checks - 84 cases
-    "Passed" : 82
+    title Current local JVM checks - 89 cases
+    "Passed" : 87
     "Skipped - GPU unavailable" : 2
 ```
 

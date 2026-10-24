@@ -82,6 +82,9 @@ nowMs)` is a pure pair-level admission precursor. Its bounded inputs identify
 exact feature/protocol/version/workload tuples, approved adapter descriptors,
 driver revisions, operator coverage and fresh evidence in both lane directions.
 FPGA/ASIC offers additionally identify firmware and configuration artifacts.
+The current FPGA gate requires `FPGA_VENDOR`; an ASIC offer cannot use CPU or
+FPGA targets as its claimed backend. An applicable existing backend still needs
+independent qualification for that ASIC's exact workload and firmware.
 
 The caller's local implementation registry supplies `implementedRequests`.
 Advertisements cannot add executable features to that registry. A decision returns
@@ -89,6 +92,10 @@ an eligible candidate or a reason it was blocked. `executionActivated=false` and
 `resourceReservationGuaranteed=false` remain explicit. Caller-supplied
 `qualified=true` and `identityVerified=true` are trusted inputs, not cryptographic
 verification performed by this function.
+Candidates retain exact left/right offer snapshots, including artifact, driver,
+firmware/configuration identities, plus both directed lane observations. Dispatch
+must compare these snapshots with current state; matching adapter/lane IDs alone
+does not prove that a changed artifact or configuration is still qualified.
 
 Integration excerpt (the variables come from the owner's verified registry):
 
@@ -143,3 +150,9 @@ domains and meaningful cancellation. An extension can add candidates without
 silently changing existing programs. Basic CPU operations remain independent of
 optional vendor SDK installation. The current test hardware does not establish
 FPGA, ASIC, RDMA, NVLink, CXL or production cluster operation.
+
+Quantum providers use a separate circuit/job/result boundary and explicit account
+approval; pairing or fabric negotiation never enables a QPU. The current Python
+SDK bridges have contract-double tests, not installed SDK or hardware qualification.
+See [quantum scope](QUANTUM_EXTENSION_PLAN.md), [precision/HPC](PRECISION_AND_HPC_PLAN.md)
+and the [programming guide](PROGRAMMING_GUIDE.md).

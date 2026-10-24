@@ -1,5 +1,10 @@
 # Local CPU baseline — 2026-10-08
 
+Historical benchmark snapshot; reviewed 2026-10-24 without replacing measurements.
+Later [Samsung/Mac CPU split measurements](ANDROID_CROSS_PLATFORM_PROBE.md) use a
+different workload size, runtime and timing scope and must not be merged into
+this table. See [current validation](VALIDATION.md) for source acceptance.
+
 A real Release C build on macOS 15.8.1/x86-64, AppleClang 17, Python 3.12.4
 and NumPy 2.3.3 executes finite f32 multiply then ReLU. The CPU brand query is
 unavailable under this session's permissions and is recorded as unknown. Each

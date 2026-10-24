@@ -2,11 +2,20 @@
 
 Owner clarification, 2026-10-08 (Asia/Dhaka): HyperL must remain useful on a single
 phone as well as enterprise clusters. Standalone desktop Java CLI/GUI is implemented;
-Android/iOS native app installation remains future work. An ARM64 native Vulkan
+Production Android/iOS native packages remain future work. An ARM64 native Vulkan
 qualification experiment now runs listed kernels on the owner's Adreno 506;
 [actual results and limits](ANDROID_VULKAN.md) are separate from app integration.
 The separate Meshlit Android project can become a client; it is not proof that the
 standalone HyperL release can already be installed as a phone app.
+
+**2026-10-24 checkpoint:** a separate foreground HyperL debug probe APK is now
+installed and tested on Samsung ARM64. Local CPU checks and fixed 32,768-element
+splits with a Mac x86-64 worker pass over wired and Wi-Fi TLS. See the
+[reproducer and limits](ANDROID_CROSS_PLATFORM_PROBE.md). This is not Meshlit
+integration, an iOS package, background availability or full-model sharding.
+Enterprise/supercomputer workloads remain primary targets under the
+[precision/HPC plan](PRECISION_AND_HPC_PLAN.md); edge clients must reject unsupported
+precision rather than silently reduce it.
 
 | Mode | Planned behavior | Required evidence |
 |---|---|---|

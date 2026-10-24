@@ -26,6 +26,10 @@ the historical Meshlit table later in this document is not current standalone st
 | Secure operation and complex mathematics | Preserve generated contracts, compensated CPU reduction, HLM2 encryption/rekey and token/TLS workers; add matrix/complex-number/provider contracts, artifact signing and durable identity/revocation |
 | Fast execution | Measure complete workload latency/throughput/energy against a qualified baseline; capacity gains and arithmetic microkernel speed do not imply total speedup |
 | Dedicated enterprise/hyperscaler clusters | Primary deployment target with tenant quotas/isolation, headless services, hierarchical scheduling, recovery and measured fleet gates; current evidence is two physical CPUs |
+| Standalone programming, build and debug manuals | [Programming diagrams](PROGRAMMING_GUIDE.md), [build runbook](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md) and [progress record](PROGRESS_2026_10_24.md); future work stays in [agent backlog](AGENT_BACKLOG.md) |
+| Quantum including Chinese providers | Local bounded simulator and optional IBM/Google/Azure/OriginQ bridges implemented; SDK doubles tested, physical QPUs unqualified; [scope](QUANTUM_EXTENSION_PLAN.md) |
+| Stronger hashing and future cryptography | Explicit JCA SHA-384/SHA-512 added; Ed25519/AES-GCM preserved; standardized PQC provider migration remains [planned](CRYPTOGRAPHY_EVOLUTION_PLAN.md) |
+| General/special-purpose compute | Application-level program, numeric, target and quota policies; no invented profile execution flag |
 | Ultra-large datasets and high precision | Bounded streaming/partitioned storage/resume/spill, plus explicit FP64 and optional arbitrary-precision providers; current f32 graphs and compensated sum do not establish those future capabilities |
 
 This increment adds local plan validation/explanation and a separately scoped

@@ -15,8 +15,9 @@ It contains:
   actual original C99 bounded DAG with owned f32 input copies/output and cancellation.
 - `Program`/`Step` and import of the existing `hyperl/1` dictionary shape. Python
   package import does not load a native library or optional framework automatically.
-- Three reusable native preprocessing helpers: `weighted_relu`, `residual_relu` and
-  `positive_sum`. These are vector recipes, not training/inference models or crypto.
+- Reusable native preprocessing helpers, expanded from the original three to twelve
+  recipes; [the recipe catalogue](USE_CASES.md) lists the current exports. These are
+  vector recipes, not training/inference models or crypto.
 - Explicit NumPy/CPU PyTorch conversion in both directions: bounded contiguous 1-D
   native-endian float32, independent copies, no silent dtype/device/shape conversion.
 - Optional `TorchBackend(reference, "cpu" | "cuda:index")`: real installed PyTorch
@@ -147,6 +148,20 @@ GPU operations. Python reports unavailable when an older selected native library
 lacks the optional symbol. [Foundation contract and tests](FOUNDATION_HARDENING.md)
 and [measured CPU scopes](CPU_BENCHMARK.md) distinguish current evidence from plans.
 No PyPI package publication, vendor driver or full tensor/model engine is provided.
+
+## Separate quantum Python interfaces
+
+The bounded `hyperl.quantum` circuit contract has an actual local standard-library
+state-vector simulator. Optional provider modules expose IBM Qiskit Runtime,
+Google Cirq/approved Engine and Azure IonQ JSON paths, with explicit caller-owned
+clients, expiring provider/target permission and no wrapper-level submission retry.
+SDK-double contract tests do not qualify installed SDKs or physical QPUs. Quantum
+programs/results are separate from native f32 arrays and `TorchBackend`; there is
+no automatic tensor-to-circuit conversion or generic QIR importer. See the
+[programming guide](PROGRAMMING_GUIDE.md) and [quantum scope](QUANTUM_EXTENSION_PLAN.md).
+The [precision plan](PRECISION_AND_HPC_PLAN.md) records future f64/BF16/binary128 and
+typed complex numerical work; the simulator's binary64 complex state does not
+establish those vector-runtime types or native 128-bit arithmetic.
 
 ## Compatibility dimensions
 

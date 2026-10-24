@@ -65,6 +65,8 @@ graphs use ordered f32; the separate compensated sum uses binary64 accumulation
 followed by finite f32 output. It is not an arbitrary-precision engine. Next tracks:
 
 - FP64 operations with actual backend/operator coverage, reproducibility and error tests.
+- Binary128 and explicit BF16/mixed-precision tracks with distinct storage,
+  compute, accumulation, output and wire types; BF16 is reduced precision.
 - Optional decimal/arbitrary-precision reference providers with requested digits,
   rounding modes, bounded intermediates and deterministic serialization.
 - Numerically stable reductions and linear algebra; report conditioning/error
@@ -76,6 +78,16 @@ High precision can multiply storage, transfer and compute costs. Admission and
 placement must account for bytes per element and precision-specific benchmarks.
 Both precision and large-data claims require complete reference-checked workloads,
 failure recovery and measured resource use, not an aggregate memory/FLOPS total.
+The [precision/HPC implementation gates](PRECISION_AND_HPC_PLAN.md) prioritize
+typed admission and an f64 CPU baseline before qualified native acceleration.
+Supercomputer jobs select accuracy, latency, throughput or capacity objectives
+without silently lowering the accepted precision.
+
+Quantum work is a separate asynchronous workflow type. The
+[bounded Python simulator and SDK bridges](QUANTUM_EXTENSION_PLAN.md), including
+[OriginQ](ORIGINQ_ADAPTER.md), do not provide a production quantum job ledger or
+physical QPU qualification. Provider budgets, durable reconciliation, region scope
+and cancellation acknowledgments remain enterprise gates.
 
 Use owner-approved Rust cluster services and C/C++ kernels/adapters, linked by a
 versioned C ABI; see [native performance decision](NATIVE_PERFORMANCE_ARCHITECTURE.md).
@@ -268,6 +280,7 @@ acceptance specification for these packages:
    Larger fleet tests follow the measured rollout gates above. Dynamic explanation
    views display actual placement/bottlenecks and mark unavailable measurements.
 
-Real-device tests remain paused at the owner's request. No live enterprise, cloud
-provider or SSH test host has been provided. Finish schema/local unit fixtures first;
-keep physical/mobile/GPU/multi-host acceptance pending until infrastructure exists.
+The fixed Android/desktop CPU probe and listed Radeon/Adreno cases have separate
+physical evidence. No production enterprise fleet or physical QPU is qualified.
+Extend those bounded results through the independent-host, recovery and scale
+gates above; fixtures and configured node limits cannot substitute for deployment tests.

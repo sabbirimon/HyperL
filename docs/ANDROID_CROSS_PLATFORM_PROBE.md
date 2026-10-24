@@ -10,6 +10,10 @@ to an explicitly provisioned desktop CPU worker. It uses the existing
 new `shard-plan` cost estimator. The test uses a fixed half-and-half split, not the
 estimator's placement algorithm.
 
+The dated APK hashes and measurements in this guide are preserved snapshots.
+Later negotiation, cryptography or [quantum Python](QUANTUM_EXTENSION_PLAN.md)
+source additions do not retroactively become capabilities of that tested APK.
+
 ## 1. Exact scope
 
 | Item | Contract |
@@ -264,8 +268,10 @@ guard code unchanged; the guard UI checks above were not repeated on the final
 APK. Its separate report-retention check compared the saved wired split report
 byte-for-byte after a later local check and passed.
 
-The harness verification suite has four cases; the full Python script suite has
-eighteen passing cases. Those fixture tests remain separate from phone evidence.
+At this historical qualification checkpoint, the harness verification suite had
+four cases and the full Python script suite had eighteen passing cases. Those
+counts remain part of the recorded checkpoint; see [current validation](VALIDATION.md)
+for later source/test additions. Fixture tests remain separate from phone evidence.
 
 ### Final APK and local CPU check — 2026-10-24
 

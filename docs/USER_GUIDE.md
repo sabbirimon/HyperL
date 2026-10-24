@@ -1,5 +1,10 @@
 # HyperL installation, usage and programming guide
 
+For the detailed alpha.6 tutorial, Python/C examples and diagrams, read
+[Programming with HyperL](PROGRAMMING_GUIDE.md). See also
+[build/test](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md),
+[progress](PROGRESS_2026_10_24.md) and [all documentation](README.md).
+
 Download/install examples target the published Apache-licensed alpha.5 release.
 Sections explicitly marked alpha.6 describe unreleased development additions,
 with [new community/enterprise rights](LICENSING.md); [earlier grants](LICENSE_HISTORY.md)

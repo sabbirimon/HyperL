@@ -1,14 +1,17 @@
 # Android GPU build and qualification
 
-On 2026-10-08 the owner resumed single-phone GPU testing. A connected Samsung
+Historical GPU qualification: 2026-10-08; documentation audit: 2026-10-24.
+The owner resumed single-phone GPU testing for the recorded run. A connected Samsung
 Galaxy A20s **SM-A207F**, Android 11/API 30, executes generated HyperL kernels
 on its **Adreno (TM) 506** through system Vulkan. **Eleven finite-output cases
 match the CPU reference, and two overflow cases correctly reject output.**
-This is a native ADB-shell qualification experiment. It is not an Android HyperL
-installer, a JNI runtime wired into Meshlit, a full tensor/model engine or a
-production qualification. No root, network upload, driver installation or new
-APK is needed. Other Android vendors, Mali/Immortalis/Xclipse GPUs and iOS require
-separate devices and adapters. The unrelated two-phone cluster tests stay paused.
+This is a native ADB-shell GPU qualification experiment, separate from the later
+[standalone Android CPU probe APK](ANDROID_CROSS_PLATFORM_PROBE.md). It is not a
+JNI runtime wired into Meshlit, a full tensor/model engine or production
+qualification. This GPU runner needs no root, network upload, driver installation
+or new APK. Other Android vendors, Mali/Immortalis/Xclipse GPUs and iOS require
+separate devices and adapters. The later Samsung/Mac CPU split results do not
+extend these GPU qualification results; Meshlit integration remains separate.
 
 ## What the runner does
 

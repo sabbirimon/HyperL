@@ -1,5 +1,37 @@
 # Standalone alpha validation
 
+## Quantum, hashing and documentation increment — 2026-10-24
+
+Final local `test installDist distZip distTar` passes in **25 seconds**:
+**89 JVM cases, 87 passed, two unavailable-GPU skips, zero failures/errors**.
+Five new file-hashing tests exercise SHA-256/384/512 against independent known
+answers (including million-byte input), exact algorithm selection, empty files,
+mutation, quotas, missing/nonregular/symlink paths and cancellation. Existing
+HLAS v1 signature and HLM2 dataset formats are unchanged.
+
+**53 Python script tests pass**: 18 existing harness/installer cases plus 35 quantum
+cases (14 stdlib simulator/permission, 10 provider bridge and 11 OriginQ contracts).
+The simulator tests execute actual local complex arithmetic. Provider tests use
+SDK doubles; optional SDK installation, live cloud jobs and physical QPUs are unrun.
+OriginQ explicitly configures HTTPS rather than the SDK's HTTP default. Internal
+SDK certificate/redirect/retry behavior still needs separate qualification.
+
+Release CMake/CTest passes **three cases** (CPU contract, seeded stress, Metal
+probe); the probe is discovery, not a GPU execution claim. The programming guide's
+Python native recipe/custom graph/precise sum, C ABI program and local Bell circuit
+were executed successfully. Bell probabilities are 0.5 for each of `00` and `11`;
+seed-7 sampling produced 537/463 over 1,000 shots. All local Markdown file links
+resolve and `git diff --check` passes. Documentation-only result updates were
+packaged again after the source test run.
+
+The preceding `07b8d51` source passed all five
+[PR check jobs](https://github.com/sabbirimon/HyperL/actions/runs/40046536261) and all
+four [installer build/smoke jobs](https://github.com/sabbirimon/HyperL/actions/runs/40046536114).
+Publication was skipped. Those remote runs do not qualify the later quantum/hash
+commit; consult CI for its exact head. No alpha.6 release or QPU/hyperscale performance
+claim is made. See [progress and fixes](PROGRESS_2026_10_24.md) and
+[remaining feature gates](AGENT_BACKLOG.md).
+
 ## Enterprise capability negotiation — 2026-10-24
 
 Final local `test installDist distZip distTar` passes in **27 seconds**:

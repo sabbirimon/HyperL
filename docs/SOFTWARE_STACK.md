@@ -1,6 +1,6 @@
 # HyperL software platform and architecture
 
-Status as of 2026-10-08. HyperL is an independent AI compute project. Newly covered
+Status reviewed 2026-10-24. HyperL is an independent AI compute project. Newly covered
 development rights follow [community/enterprise terms](LICENSING.md); earlier
 Apache releases and third-party components retain their grants.
 Its architecture names describe software layers and deployment profiles, not new
@@ -13,15 +13,16 @@ and operators can scan, while keeping current code separate from future products
 | --- | --- | --- |
 | **HyperL Core** | Versioned program/precision contracts and deterministic reference behavior | Working bounded `hyperl/1` f32 DAG: add, multiply, ReLU, ordered sum; JVM reference and native C ABI/static/shared preview |
 | **HyperL Developer Tools** | Write, inspect, validate and fix supported local programs | Working CLI/workbench, JSON schema, examples, syntax highlighting, formatting, search, workspace IO, contextual diagnostics and reviewed fixes |
-| **HyperL SDK and Libraries** | Easy Python authoring and gradual migration of existing code | Small Python/native C preview; NumPy/CPU PyTorch copies and three recipes work. Full SDK, text language, tensor/model import and zero-copy interop are planned |
+| **HyperL SDK and Libraries** | Easy Python authoring and gradual migration of existing code | Small Python/native C preview; NumPy/CPU PyTorch copies and twelve f32 recipes. Full SDK, text language, tensor/model import and zero-copy interop are planned |
 | **HyperL Compute Adapters** | Execute through the API supported by each device | OpenCL/macOS Metal host previews; four bounded Metal cases pass on Radeon Pro 560X. Android Vulkan qualification runner passes 11 finite outputs/two overflow rejections on Adreno 506. Six source emitters; app GPU integration and CUDA/HIP/SYCL/NPU/FPGA dispatch remain planned |
-| **HyperL Memory and Data** | Admission, bounded datasets and explicit ownership | Working CPU estimates/admission and authenticated encrypted local streaming. HBM/VRAM/NUMA/CXL accounting, direct IO and automatic encrypted SSD/NVMe spill are planned |
+| **HyperL Memory and Data** | Admission, bounded datasets and explicit ownership | CPU admission, H0 supplied-domain estimates and HLM2 encrypted streaming/rekey. OS-backed HBM/VRAM/NUMA/CXL reservation, direct IO and automatic encrypted spill are planned |
 | **HyperL AI Services** | Inference, evaluation, serving, vision and reusable AI workflows | Only small preprocessing recipes today. Full model runtimes, training, autograd, serving APIs, model registry and provider connectors are planned |
-| **HyperL Control Services** | Manage jobs, quotas, tenants, device fleets and emergency stops | Configuration bounds and authenticated read-only node observations exist. Rust control services, durable scheduling/leases and acknowledged fleet stop are planned |
-| **HyperL Fabric** | Move work and data between qualified devices with measured latency | IPv6/IPv4/DNS endpoint configuration and explicit HTTPS node probe today. Collective communication, RDMA/InfiniBand/optical/vendor fabric adapters and network tuning are planned |
-| **HyperL Security and Operations** | Protect data and expose reliable operational evidence | Local AES-256-GCM datasets, explicit keys/paths, bounded operations and local task cancellation work. Enterprise mTLS/OIDC/RBAC/audit, kernel/hardware auth providers and full profiling/telemetry are planned |
+| **HyperL Control Services** | Manage jobs, quotas, tenants, device fleets and emergency stops | Bounded vector workers, local plan estimates and capability negotiation exist. Rust control services, durable scheduling/leases and acknowledged fleet stop are planned |
+| **HyperL Fabric** | Move work and data between qualified devices with measured latency | Authenticated bounded vector transport, same-host tests and fixed Android/desktop wired/Wi-Fi TLS CPU evidence. Collectives, RDMA/InfiniBand/vendor data-plane adapters and large-scale tuning are planned |
+| **HyperL Security and Operations** | Protect data and expose reliable operational evidence | AES-256-GCM datasets/rekey, Ed25519 artifact verification, explicit external keys, bounded operations and cancellation. Enterprise mTLS/OIDC/RBAC/audit and full profiling/telemetry are planned |
+| **Quantum prototype** | Separate circuits and hybrid workflow integration | Bounded classical Python simulation and optional SDK bridges, including OriginQ. Physical QPUs, provider transport qualification, durable job ledger and budgets remain open |
 
-These labels group existing code and proposed interfaces; they are not nine
+These labels group existing code and proposed interfaces; they are not
 separately installable enterprise services. Meshlit's MCP/A2A/LLM gateway remains
 a separate potential integration. HyperL starts no production gateway listener,
 cluster scheduler, radio stack or privileged device-management service today.
@@ -34,15 +35,15 @@ flowchart TB
     B --> D["Memory and Data<br/>CPU admission / encrypted local streaming"]
     E["AI Services<br/>Full models and serving planned"] -.-> P
     F["Control Services<br/>Rust fleet services planned"] -.-> C
-    F -.-> G["Fabric<br/>Distributed data plane planned"]
+    F -.-> G["Fabric<br/>Bounded vector transport / native fabrics planned"]
     H["Security and Operations<br/>Enterprise identity and profiling planned"] -.-> F
     C -.-> I["Qualified hardware targets<br/>Vendor-by-vendor evidence required"]
     classDef working fill:#123c35,color:#d5fff1,stroke:#72e0ce;
     classDef preview fill:#49391e,color:#fff0ce,stroke:#eac388;
     classDef planned fill:#302747,color:#eee4ff,stroke:#bba7f8;
     class A,B,D working;
-    class P,C preview;
-    class E,F,G,H,I planned;
+    class P,C,G preview;
+    class E,F,H,I planned;
 ```
 
 ## Foundational compute and acceleration stack
@@ -65,6 +66,15 @@ flowchart TB
 CUDA compatibility has separate source, data, operator, graph, binary and runtime
 boundaries. HyperL currently provides no universal CUDA ABI replacement, complete
 tensor engine, Tensor Core lowering, MIG isolation or distributed collectives.
+
+Enterprise, supercomputer and hyperscale workloads are primary targets in the
+[precision/HPC plan](PRECISION_AND_HPC_PLAN.md). Current vector graphs remain f32;
+the separate compensated binary64 sum returns f32. F64/BF16/binary128 and arbitrary
+binary/decimal graph engines are future work. The separate
+[quantum simulator](QUANTUM_EXTENSION_PLAN.md) uses classical binary64 complex
+arithmetic, which is not binary128 or physical QPU execution. Optional
+[OriginQ submission](ORIGINQ_ADAPTER.md) requires owner scope and an explicit HTTPS
+endpoint; SDK fixtures do not establish provider acceptance.
 
 ## Application development layer
 
@@ -100,7 +110,7 @@ unconfirmed; fleet isolation and recovery need the later control protocol.
 | HyperL profile | Intended use | Available now / later gate |
 | --- | --- | --- |
 | **Local Workstation** | One developer PC/Mac; offline tools and optional local GPU | CLI/GUI/native CPU work today; four Radeon Pro 560X Metal cases pass. Other exact GPUs and full models need qualification |
-| **Mobile and Edge** | One phone/tablet or an opt-in edge worker; optional remote capacity | Listed Adreno 506 Vulkan kernels pass through a native test runner; app/JNI packaging, battery/thermal and lifecycle checks remain planned; desktop ZIP is not a phone installer |
+| **Mobile and Edge** | One phone/tablet or an opt-in edge worker; optional remote capacity | Listed Adreno 506 Vulkan kernels and a separate foreground CPU debug APK have evidence; fixed Android/desktop TLS splits pass. Production/JNI, battery/thermal and broader lifecycle checks remain planned |
 | **Research Cluster** | Independent 3–5-host controlled pilot | Planned Rust control/worker services; durable work, security and stop/lease acceptance first |
 | **Enterprise AI Cluster** | Multi-tenant datacenter inference/data/compute | Planned rollout to measured 16/64/256-worker trials; no current operating-capacity/SLA claim |
 | **Large Fabric / Telecom Research** | Advanced interconnects, distributed workloads and telecom labs | Planned qualified transport/standards research; no RF activation or ISO/3GPP certification claim |

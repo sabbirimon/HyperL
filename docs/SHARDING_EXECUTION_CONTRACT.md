@@ -327,6 +327,11 @@ bounds. An adapter must report the contract it actually implements. Relaxed math
 mixed precision and parallel reduction require explicit opt-in semantics and cannot
 silently change results of an existing program.
 
+The [precision/HPC plan](PRECISION_AND_HPC_PLAN.md) adds dependency gates for typed
+f64, BF16, binary128 and bounded arbitrary binary/decimal providers. These remain
+future vector/tensor engines; two binary64 components in the separate Python
+quantum simulator do not constitute a binary128 arithmetic backend.
+
 Extend in order: shaped elementwise/broadcast operations and deterministic reduction;
 matrix multiplication and normalization; validated attention/model primitives;
 then selected complex-number types and operations, FFT or scientific-library
@@ -341,6 +346,12 @@ Record absolute/relative/ULP tolerances and the reason for them. Test dimensions
 address calculations for overflow before native allocation. Performance comparisons
 must use equivalent precision and error constraints; a less accurate result is not
 an unqualified speed improvement.
+
+[Quantum/hybrid work](QUANTUM_EXTENSION_PLAN.md) uses a separate circuit and
+asynchronous provider contract, including the [OriginQ bridge](ORIGINQ_ADAPTER.md).
+Independent circuits may be scheduled separately when valid. Splitting an arbitrary
+entangled circuit across unrelated QPUs is not implemented by classical sharding,
+device pairing, native fabrics or shared memory.
 
 ## 10. Security and cryptography boundaries
 
