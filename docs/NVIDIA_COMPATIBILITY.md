@@ -1,6 +1,7 @@
 # HyperL and the NVIDIA ecosystem
 
-Researched 2026-10-08 using primary NVIDIA documentation. Current HyperL evidence:
+Vendor research snapshot: 2026-10-08; implementation audit: 2026-10-24.
+Current HyperL evidence:
 **zero NVIDIA GPU architecture families qualified on hardware**. CUDA source
 emission and an optional installed-PyTorch CUDA preview exist; no CUDA device is
 available on this AMD Mac. No Tensor Core, FP4/FP8 model, multi-GPU or AI-factory
@@ -51,6 +52,13 @@ The organizing reference is NVIDIA's
 [AI Enterprise software overview](https://docs.nvidia.com/ai-enterprise/software/latest/overview.html).
 This matrix maps integration goals; it does not imply equivalent features, NVIDIA
 certification, support contracts or a license to redistribute proprietary software.
+
+Alpha.6 adds [exact capability negotiation](ENTERPRISE_FABRICS.md) and
+[authenticated CPU shard execution](DISTRIBUTED_EXECUTION.md). These do not
+qualify NVIDIA hardware, load CUDA/NCCL or activate a fabric from its name. The
+separate [quantum Python prototype](QUANTUM_EXTENSION_PLAN.md) is also not a
+CUDA or GPU backend. Architecture/vendor references above retain their dated
+research scope; deployment must check the selected current vendor matrix.
 
 ## Delivery order
 

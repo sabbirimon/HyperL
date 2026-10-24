@@ -6,6 +6,13 @@ complete SDK or text-language compiler. The alpha.3 increment adds a small expli
 [Python/C ABI preview and recipes](LIBRARY_INTEROPERABILITY.md), separate from the full SDK. Current alpha programs use bounded
 `hyperl/1` JSON; the full SDK is explicitly a later milestone.
 
+Current runnable entry points and their dependency boundaries are collected in the
+[programming guide](PROGRAMMING_GUIDE.md). The separate Python quantum simulator
+and optional SDK bridges do not introduce a new text frontend or quantum GUI;
+provider SDK-double tests are distinct from actual SDK/QPU qualification.
+[Quantum scope](QUANTUM_EXTENSION_PLAN.md) and [precision choices](PRECISION_AND_HPC_PLAN.md)
+retain independent contracts and acceptance gates.
+
 ## Authoring goals
 
 - A simple Python-like surface with small readable expressions, named inputs/outputs,
@@ -45,10 +52,10 @@ standalone parser should accept a deliberately bounded grammar, not `eval` scrip
 | Authoring | Clear operators, typed values, shape defaults and concise Python-like code | Frontend/full SDK later |
 | Diagnostics | Source line/column/path, cause, suggested edit and explainable limitations | JSON path/sample checks now; text-language/LSP source maps later |
 | Completion | Useful operations/arguments/types from actual schema/capabilities | Context suggestions now; semantic LSP/IDE completion later |
-| Packaging | CLI + optional GUI, reproducible examples, no cloud/account requirement for local CPU | Desktop implemented; native/mobile installers later |
+| Packaging | CLI + optional GUI, reproducible examples, no cloud/account requirement for local CPU | Desktop installers and explicit local platform wheels exist; standalone Android probe has a narrow qualification scope, not a full mobile SDK |
 | SDK use | Small Python/C++/Rust/Swift examples with consistent ownership/errors | C ABI and small Python preview now; full bindings/package/version policy later |
 | Debug/profile | Reproducible errors, numerical checks and measured transfer/execution/memory | Reference/sample checks now; native debugger/profiler later |
-| Remote jobs | Same artifact from local example to explicit cluster submission | Authenticated durable cluster API/services later |
+| Remote jobs | Same artifact from local example to explicit cluster submission | Bounded authenticated vector split/map/gather exists; durable production fleet jobs/services remain later |
 
 Use standard package/install workflows for each qualified SDK binding and avoid
 requiring every developer to build GPU drivers or learn all vendor APIs. Provide

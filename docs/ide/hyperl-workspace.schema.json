@@ -33,7 +33,7 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+            "pattern": "^(?:[A-Za-z][A-Za-z0-9_]{0,31})(?![\\s\\S])"
           }
         },
         "instructions": {
@@ -51,7 +51,7 @@
             "properties": {
               "output": {
                 "type": "string",
-                "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+                "pattern": "^(?:[A-Za-z][A-Za-z0-9_]{0,31})(?![\\s\\S])"
               },
               "operation": {
                 "enum": [
@@ -67,7 +67,7 @@
                 "maxItems": 2,
                 "items": {
                   "type": "string",
-                  "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+                  "pattern": "^(?:[A-Za-z][A-Za-z0-9_]{0,31})(?![\\s\\S])"
                 }
               }
             }
@@ -75,7 +75,7 @@
         },
         "output": {
           "type": "string",
-          "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+          "pattern": "^(?:[A-Za-z][A-Za-z0-9_]{0,31})(?![\\s\\S])"
         }
       }
     },
@@ -85,7 +85,7 @@
       "maxProperties": 8,
       "propertyNames": {
         "type": "string",
-        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+        "pattern": "^(?:[A-Za-z][A-Za-z0-9_]{0,31})(?![\\s\\S])"
       },
       "additionalProperties": {
         "type": "array",

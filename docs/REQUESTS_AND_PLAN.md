@@ -5,7 +5,52 @@ see [USER_GUIDE.md](USER_GUIDE.md), [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_A
 and [VALIDATION.md](VALIDATION.md). Android/base-branch references below are provenance,
 not standalone installation instructions.
 
-Updated 2026-10-08. Originally isolated on `codex/hyperl-experimental`, based on
+## Current owner expansion — 2026-10-24
+
+The owner prioritizes HyperL shipment before the paused Meshlit voice work.
+The [sharding execution contract](SHARDING_EXECUTION_CONTRACT.md) is the current
+dependency-ordered plan. This table records requests and acceptance boundaries;
+the historical Meshlit table later in this document is not current standalone status.
+
+| Request | Planned delivery / evidence boundary |
+|---|---|
+| Mandatory workload and model sharding | Existing split/map/gather has same-host/TLS evidence and a fixed physical Samsung ARM64/Mac x86-64 vector probe over wired and Wi-Fi TLS; H0 adds local estimates, H1 still needs general integration/durable recovery, H4 adds actual model layer/state split |
+| Mixed old/current/future CPU, GPU, NPU and TPU | Exact operator/precision/ABI/device qualification and explicit copy paths; unsupported chips retain useful qualified CPU paths where available |
+| Load balancer and large-cluster network statistics | Memory/data-local admission, measured service/transfer estimates, fair bounded queues, real per-lane statistics; configuration limits remain separate from demonstrated scale |
+| Variable-speed large data lanes and synchronization | Preserve existing authenticated bounded vector frames/credits; add measured lanes, resumable integrity checks and explicit DAG/token/collective barriers |
+| Automatic enterprise capability negotiation | [Fabric and device contract](ENTERPRISE_FABRICS.md) separates approval, candidate negotiation and execution; joining a device does not install drivers or qualify PCIe/CXL, NVLink, RDMA, DPU, FPGA/ASIC or future adapters |
+| Combined memory/storage and Redis-like in-memory support | Distinct physical domains, bounded encrypted staging/spill; optional RESP metadata cache with a separate authoritative ledger and failure behavior |
+| CUDA, PyTorch, TensorFlow, ONNX and Chinese ecosystem | Separate compute/framework/collective adapters; CANN/HCCL/MindSpore and DeepSeek model/MLA/MoE/kernel tracks with pinned provenance and actual hardware gates |
+| Simple programming and future AI adaptability | Stable typed API, Python-style facade, reusable recipes and versioned extensions; generated or imported graphs retain capability/numerical validation |
+| Dynamic presentation and explainability | Explain placement, copies, memory and rejected alternatives; estimates, observations, stale and unknown values are visually distinct |
+| Secure operation and complex mathematics | Preserve generated contracts, compensated CPU reduction, HLM2 encryption/rekey and token/TLS workers; add matrix/complex-number/provider contracts, artifact signing and durable identity/revocation |
+| Fast execution | Measure complete workload latency/throughput/energy against a qualified baseline; capacity gains and arithmetic microkernel speed do not imply total speedup |
+| Dedicated enterprise/hyperscaler clusters | Primary deployment target with tenant quotas/isolation, headless services, hierarchical scheduling, recovery and measured fleet gates; current evidence is two physical CPUs |
+| Standalone programming, build and debug manuals | [Programming diagrams](PROGRAMMING_GUIDE.md), [build runbook](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md) and [progress record](PROGRESS_2026_10_24.md); future work stays in [agent backlog](AGENT_BACKLOG.md) |
+| Quantum including Chinese providers | Local bounded simulator and optional IBM/Google/Azure/OriginQ bridges implemented; SDK doubles tested, physical QPUs unqualified; [scope](QUANTUM_EXTENSION_PLAN.md) |
+| Stronger hashing and future cryptography | Explicit JCA SHA-384/SHA-512 added; Ed25519/AES-GCM preserved; standardized PQC provider migration remains [planned](CRYPTOGRAPHY_EVOLUTION_PLAN.md) |
+| General/special-purpose compute | Application-level program, numeric, target and quota policies; no invented profile execution flag |
+| Ultra-large datasets and high precision | Bounded streaming/partitioned storage/resume/spill, plus explicit FP64 and optional arbitrary-precision providers; current f32 graphs and compensated sum do not establish those future capabilities |
+
+This increment adds local plan validation/explanation and a separately scoped
+artifact signature foundation alongside the inherited alpha.6 executor. H0 uses
+a bounded cost heuristic; its output is not a dispatch manifest or a globally
+optimal allocation. A signed artifact alone does
+not authenticate a worker, prevent job replay or implement encrypted transport.
+Update [validation](VALIDATION.md) with exact tests and failures before marking any
+source increment delivered. A fixed physical Android/desktop CPU vector split now
+passes over wired and direct Wi-Fi TLS; [the evidence](ANDROID_CROSS_PLATFORM_PROBE.md)
+also records rejected run-ID reuse and overwritten-latest-report attempts, followed
+by one-use session IDs and per-session report collection. Both final transport
+runs pass exact six-shard host correlation. This small workload's split is slower
+than its local reference; no speedup follows from the correctness result.
+H1 durable-recovery/general-integration and H4 model-sharding gates remain open.
+Preserve alpha.5 installers, actual Radeon/Samsung kernel
+evidence and the [Community/Enterprise versus prior Apache scope](LICENSE_HISTORY.md).
+
+## Historical Meshlit foundation — 2026-10-08
+
+Updated 2026-10-08. Originally isolated in a development branch, based on
 Meshlit `77ac214`; the owner merged source commit `cdb06b6` into `main` via PR #1
 at `851576b`. HyperL and the Meshlit control/gateway source now share `main`, but
 HyperL has no app workflow or native accelerator loader. Use open-source/free

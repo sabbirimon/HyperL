@@ -15,7 +15,7 @@ This document records requirements; linked upstream material is evidence, not in
 | Linux hardware/transports | Original OpenCL bridge in C; other backends unavailable | C/C++ SDK plugins for CUDA/HIP/CANN, LLVM/MLIR, UCX/RDMA/AF_XDP/DPDK, NUMA/affinity; privileged code separately installed and qualified |
 | Windows | JVM tools and buildable C SDK | Native C++ ONNX Runtime/DirectML/provider adapters, IOCP and signed packaging; no DirectML implementation yet |
 | Apple | JVM macOS tools, Metal source and Objective-C++ host; four bounded Radeon Pro 560X Metal cases pass | Wider Metal/other-device qualification, C ABI, MPS/Core ML where qualified. Native iOS app/library; no iOS JVM installer |
-| Android/mobile | C ABI/emitted Vulkan/OpenCL/Metal formats | JNI/NDK Vulkan and OEM-qualified OpenCL; iOS Metal separate. GPU vendor name does not qualify driver/operators |
+| Android/mobile | C ABI/emitted Vulkan/OpenCL/Metal formats; ARM64 Vulkan qualification host passes listed Adreno 506 kernels | App-UID JNI/runtime, broader f32/lifecycle/thermal checks and OEM-qualified OpenCL; iOS Metal separate. [Android evidence](ANDROID_VULKAN.md) |
 | Native service safety | Versioned ownership/cancellation and explicit adapter descriptors | Owner-approved Rust cluster services, separated from C/C++ native kernels/adapters; stable C ABI and explicit ownership/concurrency boundaries. Qualify with actual benchmarks |
 
 Dynamic support means explicit capability negotiation, immutable artifact/model
@@ -31,6 +31,45 @@ arrays, but preserve finite intermediate rejection. Fast-math, precision changes
 parallel reductions and relaxed checks require explicit semantics and conformance.
 
 ## Ordered implementation plan
+
+Alpha.6 includes an experimental JDK transport/orchestration prototype:
+[authenticated split/map/gather workers](DISTRIBUTED_EXECUTION.md), per-domain
+admission and ordered terminal reduction, with explicit CPU/checked OpenCL/Metal
+adapters. Two independent JVM workers and trusted/untrusted TLS were tested on one
+Mac, with separate OS CI evidence. A separate foreground Android probe also passes
+fixed Samsung ARM64/Mac x86-64 CPU vector splits over wired and Wi-Fi TLS;
+[physical evidence](ANDROID_CROSS_PLATFORM_PROBE.md) is narrowly scoped. Mixed
+accelerators, general planner dispatch and durable fleet recovery remain unqualified.
+
+### Sharding priority update — 2026-10-24
+
+The owner's mixed-architecture/sharding expansion has a concrete dependency plan
+in [Sharding execution contract](SHARDING_EXECUTION_CONTRACT.md). H0 adds bounded
+cost-aware explanation alongside the existing executor. H1 extends qualification
+to independent physical hosts and adds durable ledger/epoch recovery; it does not
+restart the already implemented process-level transport. Tensor/model execution remains a prerequisite for mandatory H4
+model sharding; it cannot be substituted with complete-model request routing.
+
+This increment prioritizes: bounded admission/partition contracts → two-host real
+workload → mixed qualified processors → tensor/model foundation → two-device model
+sharding → collective/fabric optimization → measured operational scale. Framework,
+NPU and future-protocol compatibility use independent adapters; simple SDK authoring
+and explain-plan UI use the same explicit capability and numerical contracts.
+Complex math and crypto-provider work follow the separate conformance/security gates
+in that contract. Preserve the existing compensated CPU `precise-sum/1` helper,
+generated cross-language contracts, HLM2 dataset rotation, Android Vulkan evidence
+and alpha.5 packaging; these are inherited foundations, not new work in this plan.
+New orchestration retains the [Community/Enterprise licence scope](LICENSE_HISTORY.md)
+alongside earlier Apache grants. The older broad list below remains the platform roadmap.
+
+Supercomputer and hyperscale workloads are primary targets in the
+[precision/HPC plan](PRECISION_AND_HPC_PLAN.md). Current graphs remain f32; compensated
+binary64 summation still returns f32. Typed f64, BF16, binary128 and arbitrary
+binary/decimal engines need separate implementation and numerical gates.
+The [quantum prototype](QUANTUM_EXTENSION_PLAN.md) adds separate bounded Python
+circuits, classical simulation and optional SDK bridges, including
+[OriginQ](ORIGINQ_ADAPTER.md). No QPU execution, quantum advantage or change to the
+f32 vector ABI follows from those bridges.
 
 1. **Standalone foundation (this alpha):** desktop CLI/GUI, CPU contracts, C ABI,
    source emission, memory-aware CPU admission and headroom observation,
@@ -123,6 +162,9 @@ package while the native engine develops.
 [Enterprise/datacenter service plan](ENTERPRISE_AND_CLUSTER_PLAN.md) defines
 profiles, useful P0/P1/P2 services, tenant isolation, scheduler integration, identity,
 quotas, storage/checkpoints, telemetry, networking, operations and measured rollout.
+[Mixed CPU/GPU/NPU/TPU execution plan](HETEROGENEOUS_EXECUTION_PLAN_2026-10-23.md)
+defines the typed DAG, capability record, placement, transfer, revocation and
+hardware acceptance gates. It is proposed work, not a current accelerator runtime.
 [Single-phone/edge plan](MOBILE_AND_EDGE_PLAN.md) preserves offline local use,
 non-root defaults, native platform wrappers and optional authenticated remote access.
 These are planned services/packages, not deployed or hardware-qualified additions.

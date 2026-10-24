@@ -58,3 +58,8 @@ compiler/provider adapters add their own diagnostics, debugger/profiler and tens
 model conformance. Optional AI suggestions will need owner-configured providers,
 secret isolation, explicit context sharing and reviewed diffs/tests. The full SDK
 remains a later milestone. See [developer tools](DEVELOPER_TOOLS_PLAN.md).
+
+The separate quantum circuit validator and provider permissions are Python APIs;
+`diagnose` does not compile quantum circuits, check provider access or approve paid
+submissions. [Programming examples](PROGRAMMING_GUIDE.md) and
+[quantum scope](QUANTUM_EXTENSION_PLAN.md) document those independent boundaries.

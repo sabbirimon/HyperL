@@ -1,0 +1,20 @@
+{
+  "format": "hyperl-distributed/1",
+  "workers": [
+    {
+      "id": "a",
+      "origin": "http://127.0.0.1:8091",
+      "tokenFile": "/absolute/private/worker-a.token"
+    },
+    {
+      "id": "b",
+      "origin": "http://127.0.0.1:8092",
+      "tokenFile": "/absolute/private/worker-b.token"
+    }
+  ],
+  "maxParallelism": 2,
+  "shardElements": null,
+  "coordinatorBudgetBytes": 134217728,
+  "requestTimeoutMs": 10000,
+  "jobTimeoutMs": 60000
+}

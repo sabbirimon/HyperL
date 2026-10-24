@@ -5,13 +5,29 @@ phone or workstation, and design a path to large datacenters, enterprise AI clus
 and heterogeneous compute. This is a proposed architecture and delivery plan. It
 does not add a deployed service, production scheduler or certified enterprise SKU.
 
+**2026-10-24 scope clarification:** dedicated compute clusters for large entities,
+mainstream datacenters and hyperscalers are primary targets. Phones are one edge
+profile. High-end fabrics, FPGA/ASIC adapters, ultra-large datasets and explicitly
+high-precision numerical modes are required tracks; none is enabled by a label or
+an untested scale limit. See [fabric negotiation](ENTERPRISE_FABRICS.md).
+
 ## 1. Current foundation and deployment profiles
 
 Today: standalone Java 17+ desktop CLI/GUI, bounded f32 CPU reference, portable C ABI
 preview, source emission, optional explicitly installed OpenCL bridge, encrypted
 local dataset streaming, memory admission, cluster-profile validation and read-only
-node metadata probing. No actual GPU is qualified on the local host. The full SDK,
-phone packages, server control plane and distributed execution are not delivered.
+node metadata probing. Separate owner-terminal evidence covers four bounded Metal
+cases on Radeon Pro 560X and a standalone Samsung Adreno 506 Vulkan host has its
+own listed-case evidence. These do not qualify full models or mixed clusters.
+The full SDK, phone app packages and a production fleet control plane are not delivered. Alpha.6
+adds a separate [bounded vector shard executor](DISTRIBUTED_EXECUTION.md), which
+has actual same-host process and TLS tests. A separate Android probe now also passes
+bounded Samsung ARM64/Mac x86-64 CPU splits over USB and direct Wi-Fi TLS; see
+[physical evidence](ANDROID_CROSS_PLATFORM_PROBE.md). Enterprise scheduling, model
+partitions, durable recovery and the scale below remain qualification gates.
+Preserve existing alpha.5 installers, generated contracts, compensated CPU reduction
+and HLM2 authenticated storage/rekey. New orchestration follows the
+[Community/Enterprise licence scope](LICENSE_HISTORY.md); prior Apache grants remain.
 
 Use one versioned program/artifact format, adapter negotiation and numerical contract
 across these profiles; add optional services around it rather than requiring every
@@ -23,6 +39,7 @@ installation to run a datacenter stack.
 | Workstation / edge appliance | Development, local inference and small datasets | Current CLI/GUI foundation; future native backend/model engine; optional explicitly configured remote client |
 | Small private cluster | Team inference and batch AI work | First authenticated 3–5 independent-host pilot; a durable coordinator and bounded workers; optional desktop client, no GUI required on servers |
 | Enterprise datacenter | Shared GPU/NPU fleets, quotas, batch/inference and governance | Headless services with tenant isolation, external identity, metrics, registry, lifecycle and audit; integrate an existing orchestrator first |
+| Dedicated hyperscaler cluster | Large managed fleets and isolated organization-owned compute | Hierarchical scheduling/failure domains, bounded metadata fanout, capacity reservations, SLOs, automated draining/upgrades and tested disaster recovery; no demonstrated hyperscale claim yet |
 | Multi-datacenter / region | Data residency, disaster recovery and controlled federation | Independent failure domains and local scheduling, explicit cross-site policy and bounded federation; WAN cost/latency included |
 
 A phone remains useful by itself. Remote access is optional and never required for
@@ -32,6 +49,45 @@ non-root is the default. iOS uses supported app entitlements/native APIs, not ro
 assumptions. See the [mobile and edge plan](MOBILE_AND_EDGE_PLAN.md).
 
 ## 2. Service architecture to build later
+
+### Large datasets and precision tracks
+
+Work on datasets larger than aggregate RAM through bounded chunks, partitioned
+object-storage manifests, resumable integrity-checked transfer and explicit spill.
+Account for staging, indexes, checkpoints, network traffic and temporary copies;
+storage capacity is not accelerator memory. Keep compute near approved data,
+support backpressure and cancellation, and validate restart/reconciliation before
+claiming large-scale capacity. Start with measured GB/TB workloads and larger
+reproducible deployment gates; no PB/EB operating capacity is established today.
+
+Precision is an explicit workload contract, independent of dataset size. Current
+graphs use ordered f32; the separate compensated sum uses binary64 accumulation
+followed by finite f32 output. It is not an arbitrary-precision engine. Next tracks:
+
+- FP64 operations with actual backend/operator coverage, reproducibility and error tests.
+- Binary128 and explicit BF16/mixed-precision tracks with distinct storage,
+  compute, accumulation, output and wire types; BF16 is reduced precision.
+- Optional decimal/arbitrary-precision reference providers with requested digits,
+  rounding modes, bounded intermediates and deterministic serialization.
+- Numerically stable reductions and linear algebra; report conditioning/error
+  bounds where applicable and preserve the requested numerical mode across shards.
+- Explicit mixed-precision modes only when the caller accepts their error contract;
+  unsupported high precision is rejected rather than silently rounded down.
+
+High precision can multiply storage, transfer and compute costs. Admission and
+placement must account for bytes per element and precision-specific benchmarks.
+Both precision and large-data claims require complete reference-checked workloads,
+failure recovery and measured resource use, not an aggregate memory/FLOPS total.
+The [precision/HPC implementation gates](PRECISION_AND_HPC_PLAN.md) prioritize
+typed admission and an f64 CPU baseline before qualified native acceleration.
+Supercomputer jobs select accuracy, latency, throughput or capacity objectives
+without silently lowering the accepted precision.
+
+Quantum work is a separate asynchronous workflow type. The
+[bounded Python simulator and SDK bridges](QUANTUM_EXTENSION_PLAN.md), including
+[OriginQ](ORIGINQ_ADAPTER.md), do not provide a production quantum job ledger or
+physical QPU qualification. Provider budgets, durable reconciliation, region scope
+and cancellation acknowledgments remain enterprise gates.
 
 Use owner-approved Rust cluster services and C/C++ kernels/adapters, linked by a
 versioned C ABI; see [native performance decision](NATIVE_PERFORMANCE_ARCHITECTURE.md).
@@ -99,8 +155,10 @@ implementation; do not select five systems when one satisfies the pilot.
 
 Useful optional services: deployment/adapter qualification, private registry and
 on-prem operations tooling, migration/conformance assistance, benchmark reports,
-training and support. Keep the core open-source usable without a hosted account or
-paid license gate. No SLA, commercial terms or certification is established here.
+training and support. Eligible community uses remain free without a hosted account
+or activation server. New rights follow [community/enterprise terms](LICENSING.md):
+large-entity production needs a paid written agreement after its six-month trial.
+Earlier Apache rights remain. This plan creates no SLA, price or certification.
 
 ## 4. Proven systems to evaluate before inventing replacements
 
@@ -200,15 +258,29 @@ no invented availability, speedup, certification or universal target support.
 
 ## 8. Concrete next engineering packages
 
-1. Versioned capability/job/lease/error schemas and compatibility corpus, alongside
-   full-SDK planning; a local test agent over numeric loopback, no public service.
-2. Owner-configured mTLS/authenticated 3–5-host CPU pilot, durable job ledger,
-   result integrity and scoped cancel/stop protocol with failure injection.
-3. One orchestrator adapter, enforced worker isolation, tenant quotas and real metrics.
-4. One qualified native GPU/model path, then telemetry console and data/checkpoints.
-5. Operational release: upgrade/backup/restore runbooks, SBOM, security review and
-   an explicit supported-platform policy; larger fleet tests after the prior gates.
+The 2026-10-24 [sharding contract](SHARDING_EXECUTION_CONTRACT.md) is the detailed
+acceptance specification for these packages:
 
-Real-device tests remain paused at the owner's request. No live enterprise, cloud
-provider or SSH test host has been provided. Finish schema/local unit fixtures first;
-keep physical/mobile/GPU/multi-host acceptance pending until infrastructure exists.
+1. H0: versioned capability/memory/link/shard-plan objects and strict bounded
+   admission, deterministic estimates and compatibility corpus. No listener or
+   dispatched work is implied by a successful plan.
+2. H1: extend the existing split/map/gather executor from qualified same-host
+   processes to independent physical CPU hosts, and add durable attempt/epoch
+   recovery. Preserve existing token/TLS, replay, credit, cancellation and checked
+   result behavior while proving restart, revocation and remote failure handling.
+3. H2–H4: mixed qualified processors, typed tensor/model path and mandatory real
+   model-layer sharding with residency/KV/activation evidence. Retain a whole-model
+   baseline and separately report capacity, latency and throughput.
+4. H5–H6: measured variable-speed data lanes, topology-aware balancing, qualified
+   collectives, then 3–5-host durable operations and one orchestrator integration.
+   Redis-compatible caching is optional; the authoritative ledger and ownership
+   fencing remain correct if the cache fails or evicts all entries.
+5. Operational release: enforced tenant isolation, real metrics, upgrade/backup/
+   restore runbooks, SBOM, security review and explicit supported-platform policy.
+   Larger fleet tests follow the measured rollout gates above. Dynamic explanation
+   views display actual placement/bottlenecks and mark unavailable measurements.
+
+The fixed Android/desktop CPU probe and listed Radeon/Adreno cases have separate
+physical evidence. No production enterprise fleet or physical QPU is qualified.
+Extend those bounded results through the independent-host, recovery and scale
+gates above; fixtures and configured node limits cannot substitute for deployment tests.

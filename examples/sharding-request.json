@@ -1,0 +1,140 @@
+{
+  "format": "hyperl-sharding/1",
+  "program": {
+    "format": "hyperl/1",
+    "inputs": [
+      "x",
+      "w"
+    ],
+    "instructions": [
+      {
+        "output": "product",
+        "operation": "multiply",
+        "inputs": [
+          "x",
+          "w"
+        ]
+      },
+      {
+        "output": "positive",
+        "operation": "relu",
+        "inputs": [
+          "product"
+        ]
+      }
+    ],
+    "output": "positive"
+  },
+  "elements": 131072,
+  "source": {
+    "deviceId": "FIXTURE-source",
+    "memoryDomainId": "FIXTURE-source-ram",
+    "copyBytesPerSecond": 2000000000.0,
+    "egressBytesPerSecond": 100000000.0,
+    "ingressBytesPerSecond": 100000000.0,
+    "observedAtMs": 50000
+  },
+  "workers": [
+    {
+      "deviceId": "FIXTURE-arm64-cpu",
+      "memoryDomainId": "FIXTURE-arm64-cpu-ram",
+      "target": "CPU_REFERENCE",
+      "runtimeRevision": "FIXTURE-hyperl-cpu/1",
+      "numericalContract": "hyperl-f32-strict/1",
+      "supportedOperations": [
+        "multiply",
+        "relu"
+      ],
+      "programSha256": "119c15f34d7576a08f98064ba8e090f933e2cda0658f1602f59ce6d623273077",
+      "benchmarkElements": 131072,
+      "measuredElementsPerSecond": 8000000.0,
+      "copyBytesPerSecond": 2000000000.0,
+      "queueMs": 2.0,
+      "overheadBytes": 1048576,
+      "observedAtMs": 50000,
+      "qualified": true,
+      "ownerEnabled": true
+    },
+    {
+      "deviceId": "FIXTURE-x86-cpu",
+      "memoryDomainId": "FIXTURE-x86-cpu-ram",
+      "target": "CPU_REFERENCE",
+      "runtimeRevision": "FIXTURE-hyperl-cpu/1",
+      "numericalContract": "hyperl-f32-strict/1",
+      "supportedOperations": [
+        "multiply",
+        "relu"
+      ],
+      "programSha256": "119c15f34d7576a08f98064ba8e090f933e2cda0658f1602f59ce6d623273077",
+      "benchmarkElements": 131072,
+      "measuredElementsPerSecond": 4000000.0,
+      "copyBytesPerSecond": 1000000000.0,
+      "queueMs": 5.0,
+      "overheadBytes": 1048576,
+      "observedAtMs": 50000,
+      "qualified": true,
+      "ownerEnabled": true
+    }
+  ],
+  "memoryDomains": [
+    {
+      "id": "FIXTURE-source-ram",
+      "availableBytes": 67108864,
+      "reservedBytes": 16777216,
+      "observedAtMs": 50000
+    },
+    {
+      "id": "FIXTURE-arm64-cpu-ram",
+      "availableBytes": 8388608,
+      "reservedBytes": 3145728,
+      "observedAtMs": 50000
+    },
+    {
+      "id": "FIXTURE-x86-cpu-ram",
+      "availableBytes": 8388608,
+      "reservedBytes": 3145728,
+      "observedAtMs": 50000
+    }
+  ],
+  "links": [
+    {
+      "from": "FIXTURE-source",
+      "to": "FIXTURE-arm64-cpu",
+      "goodputBytesPerSecond": 80000000.0,
+      "roundTripMs": 4.0,
+      "sampleBytes": 1048576,
+      "observedAtMs": 50000,
+      "authenticated": true
+    },
+    {
+      "from": "FIXTURE-arm64-cpu",
+      "to": "FIXTURE-source",
+      "goodputBytesPerSecond": 80000000.0,
+      "roundTripMs": 4.0,
+      "sampleBytes": 1048576,
+      "observedAtMs": 50000,
+      "authenticated": true
+    },
+    {
+      "from": "FIXTURE-source",
+      "to": "FIXTURE-x86-cpu",
+      "goodputBytesPerSecond": 40000000.0,
+      "roundTripMs": 8.0,
+      "sampleBytes": 1048576,
+      "observedAtMs": 50000,
+      "authenticated": true
+    },
+    {
+      "from": "FIXTURE-x86-cpu",
+      "to": "FIXTURE-source",
+      "goodputBytesPerSecond": 40000000.0,
+      "roundTripMs": 8.0,
+      "sampleBytes": 1048576,
+      "observedAtMs": 50000,
+      "authenticated": true
+    }
+  ],
+  "objective": "CAPACITY",
+  "maxWorkers": 2,
+  "deadlineMs": 200.0
+}

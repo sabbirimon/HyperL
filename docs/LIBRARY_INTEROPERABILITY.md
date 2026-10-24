@@ -15,8 +15,9 @@ It contains:
   actual original C99 bounded DAG with owned f32 input copies/output and cancellation.
 - `Program`/`Step` and import of the existing `hyperl/1` dictionary shape. Python
   package import does not load a native library or optional framework automatically.
-- Three reusable native preprocessing helpers: `weighted_relu`, `residual_relu` and
-  `positive_sum`. These are vector recipes, not training/inference models or crypto.
+- Reusable native preprocessing helpers, expanded from the original three to twelve
+  recipes; [the recipe catalogue](USE_CASES.md) lists the current exports. These are
+  vector recipes, not training/inference models or crypto.
 - Explicit NumPy/CPU PyTorch conversion in both directions: bounded contiguous 1-D
   native-endian float32, independent copies, no silent dtype/device/shape conversion.
 - Optional `TorchBackend(reference, "cpu" | "cuda:index")`: real installed PyTorch
@@ -101,6 +102,66 @@ The output remains a PyTorch tensor on the selected device. A CPU copy is compar
 with the native reference before returning. Device execution/cancellation/speed
 qualification is separate; host cancellation does not prove interruption of an
 already accepted GPU kernel. Do not use this verification path as a speed claim.
+
+## Alpha.6 local platform wheels and precision
+
+The unreleased development source includes a native wheel builder. After building
+and checking the CPU library, invoke it with the exact reviewed absolute path:
+
+```sh
+python -m pip install setuptools==80.9.0 wheel==0.45.1
+python scripts/build_native_wheel.py \
+  --library /absolute/path/to/libhyperl_cpu_runtime.so \
+  --output /absolute/new-wheel-directory
+python -m pip install --no-index --no-deps /absolute/path/to/the-generated-platform-wheel.whl
+```
+
+Use the actual filename printed by the builder, and `.dylib`/`.dll` library names
+on macOS/Windows. The builder does not fetch a binary or publish to an index; its
+temporary pure-Python wheel build uses already installed pinned build tools. OS CI
+builds a wheel on its own host and tests installation in a fresh isolated environment.
+These are native-platform artifacts, not a universal ABI/architecture wheel. Linux
+uses a plain `linux_ARCH` tag, without claiming an audited manylinux baseline. macOS
+selects the actual build-host major OS version conservatively. An older-SDK Conda
+Python may incorrectly report macOS 10.16; on the actual qualifying macOS host,
+`SYSTEM_VERSION_COMPAT=0 python -m pip install ...` lets pip observe the real version.
+Do not retag the binary to claim support for an older OS.
+
+```python
+from hyperl import NativeCpu, f32, weighted_relu
+cpu = NativeCpu.bundled()  # explicit opt-in, never selected by package import
+print(list(weighted_relu(cpu, f32([-1, 2, 3]), f32([2, 3, 4]))))
+print(list(cpu.precise_sum(f32([16777216, 1, -16777216]))))  # [1.0]
+```
+
+The bundled loader checks system/process architecture, bounded metadata, fixed
+library name and SHA-256 before loading, then uses the existing runtime-version
+check. Tampering fails; nothing is downloaded and there is no automatic fallback.
+Hashes and source provenance are not a publisher signature or protection against
+an attacker who can replace both installed metadata and binary. Use a reviewed
+artifact and private installation. Pure source installs still require an explicit
+native path; `NativeCpu.bundled()` reports that no bundle exists.
+
+The separate `precise-sum/1` helper uses compensated binary64 intermediates and
+one finite f32 rounding. It does not change ordered graph sums, ABI-1 structures or
+GPU operations. Python reports unavailable when an older selected native library
+lacks the optional symbol. [Foundation contract and tests](FOUNDATION_HARDENING.md)
+and [measured CPU scopes](CPU_BENCHMARK.md) distinguish current evidence from plans.
+No PyPI package publication, vendor driver or full tensor/model engine is provided.
+
+## Separate quantum Python interfaces
+
+The bounded `hyperl.quantum` circuit contract has an actual local standard-library
+state-vector simulator. Optional provider modules expose IBM Qiskit Runtime,
+Google Cirq/approved Engine and Azure IonQ JSON paths, with explicit caller-owned
+clients, expiring provider/target permission and no wrapper-level submission retry.
+SDK-double contract tests do not qualify installed SDKs or physical QPUs. Quantum
+programs/results are separate from native f32 arrays and `TorchBackend`; there is
+no automatic tensor-to-circuit conversion or generic QIR importer. See the
+[programming guide](PROGRAMMING_GUIDE.md) and [quantum scope](QUANTUM_EXTENSION_PLAN.md).
+The [precision plan](PRECISION_AND_HPC_PLAN.md) records future f64/BF16/binary128 and
+typed complex numerical work; the simulator's binary64 complex state does not
+establish those vector-runtime types or native 128-bit arithmetic.
 
 ## Compatibility dimensions
 

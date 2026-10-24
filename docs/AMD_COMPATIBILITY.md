@@ -1,6 +1,7 @@
 # HyperL and the AMD ecosystem
 
-Researched 2026-10-08 from primary AMD documentation. HyperL currently has HIP
+Vendor research snapshot: 2026-10-08; implementation audit: 2026-10-24.
+HyperL currently has HIP
 source emission and an original macOS Metal host preview; it has **no qualified
 ROCm/HIP GPU runtime, Ryzen NPU, Vitis FPGA, ZenDNN or AMD model-serving adapter**.
 The A1990 Radeon Pro 560X is the first requested local target, through **Metal**.
@@ -32,7 +33,7 @@ source does not prove that every AMD GPU, NPU or FPGA can run it.
 | HIP / HIPIFY | C++ portability and selected CUDA-source migration | Small generated HIP kernels only; future reviewed compile/load path and migration examples |
 | rocBLAS / hipBLAS / hipBLASLt | Matrix/math libraries | Planned operator/layout/dtype adapters; no matrix API in current f32 DAG |
 | MIOpen | Deep-learning primitives | Planned selected operator adapters and real reference-model tests |
-| RCCL | GPU collective communication | Planned multi-GPU/fabric path; no distributed execution or collective today |
+| RCCL | GPU collective communication | No RCCL GPU collective; bounded CPU split/map/gather exists separately |
 | MIGraphX | AMD inference optimization/runtime | Planned model import through a qualified runtime; no engine import today |
 | Profiling / AMD SMI / RDC | Tracing and device operations | Planned read-only observation first; explicit operator configuration for privileged actions |
 
@@ -59,6 +60,11 @@ entire AMD ecosystem is not one uniform permissive redistribution grant.
 - **Ryzen AI / Vitis AI:** separate NPU/adaptive-compute providers with their own
   supported platform and model requirements. [Ryzen AI](https://ryzenai.docs.amd.com/en/latest/),
   [Vitis AI](https://vitisai.docs.amd.com/en/latest/).
+
+The alpha.6 [capability negotiator](ENTERPRISE_FABRICS.md) can intersect exact
+qualified adapter/workload/lane offers, and the [CPU worker protocol](DISTRIBUTED_EXECUTION.md)
+executes bounded shards. Neither supplies ROCm, RCCL, Ryzen NPU or FPGA execution.
+The dated Radeon measurements above remain unchanged.
 
 ## Delivery order
 

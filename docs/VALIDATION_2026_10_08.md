@@ -5,7 +5,7 @@ see [USER_GUIDE.md](USER_GUIDE.md), [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_A
 and [VALIDATION.md](VALIDATION.md). Android/base-branch references below are provenance,
 not standalone installation instructions.
 
-Isolated branch `codex/hyperl-experimental`, based on Meshlit `77ac214`. This is
+An isolated branch based on Meshlit `77ac214`. This is
 original source research, not an application integration or universal runtime release.
 
 Java 21, existing pinned offline Gradle dependencies, Android SDK 37, one Gradle

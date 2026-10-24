@@ -1,0 +1,238 @@
+{
+  "format": "hyperl-cpu-benchmark/1",
+  "hardware": {
+    "system": "Darwin",
+    "machine": "x86_64",
+    "os_version": "15.8.1",
+    "cpu": "unavailable in current permissions"
+  },
+  "python": "3.12.4",
+  "numpy": "2.3.3",
+  "native_sha256": "650e57f5b5e3222a7bf10a1d95e7f96304231e5485bfc9e954f6d746e58a7618",
+  "reference_sha256": "ef7dfe26789baaead36ff7ab2e1998c592d23b494d0ccf8da2d4ae856b07172e",
+  "warmups": 3,
+  "rounds": 9,
+  "calls_per_round": 20,
+  "workload": "two-step finite f32 multiply then relu; no GPU/model/transfer",
+  "cost_scopes": {
+    "python_api": "Python validation, private snapshots, ctypes setup, admitted native allocations/computation, output",
+    "native_abi": "ctypes call plus C validation, admitted allocations/computation and output copy; caller preparation outside timer",
+    "numpy_pipeline": "two NumPy ufuncs with intermediate/output allocation; input preparation outside timer",
+    "preallocated_naive_c_kernel": "ctypes call plus one C loop; input validation/admission/preallocation excluded"
+  },
+  "rows": [
+    {
+      "elements": 128,
+      "correctness": "exact finite f32 outputs",
+      "paths": {
+        "python_api": {
+          "median_us": 44.148900000000005,
+          "p95_batch_mean_us": 50.96785,
+          "batch_means_us": [
+            39.430099999999996,
+            44.148900000000005,
+            49.87335,
+            40.10325,
+            50.96785,
+            39.909,
+            44.11795,
+            50.10855,
+            46.25635
+          ]
+        },
+        "native_abi": {
+          "median_us": 3.97945,
+          "p95_batch_mean_us": 4.036449999999999,
+          "batch_means_us": [
+            3.96995,
+            3.9479499999999996,
+            3.9533,
+            3.98175,
+            3.9509000000000003,
+            3.9996,
+            3.99615,
+            3.97945,
+            4.036449999999999
+          ]
+        },
+        "numpy_pipeline": {
+          "median_us": 1.73075,
+          "p95_batch_mean_us": 1.7744000000000002,
+          "batch_means_us": [
+            1.7744000000000002,
+            1.74615,
+            1.7439,
+            1.7252,
+            1.72645,
+            1.73075,
+            1.7312,
+            1.72465,
+            1.7283499999999998
+          ]
+        },
+        "preallocated_naive_c_kernel": {
+          "median_us": 1.2036,
+          "p95_batch_mean_us": 1.6125999999999998,
+          "batch_means_us": [
+            1.20875,
+            1.1905,
+            1.6125999999999998,
+            1.2196,
+            1.1921,
+            1.2333,
+            1.2012,
+            1.201,
+            1.2036
+          ]
+        }
+      }
+    },
+    {
+      "elements": 4096,
+      "correctness": "exact finite f32 outputs",
+      "paths": {
+        "python_api": {
+          "median_us": 607.1405,
+          "p95_batch_mean_us": 619.81885,
+          "batch_means_us": [
+            603.26975,
+            619.81885,
+            607.8608,
+            607.1405,
+            619.51595,
+            609.8031500000001,
+            554.5253,
+            594.69785,
+            604.04925
+          ]
+        },
+        "native_abi": {
+          "median_us": 44.97785,
+          "p95_batch_mean_us": 47.13165,
+          "batch_means_us": [
+            45.01955,
+            44.82545,
+            45.1076,
+            47.13165,
+            45.33905,
+            44.86285,
+            44.6427,
+            44.97785,
+            44.919650000000004
+          ]
+        },
+        "numpy_pipeline": {
+          "median_us": 12.8973,
+          "p95_batch_mean_us": 14.664950000000001,
+          "batch_means_us": [
+            12.86455,
+            12.876149999999999,
+            14.664950000000001,
+            12.878549999999999,
+            12.8414,
+            12.98385,
+            12.8973,
+            12.93745,
+            13.025049999999998
+          ]
+        },
+        "preallocated_naive_c_kernel": {
+          "median_us": 2.02955,
+          "p95_batch_mean_us": 2.0393,
+          "batch_means_us": [
+            2.018,
+            2.00445,
+            2.0393,
+            2.03355,
+            2.0231500000000002,
+            2.02955,
+            2.01855,
+            2.0359000000000003,
+            2.0321
+          ]
+        }
+      }
+    },
+    {
+      "elements": 65536,
+      "correctness": "exact finite f32 outputs",
+      "paths": {
+        "python_api": {
+          "median_us": 10132.175150000001,
+          "p95_batch_mean_us": 15733.0143,
+          "batch_means_us": [
+            15733.0143,
+            11146.9234,
+            9958.691,
+            9966.5913,
+            12084.63425,
+            10490.363650000001,
+            10008.019699999999,
+            10132.175150000001,
+            9840.77335
+          ]
+        },
+        "native_abi": {
+          "median_us": 875.0626,
+          "p95_batch_mean_us": 985.8648000000001,
+          "batch_means_us": [
+            941.30755,
+            865.3093,
+            848.36415,
+            985.75035,
+            855.9721,
+            875.0626,
+            985.8648000000001,
+            866.5182,
+            943.479
+          ]
+        },
+        "numpy_pipeline": {
+          "median_us": 311.6465,
+          "p95_batch_mean_us": 378.17884999999995,
+          "batch_means_us": [
+            317.32825,
+            311.6465,
+            301.22459999999995,
+            315.9443,
+            297.51225,
+            296.0046,
+            311.12365,
+            366.12825,
+            378.17884999999995
+          ]
+        },
+        "preallocated_naive_c_kernel": {
+          "median_us": 18.5277,
+          "p95_batch_mean_us": 18.8842,
+          "batch_means_us": [
+            18.5637,
+            17.65195,
+            18.37215,
+            18.22165,
+            18.196,
+            18.8842,
+            18.5277,
+            18.55365,
+            18.7265
+          ]
+        }
+      }
+    }
+  ],
+  "precision_example": {
+    "input": [
+      16777216.0,
+      1.0,
+      -16777216.0
+    ],
+    "ordered_sum_v1": 0.0,
+    "precise_sum_1": 1.0,
+    "math_fsum": 1.0
+  },
+  "limits": [
+    "single host, bounded workload, sequential path order, no application-speedup claim",
+    "p95 is across batch means, not individual-call tail latency",
+    "different cost scopes; do not present ratios as equivalent end-to-end workloads"
+  ]
+}
