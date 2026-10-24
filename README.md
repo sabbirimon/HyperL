@@ -58,7 +58,7 @@ loading. [Review fixes and remaining milestones](docs/FOUNDATION_HARDENING.md) Â
 [Measured CPU baseline](docs/CPU_BENCHMARK.md) Â· [Dataset format](docs/DATASET_FORMAT.md).
 These changes are not yet part of the published alpha.5 installers.
 
-Created by **Sabbir Hassan Imon (IMON)** with Codex assistance. HyperL is independent;
+Created by **Sabbir Hassan Imon (IMON)**. HyperL is independent;
 [Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
 
 ## New programming and operations guides

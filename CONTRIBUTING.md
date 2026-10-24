@@ -11,7 +11,7 @@ code/assets, including applicable restrictions on generated material.
 For new external contributions intended for community and paid licensing,
 maintainers must obtain actual authorized acceptance of the
 [contributor agreement](docs/CONTRIBUTOR_AGREEMENT.md), including employer authority
-where applicable. A PR, DCO sign-off or Codex footer alone does not assign copyright
+where applicable. A PR or DCO sign-off alone does not assign copyright
 or establish commercial sublicensing rights. Do not merge such contributions
 until rights and the agreement are reviewed/recorded. Authors keep ownership and
 credit; the template is not evidence anyone signed.
