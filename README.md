@@ -44,6 +44,11 @@ placed on hardware that actually passes the required correctness, memory and
 security tests. That can widen access to experimentation, help teams compare
 systems fairly and give existing equipment more useful work.
 
+**For AI that serves people:** researchers and builders should be able to see
+what ran, on which device, with what result and resource cost. Reproducible
+contracts can help useful AI reach more settings while keeping human control,
+correctness and honest limits in view.
+
 Longer use of working electronics can reduce new-material demand and delay
 e-waste, as described by the [US EPA's electronics guidance](https://www.epa.gov/electronics-batteries-management/electronics-basic-information-research-and-initiatives).
 HyperL does not claim a measured environmental saving. An efficient newer system
