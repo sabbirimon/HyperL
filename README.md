@@ -34,6 +34,23 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+## Why HyperL exists
+
+**Useful compute is already all around us.** A researcher may have a dependable
+CPU workstation, a lab may have mixed servers, and a large organization may own
+machines from several hardware generations. HyperL's purpose is to give those
+systems a clear program contract and honest capability checks, so work can be
+placed on hardware that actually passes the required correctness, memory and
+security tests. That can widen access to experimentation, help teams compare
+systems fairly and give existing equipment more useful work.
+
+Longer use of working electronics can reduce new-material demand and delay
+e-waste, as described by the [US EPA's electronics guidance](https://www.epa.gov/electronics-batteries-management/electronics-basic-information-research-and-initiatives).
+HyperL does not claim a measured environmental saving. An efficient newer system
+may use less energy for a particular workload. We welcome real power, throughput,
+failure and device-lifetime data alongside correctness results, so future
+placement decisions can account for both useful work and resource cost.
+
 Dedicated enterprise clusters, datacenters and hyperscalers are primary design
 targets, alongside standalone workstations and edge nodes. Tenant isolation,
 large-data streaming, high-precision backends, recovery and demonstrated scale
