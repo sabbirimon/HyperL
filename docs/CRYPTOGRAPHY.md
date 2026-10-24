@@ -94,7 +94,7 @@ silently accepted. A future protocol needs a new explicit codec/compatibility ga
 
 ### Trust, replay and file lifetime
 
-The envelope contains no expiry, nonce, monotonic version or anti-replay ledger.
+The artifact-signature envelope contains no expiry, nonce, monotonic version or anti-replay ledger.
 A valid old artifact can verify again. Callers must enforce approved releases,
 expiry/revocation and replay rules independently; an expected release-specific
 context helps only when that expectation comes from trusted policy. Verification
@@ -106,7 +106,11 @@ path or prevent another process from replacing/changing that file later. Verify
 inside caller-controlled storage and retain control of the exact artifact used;
 do not verify an attacker-writable path and later reopen it for execution. No
 snapshot/immutable handle, network transport, KMS/HSM integration or secure-memory
-erasure is provided by this API.
+erasure is provided by this API. HyperL's separate bounded distributed executor
+already has token-authenticated workers, HTTPS for non-loopback connections and
+bounded request replay records. Those transport controls do not add expiry or
+release authorization to this independent artifact-signature format. See
+[distributed execution](DISTRIBUTED_EXECUTION.md) for its scope and limits.
 
 ## Existing AES-256-GCM dataset storage
 
@@ -119,17 +123,41 @@ hyperl data-export /data/dataset /data/restored.bin /private/keys/dataset.key 10
 ```
 
 `keygen` creates a random 32-byte AES key without overwriting. Import/export use
-an explicit byte quota, up to 4 TiB. Payloads stream in 4 MiB AES-GCM chunks with
-SHA-256 integrity checks; the `HLM1` manifest is also encrypted/authenticated in
-bounded records of at most 512 plaintext bytes and an authenticated final footer.
-An export publishes its new destination only after complete verification.
-Existing destinations and incomplete/tampered outputs are rejected. Abrupt process
-or OS failure may leave private staging that requires owner review.
+an explicit positive byte quota, up to 4 TiB. Payloads stream in 4 MiB AES-GCM
+chunks with 12-byte random nonces, 128-bit tags and SHA-256 integrity checks.
+Alpha.6 writes typed `HLM2` manifest records and still reads authenticated `HLM1`.
+Manifest plaintext records are bounded to 512 bytes with authenticated ordering
+and a final total/hash footer. HLM2 binds the dataset UUID, SHA-256-derived key ID,
+format, chunk index and plaintext size, and groups up to 1,024 chunks per directory.
+The key ID identifies a random key; it is not a password KDF or a secret key.
+
+Export checks all chunks, totals and hashes before publishing plaintext with
+atomic no-overwrite hard-link creation. Filesystems without hard links fail
+explicitly. Import/rekey reserve a new directory and publish the authenticated
+manifest last as a commit marker. This is not an atomic whole-directory rename or
+fsync guarantee. Existing destinations and incomplete/tampered datasets are
+rejected. Abrupt process or OS failure may leave private staging/reserved
+directories that require owner review. [Exact format](DATASET_FORMAT.md).
+
+### Rotate a dataset key
+
+```sh
+hyperl keygen /private/keys/new.key
+hyperl data-rekey /data/dataset /data/rotated /private/keys/dataset.key /private/keys/new.key 10737418240
+hyperl data-export /data/rotated /data/restored-new.bin /private/keys/new.key 10737418240
+```
+
+Rekey requires a different key, verifies the entire source and writes new HLM2
+ciphertext, UUID, nonces and key identity. It preserves the original dataset/key,
+including when migrating an HLM1 source. Rotation does not create an intermediate
+plaintext export; plaintext chunk buffers are cleared after use. Provider/JVM
+copies may still exist, so this does not guarantee process-wide secure erasure.
+Back up the new key and verify the new output before managing old copies.
 
 Fresh random chunk nonces do not remove the need for key lifecycle management.
 Use dataset-specific keys, back them up privately and plan rotation before very
-large encryption volumes. Key rotation, KMS, secure erasure and distributed key
-exchange are not implemented. POSIX-created key files/directories are private;
+large encryption volumes. Local key rotation is implemented as described above;
+KMS, secure erasure and distributed key exchange are not. POSIX-created key files/directories are private;
 review permissions/ACLs on the actual host. Never put secret keys in prompts,
 program JSON, source, CLI literal arguments or logs. Key-file paths can appear in
 local process history and should themselves avoid sensitive identifiers.
@@ -138,9 +166,11 @@ local process history and should themselves avoid sensitive identifiers.
 
 Tests cover real JCA signatures, bounded multi-chunk hashing, independently checked
 signature framing, wrong keys/contexts, modified files, malformed envelopes,
-quotas and cancellation. Dataset tests cover AES-GCM round trips and corruption
-rejection. Consult [validation](VALIDATION.md) for runs actually completed and
+quotas and cancellation. Dataset tests cover AES-GCM round trips, legacy reads,
+rotation, malformed authenticated records and corruption rejection. Consult
+[validation](VALIDATION.md) for runs actually completed and
 their exact source scope. Test coverage is not a security audit, hardware-provider
 qualification, side-channel evaluation or certification. General crypto operators,
-complex-number math, full model sharding and secure cluster transport remain
-separate implementation milestones.
+complex-number math, full model sharding and production fleet identity/key
+management remain separate milestones. Existing bounded TLS worker transport
+has its own tests and independent-host/hardware acceptance gates.

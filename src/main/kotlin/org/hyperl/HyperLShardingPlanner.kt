@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-HyperL-Community-1.0
+// Copyright 2026 Sabbir Hassan Imon and respective contributors.
 package org.hyperl
 
 import java.io.ByteArrayOutputStream
@@ -15,7 +17,7 @@ import kotlin.math.floor
 )
 
 /** A trusted caller supplies observations. These fields are not identity or enrollment proof. */
-@Serializable data class ShardWorker(
+@Serializable data class ShardWorkerObservation(
     val deviceId: String, val memoryDomainId: String, val target: HyperLTarget,
     val runtimeRevision: String, val numericalContract: String,
     val supportedOperations: Set<String>, val programSha256: String,
@@ -39,7 +41,7 @@ import kotlin.math.floor
 
 @Serializable data class ShardingRequest(
     val format: String = "hyperl-sharding/1", val program: HyperLProgram, val elements: Int,
-    val source: ShardSource, val workers: List<ShardWorker>, val memoryDomains: List<ShardMemoryDomain>,
+    val source: ShardSource, val workers: List<ShardWorkerObservation>, val memoryDomains: List<ShardMemoryDomain>,
     val links: List<ShardLink>, val objective: ShardObjective = ShardObjective.LATENCY,
     val maxWorkers: Int = 8, val deadlineMs: Double? = null
 )
@@ -94,7 +96,7 @@ object HyperLShardingPlanner {
         require(request.program.instructions.all { it.operation in operations }) {
             "Only independent add/multiply/relu graphs can be sharded; ordered sum is not reassociated"
         }
-        require(nowMs > 0 && request.elements in 2..262144 && request.maxWorkers in 2..8)
+        require(nowMs > 0 && request.elements in 2..HyperLContract.MAX_VECTOR_ELEMENTS && request.maxWorkers in 2..8)
         require(request.workers.size in 1..8 && request.memoryDomains.size in 1..16 && request.links.size <= 64)
         require(request.deadlineMs == null || positive(request.deadlineMs))
         require(request.workers.map { it.deviceId }.distinct().size == request.workers.size) { "Duplicate device identity" }
@@ -133,7 +135,7 @@ object HyperLShardingPlanner {
         val sourceBytes = Math.addExact(Math.multiplyExact((inputCount + 1L) * 4, request.elements.toLong()), 65536)
         val bytesPerElement = (3L * inputCount + request.program.instructions.size + 2) * 4
         val fixedArrays = 65536L + 32L * (inputCount * 2 + request.program.instructions.size + 1)
-        val retainedLimit = 1048576 / (inputCount + request.program.instructions.size)
+        val retainedLimit = HyperLContract.MAX_RETAINED_ELEMENTS / (inputCount + request.program.instructions.size)
         val linkMap = request.links.associateBy { it.from to it.to }
         val nodes = request.workers.sortedBy { it.deviceId }.mapNotNull { worker ->
             val outbound = linkMap[source.deviceId to worker.deviceId]
@@ -185,7 +187,7 @@ object HyperLShardingPlanner {
             else "Sharding candidate fits measured evidence; estimated benefit must be tested on actual hosts", sharded, single)
     }
 
-    private data class Node(val worker: ShardWorker, val baseMs: Double, val msPerElement: Double, val fixedBytes: Long, val remote: Boolean)
+    private data class Node(val worker: ShardWorkerObservation, val baseMs: Double, val msPerElement: Double, val fixedBytes: Long, val remote: Boolean)
     private data class Candidate(val ranges: List<ShardRange>, val memory: List<ShardDomainUse>, val timeMs: Double)
 
     private fun candidate(nodes: List<Node>, request: ShardingRequest, available: Map<String, Long>, sourceBytes: Long, bytesPerElement: Long, retainedLimit: Int): Candidate? {

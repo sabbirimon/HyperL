@@ -1,6 +1,15 @@
 # HyperL installation, usage and programming guide
 
-For `0.1.0-alpha.4`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
+Download/install examples target the published Apache-licensed alpha.5 release.
+Sections explicitly marked alpha.6 describe unreleased development additions,
+with [new community/enterprise rights](LICENSING.md); [earlier grants](LICENSE_HISTORY.md)
+remain unchanged. Existing `hyperl/1` graph semantics and ABI-1 structures are retained.
+
+For the separate ARM64 Android Vulkan qualification runner and the actual
+Samsung/Adreno 506 results, see [Android GPU build/test](ANDROID_VULKAN.md).
+This experiment is not a mobile installer or Meshlit app GPU backend.
+
+For `0.1.0-alpha.5`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone;
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what
 is tested. This alpha is a developer experiment, not a CUDA-compatible SDK or a
@@ -9,11 +18,16 @@ describes the expansion and performance gates.
 
 ## 1. Choose an installation
 
+For the bundled-runtime macOS DMG, Windows MSI and Linux DEB/RPM previews,
+see [native desktop installation](DESKTOP_INSTALLERS.md). The steps below are
+for the alternative portable archives. [Use cases and twelve recipes](USE_CASES.md)
+provide runnable development workflows.
+
 The desktop release ZIP/TAR contains `bin/`, `lib/`, examples, documentation,
 install scripts and portable C SDK source under `sdk/`. `bin/hyperl` is the Unix
 launcher; `bin/hyperl.bat` is the Windows launcher. Both run the same CLI and GUI.
 Install a maintained Java **17 or later** runtime separately. The local build uses
-Java 21. No JRE, GPU driver, model, Android/iOS app or telecom stack is bundled.
+Java 21. The portable archives bundle no JRE, GPU driver, model, Android/iOS app or telecom stack.
 
 The C SDK needs no JVM at runtime. It needs CMake 3.20+ and a C99 compiler to build.
 Optional OpenCL execution needs existing reviewed headers/runtime/driver and a
@@ -29,9 +43,9 @@ Linux:
 
 ```sh
 java -version
-sha256sum hyperl-0.1.0-alpha.4.zip
-unzip hyperl-0.1.0-alpha.4.zip
-cd hyperl-0.1.0-alpha.4
+sha256sum hyperl-0.1.0-alpha.5.zip
+unzip hyperl-0.1.0-alpha.5.zip
+cd hyperl-0.1.0-alpha.5
 bin/hyperl capabilities
 bin/hyperl gui
 ```
@@ -40,9 +54,9 @@ macOS:
 
 ```sh
 java -version
-shasum -a 256 hyperl-0.1.0-alpha.4.zip
-unzip hyperl-0.1.0-alpha.4.zip
-cd hyperl-0.1.0-alpha.4
+shasum -a 256 hyperl-0.1.0-alpha.5.zip
+unzip hyperl-0.1.0-alpha.5.zip
+cd hyperl-0.1.0-alpha.5
 bin/hyperl run examples/elementwise.json examples/inputs.json
 bin/hyperl gui
 ```
@@ -51,9 +65,9 @@ Windows PowerShell:
 
 ```powershell
 java -version
-Get-FileHash .\hyperl-0.1.0-alpha.4.zip -Algorithm SHA256
-Expand-Archive .\hyperl-0.1.0-alpha.4.zip -DestinationPath .\hyperl-download
-Set-Location .\hyperl-download\hyperl-0.1.0-alpha.4
+Get-FileHash .\hyperl-0.1.0-alpha.5.zip -Algorithm SHA256
+Expand-Archive .\hyperl-0.1.0-alpha.5.zip -DestinationPath .\hyperl-download
+Set-Location .\hyperl-download\hyperl-0.1.0-alpha.5
 .\bin\hyperl.bat capabilities
 .\bin\hyperl.bat gui
 ```
@@ -70,13 +84,13 @@ After inspecting the downloaded script and verifying its source, pass the archiv
 a **new** selected installation prefix and exact SHA-256:
 
 ```sh
-python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.4.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
+python3 scripts/install.py /downloads/hyperl-0.1.0-alpha.5.zip /your/tools/hyperl-0.1 'ACTUAL_64_HEX_SHA256'
 ```
 
 PowerShell equivalent:
 
 ```powershell
-python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.4.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
+python .\scripts\install.py C:\Downloads\hyperl-0.1.0-alpha.5.zip C:\YourTools\HyperL 'ACTUAL_64_HEX_SHA256'
 ```
 
 The placeholder is not a real checksum. The installer checks hashes, paths, special
@@ -93,6 +107,7 @@ and verified version; retain the previous prefix until the new version works.
 ```sh
 git clone https://github.com/sabbirimon/HyperL.git
 cd HyperL
+git checkout v0.1.0-alpha.5
 ./gradlew --no-daemon test installDist distZip distTar
 build/install/hyperl/bin/hyperl capabilities
 ```
@@ -112,6 +127,7 @@ launcher path if you have not added a user-local PATH entry.
 | Command | Effect |
 |---|---|
 | `memory-plan PROGRAM INPUTS [BUDGET_BYTES]` | Observed heap/environment, full graph array estimate and admission decision; see [memory policy](MEMORY.md) |
+| `library` / `recipe ID` / `recipe-run ID INPUTS [BUDGET]` | Inspect twelve recipes, export a workspace or execute on CPU; see [use cases](USE_CASES.md) |
 | `capabilities` | Actual OS/architecture/JRE and implemented tool status; does not invent accelerators |
 | `validate PROGRAM.json` | Checks `hyperl/1`, names, dependencies and operations |
 | `run PROGRAM.json INPUTS.json` | Executes finite f32 vectors on CPU reference |
@@ -122,15 +138,22 @@ launcher path if you have not added a user-local PATH entry.
 | `keygen KEYFILE` | Creates a new random 32-byte AES key file; never overwrites |
 | `data-import SOURCE DATASET KEYFILE MAX_BYTES` | Encrypts a local file as bounded chunks and authenticated manifest |
 | `data-export DATASET DESTINATION KEYFILE MAX_BYTES` | Verifies/decrypts chunks into a new output, published after full integrity checks |
+| `sum-precise INPUTS.json [MEMORY_BUDGET_BYTES]` (alpha.6) | Separate compensated CPU reduction of exactly one `x` vector, rounded once to finite f32 |
+| `data-rekey DATASET NEW_DATASET OLD_KEYFILE NEW_KEYFILE MAX_BYTES` (alpha.6) | Verifies the entire source and writes HLM2 under a different key without an intermediate plaintext export |
 | `cluster-plan PROFILE.json` | Validates IPv6/capacity configuration; does not enroll/dispatch nodes |
 | `shard-plan REQUEST.json [OBSERVATION_TIME_MS]` | Estimates bounded elementwise partitions from supplied observations; no discovery, reservation or execution |
+| `worker-token NEW_PRIVATE_TOKEN_FILE` | Creates a new private worker token without overwriting |
+| `worker WORKER_CONFIG.json` | Starts an explicitly configured bounded compute listener; non-loopback requires TLS |
+| `distributed-plan CONFIG.json PROGRAM.json INPUTS.json` | Contacts approved workers and computes bounded placements without running kernels |
+| `distributed-run CONFIG.json PROGRAM.json INPUTS.json` | Executes actual split/map/gather through configured CPU or checked OpenCL/Metal workers |
 | `node-probe ORIGIN TOKEN_FILE` | Authenticated read-only host metadata observation, no inference qualification |
 | `telecom-plan PROFILE.json` | Validates a research profile, reports stack unavailable/uncertified |
 
 Usage/input/backend failures exit with status 2 and a bounded error. Supported
 operation output is actual computation. No command silently falls back to a CPU
 when a requested GPU is unavailable. No network action occurs for math/emission/
-dataset commands. `node-probe` is an explicit network request to your selected host.
+dataset commands or `shard-plan`. `node-probe` and the separate distributed
+commands explicitly contact configured hosts; `worker` opens its configured listener.
 
 ## 3. Write a HyperL program
 
@@ -214,6 +237,14 @@ controls. Dataset and node commands currently use the CLI.
 
 The repository's GUI test operates actual Swing panel buttons headlessly. That
 does not prove native window interaction on every OS.
+
+The thin header contains **Theme**, **Focus** and **Glass**. Graphite and Aurora
+provide darker surfaces; Paper provides a light appearance. Focus hides the environment
+row and output panel to expand the editor; toggling it restores the previous divider.
+Theme changes keep edited code, input data and execution output. Theme/glass settings
+are saved in `~/.hyperl/ui.properties`; they are display preferences, not runtime or
+network permissions. `-Dhyperl.ui.settings=/path/to/ui.properties` overrides this file
+for a test or isolated profile. Glass is a painted highlight, not OS backdrop blur.
 
 ## 5. Source emitters and accelerators
 
@@ -332,15 +363,28 @@ destinations are rejected. A temporary output publishes after the entire dataset
 verifies, avoiding accepted truncated/tampered exports. Ordinary process failures
 clean staging; abrupt OS crashes can leave private staging that needs owner review.
 
-Manifest `HLM1` uses individually authenticated records with at most 512 plaintext
-bytes, ordered by authenticated index, and a final authenticated total/hash footer.
-Metadata decoding does not ask the crypto provider to buffer a whole large manifest.
-Chunk nonces are freshly random; use dataset-specific keys and plan key rotation
-before very large numbers of encryptions. This format is experimental/versioned.
+Alpha.5 writes `HLM1`; alpha.6 writes typed `HLM2` records and still reads authentic
+HLM1 datasets. Records have at most 512 plaintext bytes, authenticated order and a
+final authenticated total/hash footer. HLM2 uses an authenticated key ID and grouped
+chunk directories. Metadata decoding does not buffer the whole manifest. Nonces
+are freshly random; keys are random 32-byte AES keys, not password-derived keys.
+[Format, publication boundaries and key rotation](DATASET_FORMAT.md).
+
+Alpha.6 rotation writes a new dataset and leaves the source/key unchanged:
+
+```sh
+hyperl keygen /private/keys/new.key
+hyperl data-rekey /data/dataset /data/rotated /private/keys/dataset.key /private/keys/new.key 10737418240
+```
+
+Export publishes verified plaintext with atomic no-overwrite hard-link creation
+on the selected filesystem. A filesystem without hard links fails explicitly.
+Import/rekey reserve a new directory and publish the authenticated manifest last;
+this is a commit marker, not an atomic whole-directory rename or fsync guarantee.
 
 Back up the 32-byte key securely; never paste it into prompts, source, JSON programs
 or logs. POSIX-created keys/directories receive private permissions; review Windows
-ACLs in the chosen private parent. No KMS, distributed key exchange, key rotation,
+ACLs in the chosen private parent. No KMS, distributed key exchange,
 secure erasure or storage snapshot guarantee is implemented. The quota upper bound
 is 4 TiB, not a tested multi-terabyte performance claim. This is local storage IO;
 distributed large-data operators/shuffle/offload are future work.
@@ -376,9 +420,12 @@ it never sets inference-qualified. Numeric `http://[::1]:PORT` and
 plaintext host is accepted. IPv6 link-local zone IDs are currently rejected.
 
 The existing companion protocol is reused rather than inventing another discovery
-format. This alpha does not start a node server, enroll devices, transfer datasets
-remotely or dispatch distributed kernels. Independent hosts, trusted TLS and
-large-scale/failure behavior remain qualification work.
+format. Published alpha.5 does not start a worker or dispatch kernels. Alpha.6
+development adds separate explicit `worker`, `distributed-plan` and
+`distributed-run` commands for bounded vector shards. See
+[distributed execution](DISTRIBUTED_EXECUTION.md) for adapters, tokens, TLS,
+memory ownership and cancellation. Enrollment, remote datasets, independent
+device qualification and fleet scale remain later.
 
 ### Sharding admission example
 
@@ -417,9 +464,18 @@ This H0 planner admits only independent f32 `add`, `multiply` and `relu` graphs:
 2–262,144 elements, up to eight workers, sixteen physical memory domains and
 64 directed links, within the language's retained-array limit. It rejects
 ordered `sum` rather than changing its numerical order. Authenticated dispatch,
-acknowledged cancellation, live load balancing, full LLM/tensor/model sharding,
-collective communication and complex-number/advanced math remain later work.
-See [the staged execution contract](SHARDING_EXECUTION_CONTRACT.md).
+worker admission and checked split/map/gather already exist in the separate
+`distributed-plan` / `distributed-run` path, which uses its own configuration and
+placement contract. This H0 request/plan is not automatically passed to that
+executor. The executor additionally supports a single terminal ordered sum using
+exact CPU workers and coordinator reduction; `shard-plan` does not admit it.
+
+The existing distributed path attempts authenticated cancellation; acknowledgment
+means requested, not proven termination. Live measured adaptive load balancing,
+full LLM/tensor/model sharding, collectives and complex-number math remain future
+work. The separate `sum-precise` CPU operation is implemented and does not change
+the ordered f32 sharding contract. See [distributed execution](DISTRIBUTED_EXECUTION.md)
+and [the staged execution contract](SHARDING_EXECUTION_CONTRACT.md).
 
 ## 9. Telecom and extensions
 
@@ -457,7 +513,8 @@ thin adapters; see UPSTREAM_REUSE.md. Never label an installed SDK as executed A
 
 Current use cases: AI vector preprocessing experiments, cross-backend source and
 correctness comparisons, C embedding, encrypted local dataset handling and bounded
-host capability observations. Future tensor/model/vision/DSP/distributed/telecom
+host capability observations and experimental bounded split/map/gather. Future
+tensor/model/vision/DSP/fleet-scale/telecom
 use cases need actual backends, measurements and acceptance. HyperL can reduce
 duplicate integration work while keeping provenance, device limits and human
 controls visible; speed and universal compatibility are outcomes to demonstrate.

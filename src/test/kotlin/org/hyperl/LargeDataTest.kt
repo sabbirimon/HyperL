@@ -28,7 +28,7 @@ class LargeDataTest {
             assertEquals(2,summary.chunks);assertEquals(data.size.toLong(),summary.bytes)
             assertEquals(summary,LargeData.export(dir.resolve("dataset"),dir.resolve("restored"),key,data.size.toLong()))
             assertArrayEquals(data,Files.readAllBytes(dir.resolve("restored")))
-            assertFalse(Files.readAllBytes(dir.resolve("dataset/chunk_0.aesgcm")).copyOfRange(12,24).contentEquals(data.copyOfRange(0,12)))
+            assertFalse(Files.readAllBytes(dir.resolve("dataset/chunks/0000/chunk_0.aesgcm")).copyOfRange(12,24).contentEquals(data.copyOfRange(0,12)))
         }finally{Files.walk(dir).use{it.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists)}}
     }
     @Test fun wrongKeyTamperAndQuotaNeverPublishOutput()=runBlocking {
@@ -38,7 +38,7 @@ class LargeDataTest {
             try{LargeData.import(source,dir.resolve("overquota"),key,2);fail("Quota") }catch(_:IllegalArgumentException){};assertFalse(Files.exists(dir.resolve("overquota")))
             LargeData.import(source,dir.resolve("dataset"),key,3)
             try{LargeData.export(dir.resolve("dataset"),dir.resolve("output"),wrong,3);fail("Wrong key")}catch(_:Exception){};assertFalse(Files.exists(dir.resolve("output")))
-            val chunk=dir.resolve("dataset/chunk_0.aesgcm");val bytes=Files.readAllBytes(chunk);bytes[bytes.lastIndex]=(bytes.last().toInt() xor 1).toByte();Files.write(chunk,bytes)
+            val chunk=dir.resolve("dataset/chunks/0000/chunk_0.aesgcm");val bytes=Files.readAllBytes(chunk);bytes[bytes.lastIndex]=(bytes.last().toInt() xor 1).toByte();Files.write(chunk,bytes)
             try{LargeData.export(dir.resolve("dataset"),dir.resolve("output"),key,3);fail("Tamper")}catch(_:Exception){};assertFalse(Files.exists(dir.resolve("output")))
             assertFalse(Files.list(dir).use{it.anyMatch{p->p.fileName.toString().startsWith(".hyperl-data-")}})
         }finally{Files.walk(dir).use{it.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists)}}

@@ -4,7 +4,7 @@ plugins {
     application
 }
 group = "org.hyperl"
-version = "0.1.0-alpha.4"
+version = "0.1.0-alpha.6"
 repositories { mavenCentral() }
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
 java { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
@@ -21,6 +21,7 @@ distributions {
         contents {
             from("README.md", "LICENSE", "NOTICE")
             from("examples") { into("examples") }
+            from("contracts") { into("contracts") }
             from("python") { into("python"); exclude("__pycache__/**", "**/__pycache__/**", "*.pyc", "**/*.egg-info/**", "build/**") }
             from("docs") { into("docs") }
             from("native") { into("sdk/native"); exclude("hyperl-opencl", "hyperl-opencl.exe", "hyperl-metal") }

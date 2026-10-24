@@ -1,0 +1,21 @@
+{
+  "format": "hyperl-distributed-qualification/1",
+  "status": "passed",
+  "scope": "Independent JVM processes on one host, HTTP loopback and trusted TLS loopback only",
+  "workerProcessIds": [
+    73501,
+    73520
+  ],
+  "cpuWorkers": 2,
+  "shards": 8,
+  "elements": 4096,
+  "endToEndMs": 172.593394,
+  "tlsProcessId": 73570,
+  "trustedTlsPassed": true,
+  "untrustedCertificateRejected": true,
+  "hostnameMismatchRejected": true,
+  "remoteHostsTested": false,
+  "mixedGpuNpuTested": false,
+  "speedupClaimed": false,
+  "bundledRuntimeWithoutExternalJava": false
+}

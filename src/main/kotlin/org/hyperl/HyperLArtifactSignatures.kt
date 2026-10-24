@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-HyperL-Community-1.0
+// Copyright 2026 Sabbir Hassan Imon and respective contributors.
 package org.hyperl
 
 import kotlinx.coroutines.Dispatchers

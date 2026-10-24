@@ -13,7 +13,7 @@ import java.security.MessageDigest
 /** Bounded local semantic analysis plus real CPU sample checking; no provider or shell. */
 object CodeDiagnostics {
     private val operations=listOf("add","multiply","relu","sum")
-    private val names=Regex("[A-Za-z][A-Za-z0-9_]{0,31}")
+    private val names=Regex(HyperLContract.IDENTIFIER_PATTERN)
     private fun hash(text:String)=MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8)).joinToString(""){"%02x".format(it)}
     private fun nearest(value:String,candidates:Collection<String>):String?=candidates.filter{it!=value}.minByOrNull{distance(value,it)}?.takeIf{distance(value,it)<=3}
     private fun distance(a:String,b:String):Int {

@@ -11,8 +11,15 @@ Today: standalone Java 17+ desktop CLI/GUI, bounded f32 CPU reference, portable 
 preview, source emission, optional explicitly installed OpenCL bridge, encrypted
 local dataset streaming, memory admission, cluster-profile validation and read-only
 node metadata probing. Separate owner-terminal evidence covers four bounded Metal
-cases on Radeon Pro 560X; this does not qualify other backends or models. The full SDK,
-phone packages, server control plane and distributed execution are not delivered.
+cases on Radeon Pro 560X and a standalone Samsung Adreno 506 Vulkan host has its
+own listed-case evidence. These do not qualify full models or mixed clusters.
+The full SDK, phone app packages and a production fleet control plane are not delivered. Alpha.6
+adds a separate [bounded vector shard executor](DISTRIBUTED_EXECUTION.md), which
+has actual same-host process and TLS tests. Independent physical hosts, enterprise
+scheduling, model partitions and the scale below remain qualification gates.
+Preserve existing alpha.5 installers, generated contracts, compensated CPU reduction
+and HLM2 authenticated storage/rekey. New orchestration follows the
+[Community/Enterprise licence scope](LICENSE_HISTORY.md); prior Apache grants remain.
 
 Use one versioned program/artifact format, adapter negotiation and numerical contract
 across these profiles; add optional services around it rather than requiring every
@@ -100,8 +107,10 @@ implementation; do not select five systems when one satisfies the pilot.
 
 Useful optional services: deployment/adapter qualification, private registry and
 on-prem operations tooling, migration/conformance assistance, benchmark reports,
-training and support. Keep the core open-source usable without a hosted account or
-paid license gate. No SLA, commercial terms or certification is established here.
+training and support. Eligible community uses remain free without a hosted account
+or activation server. New rights follow [community/enterprise terms](LICENSING.md):
+large-entity production needs a paid written agreement after its six-month trial.
+Earlier Apache rights remain. This plan creates no SLA, price or certification.
 
 ## 4. Proven systems to evaluate before inventing replacements
 
@@ -207,8 +216,10 @@ acceptance specification for these packages:
 1. H0: versioned capability/memory/link/shard-plan objects and strict bounded
    admission, deterministic estimates and compatibility corpus. No listener or
    dispatched work is implied by a successful plan.
-2. H1: two independent authenticated CPU hosts execute disjoint real workload
-   shards; verify result integrity, leases, idempotency, cancel and failure handling.
+2. H1: extend the existing split/map/gather executor from qualified same-host
+   processes to independent physical CPU hosts, and add durable attempt/epoch
+   recovery. Preserve existing token/TLS, replay, credit, cancellation and checked
+   result behavior while proving restart, revocation and remote failure handling.
 3. H2–H4: mixed qualified processors, typed tensor/model path and mandatory real
    model-layer sharding with residency/KV/activation evidence. Retain a whole-model
    baseline and separately report capacity, latency and throughput.

@@ -2,7 +2,9 @@
 
 Owner clarification, 2026-10-08 (Asia/Dhaka): HyperL must remain useful on a single
 phone as well as enterprise clusters. Standalone desktop Java CLI/GUI is implemented;
-Android/iOS native installation and device-qualified execution remain future work.
+Android/iOS native app installation remains future work. An ARM64 native Vulkan
+qualification experiment now runs listed kernels on the owner's Adreno 506;
+[actual results and limits](ANDROID_VULKAN.md) are separate from app integration.
 The separate Meshlit Android project can become a client; it is not proof that the
 standalone HyperL release can already be installed as a phone app.
 
@@ -35,8 +37,10 @@ stores when integrated. Never place keys in programs, AI prompts or logs.
 Acceptance: actual single-phone CPU output, install/uninstall/update, permissions,
 low-memory interruption, rotation/background/resume, cancellation and offline use;
 then qualified GPU/NPU checks, then one remote endpoint with revoke/cancel/timeout
-and network changes. Physical-device testing remains paused; no phone qualification
-or native mobile package is claimed by the desktop CI results.
+and network changes. The owner resumed single-phone GPU testing: eleven finite
+outputs/two expected rejections pass on Galaxy A20s / Adreno 506 through the
+native ADB-shell runner. Meshlit app-UID/JNI/lifecycle and two-phone cluster tests
+remain pending. Desktop CI does not establish these hardware results.
 
 See [enterprise/cluster services](ENTERPRISE_AND_CLUSTER_PLAN.md),
 [platform matrix](PLATFORMS.md) and [SDK/runtime roadmap](ARCHITECTURE_AND_ROADMAP.md).

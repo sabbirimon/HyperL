@@ -6,6 +6,10 @@ commit, preserve licenses/notices and source provenance, review transitive/nativ
 components, and test the exact target. Public availability is not permission to
 relicense closed or restricted source. No vendor performance transfers automatically.
 
+The new HyperL licence does not replace dependency grants. Check compatibility
+before combining newly restricted code with copyleft code; retain each component's
+licence, notices and source obligations. See [scope history](LICENSE_HISTORY.md).
+
 Already used: Kotlin standard library, kotlinx.serialization, kotlinx.coroutines,
 JDK Swing/ZIP and JCE AES-GCM/SecureRandom/MessageDigest, Gradle and CMake.
 The workbench also links pinned FlatLaf 3.7.2 no-natives (Apache-2.0) and

@@ -8,7 +8,7 @@ class HyperLShardingPlannerTest {
     private val now = 50_000L
     private val program = Workspace.program(Workspace.EXAMPLE_PROGRAM)
     private fun fixture(): ShardingRequest {
-        val workers = listOf("arm", "x86").map { name -> ShardWorker(
+        val workers = listOf("arm", "x86").map { name -> ShardWorkerObservation(
             name, name, HyperLTarget.CPU_REFERENCE, "hyperl-cpu/1", HyperLShardingPlanner.NUMERICAL_CONTRACT,
             setOf("multiply", "relu"), HyperLShardingPlanner.programSha256(program), 1024, 1000.0,
             100_000_000.0, 0.0, 0L, now, qualified = true, ownerEnabled = true
@@ -91,7 +91,7 @@ class HyperLShardingPlannerTest {
 
     @Test fun staleUnapprovedIncompatibleAndUnknownEvidenceIsExcluded() {
         val request = fixture()
-        val invalid = listOf<(ShardWorker) -> ShardWorker>(
+        val invalid = listOf<(ShardWorkerObservation) -> ShardWorkerObservation>(
             { it.copy(ownerEnabled = false) }, { it.copy(qualified = false) },
             { it.copy(observedAtMs = now - 30_001) }, { it.copy(observedAtMs = now + 1) },
             { it.copy(programSha256 = "a".repeat(64)) }, { it.copy(benchmarkElements = 32) },

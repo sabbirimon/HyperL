@@ -46,8 +46,12 @@ Disk IO may still fail if storage runs out or permissions change.
 
 Reports distinguish JVM_HEAP, SYSTEM_RAM, HBM, GDDR, DDR_LPDDR, UNIFIED_GPU, SRAM,
 CXL_NUMA and SSD_NVME. Only the actually observed heap/environment has capacity.
-The alpha cannot identify RAM technology, memory bus width/rate, NUMA topology,
-VRAM, HBM, coherent sharing or whether a filesystem is backed by NVMe.
+Published alpha.5 cannot identify those provider domains. Alpha.6's separate
+[distributed worker](DISTRIBUTED_EXECUTION.md) additionally observes bounded Linux
+NUMA subsets, owner-selected filesystem capacity and selected OpenCL/Metal
+memory metadata. Heap/NUMA/unified sharing is explicit. Metal working-set advice
+is not capacity; unknown free VRAM, HBM/DDR technology, bus width/rate and SSD/NVMe
+identity remain unknown. Observations do not reserve physical allocations.
 
 Later qualified native adapters will expose separate capacity/availability,
 allocation domains, shared-pool identities, alignment, locality, coherency,

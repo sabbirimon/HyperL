@@ -15,7 +15,8 @@ failure recovery and evidence gates. It is the implementation plan for this
 increment; the platform rows below remain qualification tracks, not delivered
 mixed-accelerator support.
 
-- First prove contiguous independent workload partitions on two authenticated hosts;
+- Extend the existing bounded split/map/gather executor from tested same-host
+  processes to two independent authenticated physical hosts;
   then prove a real model's layers/state split across devices. Replicated model
   requests and profile grouping do not satisfy model sharding.
 - Add measured load balancing, variable-speed lanes, backpressure and lane telemetry.
@@ -34,8 +35,14 @@ mixed-accelerator support.
   cryptographic providers with isolated keys and authenticated transport. Neither
   a future math operator nor a cryptographic algorithm is implied by source emission.
 
-Current evidence supports bounded CPU execution and separately recorded small Metal
-cases. It does not establish these new scheduler, sharding or provider capabilities.
+Current alpha.6 evidence includes real bounded CPU shards across independently
+started JVM processes, verified TLS/trust/hostname behavior, separate Radeon Metal
+and Samsung Adreno Vulkan cases, generated cross-language contracts, compensated
+CPU reduction and HLM2 authenticated dataset/rekey. Same-host shard execution is
+not yet physical mixed-device or full-model qualification. Preserve the existing
+alpha.5 installers and the [licence history](LICENSE_HISTORY.md). New H0 cost-aware
+planning complements [the existing executor](DISTRIBUTED_EXECUTION.md); its output
+is a local explanation, not an execution manifest or globally optimal allocation.
 
 ## Capability before placement
 
@@ -81,8 +88,8 @@ that device for a HyperL graph segment.
    timings and transfer bytes. Change placement only after measured end-to-end
    benefit, not based on aggregate advertised FLOPS.
 
-The first distributed pilot uses bounded independent elementwise partitions on
-two authenticated CPU hosts. Then qualify CPU/GPU partitions and a second actual
+The next distributed qualification uses the existing bounded elementwise executor
+on two independent authenticated physical CPU hosts. Then qualify CPU/GPU partitions and a second actual
 architecture after cancellation, device loss and numerical conformance pass.
 Move to shaped tensors, matmul/attention and actual model state only after
 the typed tensor IR or a reviewed model-engine boundary exists. Direct TPU/NPU paths require their own legal SDK,

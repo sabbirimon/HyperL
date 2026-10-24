@@ -14,22 +14,28 @@ the historical Meshlit table later in this document is not current standalone st
 
 | Request | Planned delivery / evidence boundary |
 |---|---|
-| Mandatory workload and model sharding | H0 bounded plans, H1 actual two-host workload, H4 actual model layer/state split; replicated requests do not close model sharding |
+| Mandatory workload and model sharding | Existing bounded split/map/gather has same-host process/TLS evidence; H0 adds local estimates, H1 qualifies independent physical hosts and durable recovery, H4 adds actual model layer/state split |
 | Mixed old/current/future CPU, GPU, NPU and TPU | Exact operator/precision/ABI/device qualification and explicit copy paths; unsupported chips retain useful qualified CPU paths where available |
 | Load balancer and large-cluster network statistics | Memory/data-local admission, measured service/transfer estimates, fair bounded queues, real per-lane statistics; configuration limits remain separate from demonstrated scale |
-| Variable-speed large data lanes and synchronization | Authenticated bounded chunks, credits/backpressure, resumable integrity checks and explicit DAG/token/collective barriers |
+| Variable-speed large data lanes and synchronization | Preserve existing authenticated bounded vector frames/credits; add measured lanes, resumable integrity checks and explicit DAG/token/collective barriers |
 | Combined memory/storage and Redis-like in-memory support | Distinct physical domains, bounded encrypted staging/spill; optional RESP metadata cache with a separate authoritative ledger and failure behavior |
 | CUDA, PyTorch, TensorFlow, ONNX and Chinese ecosystem | Separate compute/framework/collective adapters; CANN/HCCL/MindSpore and DeepSeek model/MLA/MoE/kernel tracks with pinned provenance and actual hardware gates |
 | Simple programming and future AI adaptability | Stable typed API, Python-style facade, reusable recipes and versioned extensions; generated or imported graphs retain capability/numerical validation |
 | Dynamic presentation and explainability | Explain placement, copies, memory and rejected alternatives; estimates, observations, stale and unknown values are visually distinct |
-| Secure operation and complex mathematics | Numerical/precision/tolerance contracts, matrix/complex-number roadmap; established cryptographic providers, external keys, authenticated transport and lifecycle tests |
+| Secure operation and complex mathematics | Preserve generated contracts, compensated CPU reduction, HLM2 encryption/rekey and token/TLS workers; add matrix/complex-number/provider contracts, artifact signing and durable identity/revocation |
 | Fast execution | Measure complete workload latency/throughput/energy against a qualified baseline; capacity gains and arithmetic microkernel speed do not imply total speedup |
 
-Initial implementation is deliberately bounded: local plan validation/explanation
-and a separately scoped artifact signature foundation. A signed artifact alone does
+This increment adds local plan validation/explanation and a separately scoped
+artifact signature foundation alongside the inherited alpha.6 executor. H0 uses
+a bounded cost heuristic; its output is not a dispatch manifest or a globally
+optimal allocation. A signed artifact alone does
 not authenticate a worker, prevent job replay or implement encrypted transport.
 Update [validation](VALIDATION.md) with exact tests and failures before marking any
-source increment delivered; H1 remote execution and H4 model sharding remain open.
+source increment delivered; H1 physical-host/durable-recovery and H4 model-sharding
+gates remain open. Preserve alpha.5 installers, actual Radeon/Samsung kernel
+evidence and the [Community/Enterprise versus prior Apache scope](LICENSE_HISTORY.md).
+
+## Historical Meshlit foundation — 2026-10-08
 
 Updated 2026-10-08. Originally isolated on `codex/hyperl-experimental`, based on
 Meshlit `77ac214`; the owner merged source commit `cdb06b6` into `main` via PR #1

@@ -1,6 +1,10 @@
 HyperL — original experimental AI compute tools
 Copyright 2026 Sabbir Hassan Imon and contributors.
-Licensed under Apache License 2.0; see LICENSE.
+Newly covered rights: HyperL Community and Enterprise License 1.0; see LICENSE.
+Earlier Apache-2.0 grants are preserved, including pre-transition source through
+67b30e09741f4bba1672a891644fc73abb1f9855 and released alpha.5 material.
+See the accompanying LICENSE_HISTORY.md and Apache-2.0.txt.
+Licensing contact: sabbirimon@gmail.com.
 AI-assisted contributor: Codex by OpenAI.
 
 Foundation adapted from original Meshlit HyperL source commit
@@ -15,8 +19,11 @@ Kotlin standard library 2.4.10 — Apache-2.0, JetBrains and contributors.
 kotlinx.coroutines 1.10.0 — Apache-2.0, JetBrains and contributors.
 kotlinx.serialization 1.8.0 — Apache-2.0, JetBrains and contributors.
 Gradle wrapper/build tooling — Apache-2.0, Gradle and contributors.
-JDK, native compilers, platform OpenCL/Metal/CUDA/HIP/Vulkan SDKs and drivers
-are separately installed and retain their own licenses; not bundled here.
+Portable ZIP/TAR packages require a separately installed JDK/JRE. Native desktop
+installers include an OpenJDK 21 runtime (Temurin in CI); preserve its bundled
+legal/ notices and GPL-2.0-with-Classpath-Exception and component licenses.
+Native compilers, platform OpenCL/Metal/CUDA/HIP/Vulkan SDKs and drivers remain
+separately installed and retain their own licenses; they are not bundled.
 
 Preserve upstream license/notice resources contained in dependency jars.
 No Odysseus, OpenAirInterface or srsRAN implementation is imported.
@@ -32,3 +39,7 @@ resources pinned through FlatLaf tag 3.7.2) and JetBrains Mono Regular v2.304
 (JetBrains Mono Project Authors), both SIL Open Font License 1.1. Preserve the
 complete upstream copyright/license texts under docs/licenses. Source paths and
 SHA-256 digests are recorded in docs/FONT_PROVENANCE.md. No runtime font download.
+
+The macOS Metal host is original Objective-C++ code using Apple's system SDK
+interfaces. Apple frameworks/toolchains retain their separate license terms;
+no Apple or NVIDIA implementation source is copied or redistributed here.

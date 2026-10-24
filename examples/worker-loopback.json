@@ -1,0 +1,11 @@
+{
+  "format": "hyperl-worker/1",
+  "id": "a",
+  "bind": "127.0.0.1",
+  "port": 8091,
+  "tokenFile": "/absolute/private/worker-a.token",
+  "memoryBudgetBytes": 67108864,
+  "maxJobs": 1,
+  "maxShardElements": 16384,
+  "backend": "CPU_REFERENCE"
+}

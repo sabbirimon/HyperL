@@ -2,20 +2,32 @@
 
 Proposed implementation contract, 2026-10-24 (Asia/Dhaka). The owner requires genuine
 sharding, mixed processor architectures, load balancing, measured network lanes,
-memory tiers and future adapter support. This document defines the delivery gates;
-it does not establish remote execution or a full model engine in the current alpha.
+memory tiers and future adapter support. This document defines delivery gates beyond
+the existing bounded vector executor; it does not establish physical multi-device
+qualification or a full model engine.
 The [heterogeneous plan](HETEROGENEOUS_EXECUTION_PLAN_2026-10-23.md) records vendor
 tracks and [validation](VALIDATION.md) records actual evidence.
 
 ## 1. Baseline and success criteria
 
 Current standalone code executes bounded f32 add/multiply/ReLU/ordered-sum graphs
-on CPU, provides a C ABI preview, and has optional GPU host previews. Four bounded
-Metal cases on Radeon Pro 560X have separate hardware evidence. Cluster profiles,
-compatibility grouping and HTTPS metadata probes do not dispatch shards. Full
-tensor/model execution, remote resource reservation, collective operations and a
-durable cluster scheduler remain open. Meshlit's Android runtime is a separate
-integration and cannot be counted as standalone HyperL qualification.
+on CPU, provides a C ABI preview, and has optional GPU hosts. Four bounded Metal
+cases on Radeon Pro 560X and listed standalone Samsung Adreno 506 Vulkan cases have
+separate hardware evidence. Alpha.6 also has a real authenticated
+[split/map/gather executor](DISTRIBUTED_EXECUTION.md) for elementwise vectors, with
+CPU/checked OpenCL/Metal worker adapters, bounded credits/frames/deadlines, replay
+checks, cancellation and complete-result verification. Two independent JVM worker
+processes and TLS trust/hostname tests were qualified on one Mac and in OS CI.
+These are actual computations, not physical multi-device or mixed-GPU evidence.
+
+Cluster-profile validation and the new H0 `shard-plan` estimator remain separate
+from execution. Full tensor/model execution, physical mixed-device qualification,
+OS/VRAM reservation, collectives and a durable production scheduler remain open.
+Existing generated cross-language contracts, compensated CPU `precise-sum/1`, HLM2
+authenticated datasets/key rotation and alpha.5 installers are preserved. Meshlit's
+Android integration is separate. Newly covered orchestration follows the
+[Community/Enterprise licence](LICENSE_HISTORY.md); no restricted implementation is
+silently ported into Meshlit's Apache foundation.
 
 The product target has three separately measured outcomes:
 
@@ -35,14 +47,16 @@ No aggregate RAM/VRAM/FLOPS sum implies one coherent memory space or a speedup.
 | Gate | Deliverable | Required evidence before moving on |
 |---|---|---|
 | H0: bounded contract | Versioned capability, memory-domain, link and shard-plan objects; deterministic admission and estimates; no dispatcher | Invalid/stale/unapproved evidence fails closed; checked sizes; exact partition coverage; reproducible plans; estimates explicitly identified |
-| H1: real workload shards | Owner-configured authenticated two-host CPU worker/client; contiguous independent f32 elementwise partitions; bounded data transfer; minimal durable attempt/lease ledger; result assembly | Actual two-host execution agrees with unsplit reference; neither worker executes all input; lost/corrupt/duplicate/late results cannot publish success; cancel and lease expiry release work |
+| H1: independent-host qualification and recovery | Extend the existing authenticated executor to independent physical CPU hosts; integrate reviewed plan admission and minimal durable attempt/epoch ledger | Physical two-host execution agrees with reference; neither worker executes all input; preserve current corrupt/replay/late-result rejection and cancellation, then prove restart, fencing and remote recovery |
 | H2: heterogeneous workload | One separately qualified CPU/GPU combination, then ARM/x86 independent hosts; resource and bandwidth aware rebalance between jobs | Per-backend numerical conformance, real architecture/driver evidence, transfer-inclusive timing, thermal slowdown, worker loss and bounded buffers |
 | H3: tensor/model foundation | Typed shape/stride/dtype IR or reviewed external engine boundary; bounded matmul/norm/attention/KV operations; one pinned dense model on one host | Tokenizer, weights, prompt format, intermediate tensors and generation checked against the model's reference engine; known memory/cancellation limits |
 | H4: mandatory model sharding | One dense model with explicit layer/pipeline placement across two independent devices; KV/state ownership and checkpoints | Exact model/shard/weight hashes, actual residency and inter-stage activations; reference quality, prefill/decode, multi-request behavior, memory-limit case and failure/recovery test |
 | H5: faster fabrics and collectives | Tensor/expert parallelism inside qualified compatible device groups; native collective adapters; encrypted transfer between groups | Collective order/dtype/timeout tests; topology-aware placement; real slow-link and bandwidth saturation evidence; equivalent outputs and measured cost |
 | H6: operations and scale | Operational ledger/backup and multi-tenant services, one orchestrator adapter, optional cache, fair queues, telemetry and rollout | 3–5 independent hosts first, then measured 16/64/256-host steps; restart, partition, revoke, drain, backup/restore and tenant-isolation tests |
 
-H0/H1 work can start before all GPU and model import work. H4 remains a required
+H0 is a complementary planning increment, not a prerequisite that erases the
+existing executor. H1's physical-host and durable-recovery gates remain open.
+H0/H1 work can proceed before all GPU and model import work. H4 remains a required
 delivery gate; completing H1 or adding an external complete-model endpoint cannot
 close it. Training and optimizer-state sharding follow inference qualification and
 need additional autograd, collective and checkpoint tests. Each gate names actual
@@ -54,22 +68,37 @@ also need an observed overlap interval with a stated clock/time-correlation meth
 queued requests or two reported device names are insufficient. H1 needs a minimal
 durable ledger for restart/fencing tests; H6 expands its operations and tenancy.
 
-## 3. First implementation package: H0
+## 3. Current planning increment: H0
 
-Keep this package small enough to review and implement before any listener exists.
-Use immutable bounded objects and pure planning functions in the current toolchain;
-the later Rust services consume the same versioned contract. Preserve `hyperl/1`
-and C ABI 1 semantics. Unknown required versions/features are rejected.
+`HyperLShardingPlanner.kt` adds pure local admission and placement estimates.
+`hyperl shard-plan REQUEST.json [OBSERVATION_TIME_MS]` reads supplied observations
+without contacting workers or starting a listener. Its bounds are 2–262,144 elements,
+at most eight candidate workers, sixteen physical memory domains and sixty-four
+directed links; evidence expires after thirty seconds. It handles strict finite
+f32 add/multiply/ReLU graphs and capacity/latency objectives. The optional time
+argument supports reproducible fixtures; it does not renew actual observation age.
+Actual checks for this source increment belong in [validation](VALIDATION.md).
 
-Required inputs:
+This is a bounded heuristic, not a globally optimal scheduler. Per-worker linear
+costs extrapolate measured program throughput to shard lengths; source ingress/
+egress adds a conservative shared-bottleneck surcharge. It does not model arbitrary
+downstream fabric topology, nonlinear kernel cost or true concurrent contention.
+"No evaluated candidate fits" does not prove no possible allocation exists.
+Result ranges and estimates are an explanation, not a signed dispatch manifest:
+H1 must bind and revalidate selected backend/runtime/driver identities, data and
+permissions before execution. `executionActivated=false`, `reservationGuaranteed=false`
+and `timingsAreEstimates=true` remain explicit output fields.
+
+Input contract and subsequent extensions:
 
 - A validated program hash, input shape/count, f32 precision, requested objective
-  (`capacity`, `latency` or `throughput`), deadline, minimum/maximum workers and
-  explicit permitted devices/data destinations.
-- Worker identity bound to enrollment, architecture, backend/runtime/driver/kernel
-  revisions, exact supported operators, qualified/owner-enabled state, observation
-  time and expiry. A user-supplied `qualified=true` alone is never future enrollment
-  proof; H0 fixtures must be labeled fixtures.
+  (`capacity` or `latency`), deadline and maximum workers. Throughput objectives,
+  richer minimum/maximum policy and explicit data-destination grants follow in H1.
+- Worker device ID, target/runtime revision, exact program benchmark and supported
+  operators, numerical contract, qualified/owner-enabled state and observation time.
+  Actual enrollment, architecture/driver/kernel provenance and revocation binding
+  remain executor-integration requirements. A supplied `qualified=true` alone is
+  never enrollment proof; H0 fixtures must be labeled fixtures.
 - Distinct physical memory-domain IDs and reservable bytes, allocation ownership,
   runtime/scratch/transfer overhead and existing reservations. Shared CPU/GPU UMA
   is one domain. Unknown capacity cannot become an unlimited budget.
@@ -83,9 +112,10 @@ add/multiply/ReLU work, bounded by the current program/vector limits and at most
 eight candidate workers. Require at least two distinct device identities for a
 sharding candidate; processes on one host are local contract tests. Ranges cover
 `[0, N)` exactly once with no overlap or omission. Reject ordered `sum` and other
-cross-range dependencies; reassociating a floating-point reduction changes existing
-semantics. Later deterministic reduction semantics need a separate language revision
-or explicit operation contract.
+cross-range dependencies in this estimator; reassociating a floating-point reduction
+changes existing semantics. The existing executor separately supports one terminal
+ordered f32 sum by gathering the complete vector at the coordinator with exact CPU
+workers. Preserve that working contract; it is not distributed partial summation.
 
 Use checked integer arithmetic for offsets, lengths and all byte estimates. Account
 for all inputs, live intermediates, output, runtime/scratch and send/receive buffers
@@ -111,6 +141,12 @@ slow links, capacity-only outcomes and exact full coverage. Test a plan change a
 measured load changes. Benchmark fixtures do not count as hardware qualification.
 
 ## 4. Job, lease and publication protocol for H1 onward
+
+The following is the durable recovery extension. Existing alpha.6 frames already
+bind request/worker-instance/range/digest/backend, enforce bounded replay records,
+credits and deadlines, and use explicit token-authenticated loopback or verified
+TLS endpoints. It does not yet provide the durable epochs, tenancy and recovery
+ledger below; keep those requirements distinct from existing safeguards.
 
 Versioned control messages bind tenant/project, job ID, idempotency key, attempt,
 coordinator epoch, plan digest, shard range, artifact/input hashes, adapter identity,
@@ -172,9 +208,10 @@ Measure application payload time as well as link statistics; one-way delay requi
 clock-synchronization evidence. Cost estimates include contested shared links and
 the coordinator ingress/egress ceiling.
 
-Bulk transport begins with maintained authenticated TLS/IP libraries and separate
-control/cancel and bulk queues. Do not invent encryption or a new congestion-control
-algorithm. A lane negotiates maximum chunk bytes, in-flight credits, outstanding
+The existing transport uses maintained JDK HTTP/TLS with bounded frames and worker
+credits. Extend it with separate control/cancel and bulk queues, resumable lanes
+and richer measured flow control. Do not invent encryption or a new congestion-control
+algorithm. A future lane negotiates maximum chunk bytes, in-flight credits, outstanding
 requests, deadline, supported compression and integrity algorithm. Chunk sequence,
 offset, byte length and digest bind to an immutable transfer manifest. Receivers
 validate bounds before allocation and release credits only after consumption or
@@ -208,6 +245,8 @@ scratch, compiler/runtime arenas, transfer buffers and checkpoint/staging peaks.
 Preserve a configurable margin and handle fragmentation/allocation failure. Spill
 is explicit and encrypted, quota bounded, cancellable and available only for operators
 with a tested restore path. Report spill reads/writes/time and resulting latency.
+Existing HLM2 dataset storage and authenticated rekey are local file facilities;
+they do not yet implement automatic spill or distributed memory pooling.
 
 An optional cache adapter can use Redis-compatible RESP for small immutable metadata,
 capability snapshots, admission hints and content-addressed artifact locations. It
@@ -273,6 +312,10 @@ contracts, not arbitrary code supplied through prompts or model metadata.
 ## 9. Numerical and complex-mathematics roadmap
 
 Preserve finite f32 intermediate rejection and ordered reductions in `hyperl/1`.
+The existing separate `precise-sum/1` helper uses compensated binary64 intermediates
+and one finite f32 result in C/Python/JVM; preserve its explicit CPU-only semantics.
+It is not exact real arithmetic or a new graph opcode. Generated language bounds
+and cross-language conformance already exist and remain the source of truth.
 New operations specify input/output dtype, accumulation dtype, overflow/underflow,
 rounding, subnormal/NaN/Inf policy, shape/stride/aliasing rules, determinism and error
 bounds. An adapter must report the contract it actually implements. Relaxed math,
@@ -303,8 +346,9 @@ Signature verification binds exact bytes/manifest identity to an owner-approved
 public key. It does not prove code safety, artifact freshness, worker identity or
 authorization to run. Unknown keys and malformed signatures fail closed.
 
-Remote control later needs authenticated encrypted channels, pinned or enterprise
-identities, scoped short-lived authority, nonce/attempt/epoch replay checks and
+Existing remote workers require configured verified TLS outside numeric loopback,
+per-worker tokens and bounded replay checks. Extend this with pinned or enterprise
+identities, scoped short-lived authority, durable attempt/epoch checks, rotation and
 revocation. Bind artifact/model/input/output hashes and protocol version to each
 authorized job. Keys remain in OS keystores/KMS/HSM or externally selected key files,
 outside language JSON, prompts, logs and tensor payloads. Rotation retains verified
