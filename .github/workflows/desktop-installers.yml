@@ -1,7 +1,7 @@
 name: Desktop preview installers
 on:
   push:
-    branches: [main, codex/production-library]
+    branches: [main, feature/production-library]
     tags: ['v*']
   pull_request:
   workflow_dispatch:
