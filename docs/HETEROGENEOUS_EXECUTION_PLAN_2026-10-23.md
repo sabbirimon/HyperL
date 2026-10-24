@@ -6,6 +6,37 @@ and approved remote nodes. This document defines the path and acceptance checks.
 It does not claim that the standalone alpha already schedules mixed accelerators.
 See [current validation](VALIDATION.md) and [platform matrix](PLATFORMS.md).
 
+## Expanded owner requirements — 2026-10-24
+
+Genuine multi-device workload and model sharding are required delivery goals.
+The [sharding execution contract](SHARDING_EXECUTION_CONTRACT.md) defines the
+dependency order, first bounded implementation, resource/network admission,
+failure recovery and evidence gates. It is the implementation plan for this
+increment; the platform rows below remain qualification tracks, not delivered
+mixed-accelerator support.
+
+- First prove contiguous independent workload partitions on two authenticated hosts;
+  then prove a real model's layers/state split across devices. Replicated model
+  requests and profile grouping do not satisfy model sharding.
+- Add measured load balancing, variable-speed lanes, backpressure and lane telemetry.
+  Plan memory by physical RAM/VRAM/shared domains plus bounded storage staging.
+- Keep an optional Redis-compatible metadata/cache adapter separate from the
+  authoritative job ledger, resource leases and tensor bulk transfer.
+- Qualify mainstream framework adapters, Huawei CANN/HCCL/MindSpore and DeepSeek
+  model/kernel requirements separately. Keep extension points for future devices,
+  formats and protocols, with unknown required features rejected.
+- Expose a stable typed SDK and a simple Python-style authoring path. Explain-plan
+  views show placement, copies, memory budgets and estimated versus observed timing.
+  A familiar API cannot erase unsupported NPU operators or unknown measurements.
+- Report capacity, latency and throughput separately. Fast execution is a measured
+  objective; slower devices remain useful where workload and transfer cost fit.
+- Add complex mathematics under explicit precision/error contracts, and established
+  cryptographic providers with isolated keys and authenticated transport. Neither
+  a future math operator nor a cryptographic algorithm is implied by source emission.
+
+Current evidence supports bounded CPU execution and separately recorded small Metal
+cases. It does not establish these new scheduler, sharding or provider capabilities.
+
 ## Capability before placement
 
 One immutable program and input manifest should be parsed once into a versioned
@@ -50,11 +81,11 @@ that device for a HyperL graph segment.
    timings and transfer bytes. Change placement only after measured end-to-end
    benefit, not based on aggregate advertised FLOPS.
 
-The initial pilot should use two bounded elementwise branches across one CPU and
-one already qualified GPU, then one authenticated remote CPU worker. Add a second
-accelerator family only after cancellation, device loss and numeric conformance
-pass. Move to shaped tensors, matmul/attention and actual model state only after
-the typed tensor IR exists. Direct TPU/NPU paths require their own legal SDK,
+The first distributed pilot uses bounded independent elementwise partitions on
+two authenticated CPU hosts. Then qualify CPU/GPU partitions and a second actual
+architecture after cancellation, device loss and numerical conformance pass.
+Move to shaped tensors, matmul/attention and actual model state only after
+the typed tensor IR or a reviewed model-engine boundary exists. Direct TPU/NPU paths require their own legal SDK,
 driver and operator coverage; CPU fallback is an explicit alternate plan, never
 reported as TPU/NPU execution.
 
@@ -69,6 +100,7 @@ reported as TPU/NPU execution.
 | Apple GPU | Metal host backend; iOS packaging separate | Native device tests, buffer ownership and app lifecycle |
 | Android GPU | Vulkan or owner-installed OEM path | Per phone driver/operator tests, thermal limits and permissions |
 | NPU/TPU | QNN/Core ML/ANE/NNAPI successor/other supported SDK; datacenter TPU via its supported host runtime | Per-device model lowering, supported operations, dtype, provenance and exact output tests |
+| Huawei Ascend | CANN/AscendCL compute, HCCL collectives, MindSpore graph/runtime integration | Versioned Ascend hardware/SDK/fabric evidence; Kirin/HiAI is separate; cross-vendor collectives need a tested bridge |
 
 The phone is still useful offline with CPU execution when the advanced adapters
 are absent. Mixed execution never requires a phone to expose a public listener.

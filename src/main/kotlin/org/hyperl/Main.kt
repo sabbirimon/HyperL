@@ -25,6 +25,7 @@ Usage:
   hyperl metal-run /absolute/path/to/hyperl-metal "EXACT METAL DEVICE NAME" PROGRAM.json INPUTS.json
   hyperl telecom-plan PROFILE.json
   hyperl cluster-plan PROFILE.json
+  hyperl shard-plan REQUEST.json [OBSERVATION_TIME_MS]
   hyperl node-probe ORIGIN TOKEN_FILE
   hyperl keygen KEYFILE
   hyperl data-import SOURCE DATASET_DIRECTORY KEYFILE MAX_BYTES
@@ -49,6 +50,7 @@ Network access only through explicit authenticated node-probe; no shell, auto in
             })}
             "telecom-plan"->{require(args.size==2);println(TelecomPlanner.plan(Workspace.json.decodeFromString<TelecomProfile>(Workspace.read(Path.of(args[1])))))}
             "cluster-plan"->{require(args.size==2);println(ClusterPlanner.plan(Workspace.json.decodeFromString<ClusterProfile>(Workspace.read(Path.of(args[1])))))}
+            "shard-plan"->{require(args.size in 2..3);val request=Workspace.json.decodeFromString<ShardingRequest>(Workspace.read(Path.of(args[1])));println(Workspace.json.encodeToString(HyperLShardingPlanner.plan(request,args.getOrNull(2)?.toLong()?:System.currentTimeMillis())))}
             "node-probe"->{require(args.size==3);println(NodeProbe.observe(args[1],Path.of(args[2])))}
             "keygen"->{require(args.size==2);LargeData.keygen(Path.of(args[1]));println("Key created; keep it private and separate from datasets")}
             "data-import"->{require(args.size==5);println(runBlocking{LargeData.import(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}

@@ -49,6 +49,9 @@ object Workspace {
         put("metalBridgeAvailableAsSource",true);put("metalHardwareQualified",false)
         put("iosPackageAvailable",false)
         put("memoryAwareCpuAdmission",true)
+        put("shardingAdmissionPlanner", "hyperl-sharding/1")
+        put("distributedShardExecution",false)
+        put("artifactSignatureLibrary","Ed25519/SHA-256; caller-owned trusted keys")
         put("memory",json.encodeToJsonElement(MemoryPlanner.observe()))
     }.toString()
 }

@@ -10,7 +10,8 @@ does not add a deployed service, production scheduler or certified enterprise SK
 Today: standalone Java 17+ desktop CLI/GUI, bounded f32 CPU reference, portable C ABI
 preview, source emission, optional explicitly installed OpenCL bridge, encrypted
 local dataset streaming, memory admission, cluster-profile validation and read-only
-node metadata probing. No actual GPU is qualified on the local host. The full SDK,
+node metadata probing. Separate owner-terminal evidence covers four bounded Metal
+cases on Radeon Pro 560X; this does not qualify other backends or models. The full SDK,
 phone packages, server control plane and distributed execution are not delivered.
 
 Use one versioned program/artifact format, adapter negotiation and numerical contract
@@ -200,14 +201,25 @@ no invented availability, speedup, certification or universal target support.
 
 ## 8. Concrete next engineering packages
 
-1. Versioned capability/job/lease/error schemas and compatibility corpus, alongside
-   full-SDK planning; a local test agent over numeric loopback, no public service.
-2. Owner-configured mTLS/authenticated 3–5-host CPU pilot, durable job ledger,
-   result integrity and scoped cancel/stop protocol with failure injection.
-3. One orchestrator adapter, enforced worker isolation, tenant quotas and real metrics.
-4. One qualified native GPU/model path, then telemetry console and data/checkpoints.
-5. Operational release: upgrade/backup/restore runbooks, SBOM, security review and
-   an explicit supported-platform policy; larger fleet tests after the prior gates.
+The 2026-10-24 [sharding contract](SHARDING_EXECUTION_CONTRACT.md) is the detailed
+acceptance specification for these packages:
+
+1. H0: versioned capability/memory/link/shard-plan objects and strict bounded
+   admission, deterministic estimates and compatibility corpus. No listener or
+   dispatched work is implied by a successful plan.
+2. H1: two independent authenticated CPU hosts execute disjoint real workload
+   shards; verify result integrity, leases, idempotency, cancel and failure handling.
+3. H2–H4: mixed qualified processors, typed tensor/model path and mandatory real
+   model-layer sharding with residency/KV/activation evidence. Retain a whole-model
+   baseline and separately report capacity, latency and throughput.
+4. H5–H6: measured variable-speed data lanes, topology-aware balancing, qualified
+   collectives, then 3–5-host durable operations and one orchestrator integration.
+   Redis-compatible caching is optional; the authoritative ledger and ownership
+   fencing remain correct if the cache fails or evicts all entries.
+5. Operational release: enforced tenant isolation, real metrics, upgrade/backup/
+   restore runbooks, SBOM, security review and explicit supported-platform policy.
+   Larger fleet tests follow the measured rollout gates above. Dynamic explanation
+   views display actual placement/bottlenecks and mark unavailable measurements.
 
 Real-device tests remain paused at the owner's request. No live enterprise, cloud
 provider or SSH test host has been provided. Finish schema/local unit fixtures first;

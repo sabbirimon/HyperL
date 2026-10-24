@@ -32,6 +32,22 @@ parallel reductions and relaxed checks require explicit semantics and conformanc
 
 ## Ordered implementation plan
 
+### Sharding priority update — 2026-10-24
+
+The owner's mixed-architecture/sharding expansion has a concrete dependency plan
+in [Sharding execution contract](SHARDING_EXECUTION_CONTRACT.md). H0 contract tests
+and H1 authenticated CPU workload sharding can proceed before every accelerator
+is available. Tensor/model execution remains a prerequisite for mandatory H4
+model sharding; it cannot be substituted with complete-model request routing.
+
+This increment prioritizes: bounded admission/partition contracts → two-host real
+workload → mixed qualified processors → tensor/model foundation → two-device model
+sharding → collective/fabric optimization → measured operational scale. Framework,
+NPU and future-protocol compatibility use independent adapters; simple SDK authoring
+and explain-plan UI use the same explicit capability and numerical contracts.
+Complex math and crypto-provider work follow the separate conformance/security gates
+in that contract. The older broad milestone list below remains the platform roadmap.
+
 1. **Standalone foundation (this alpha):** desktop CLI/GUI, CPU contracts, C ABI,
    source emission, memory-aware CPU admission and headroom observation,
    optional bounded OpenCL bridge, streaming encrypted local

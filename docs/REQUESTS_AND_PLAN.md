@@ -5,6 +5,32 @@ see [USER_GUIDE.md](USER_GUIDE.md), [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_A
 and [VALIDATION.md](VALIDATION.md). Android/base-branch references below are provenance,
 not standalone installation instructions.
 
+## Current owner expansion — 2026-10-24
+
+The owner prioritizes HyperL shipment before the paused Meshlit voice work.
+The [sharding execution contract](SHARDING_EXECUTION_CONTRACT.md) is the current
+dependency-ordered plan. This table records requests and acceptance boundaries;
+the historical Meshlit table later in this document is not current standalone status.
+
+| Request | Planned delivery / evidence boundary |
+|---|---|
+| Mandatory workload and model sharding | H0 bounded plans, H1 actual two-host workload, H4 actual model layer/state split; replicated requests do not close model sharding |
+| Mixed old/current/future CPU, GPU, NPU and TPU | Exact operator/precision/ABI/device qualification and explicit copy paths; unsupported chips retain useful qualified CPU paths where available |
+| Load balancer and large-cluster network statistics | Memory/data-local admission, measured service/transfer estimates, fair bounded queues, real per-lane statistics; configuration limits remain separate from demonstrated scale |
+| Variable-speed large data lanes and synchronization | Authenticated bounded chunks, credits/backpressure, resumable integrity checks and explicit DAG/token/collective barriers |
+| Combined memory/storage and Redis-like in-memory support | Distinct physical domains, bounded encrypted staging/spill; optional RESP metadata cache with a separate authoritative ledger and failure behavior |
+| CUDA, PyTorch, TensorFlow, ONNX and Chinese ecosystem | Separate compute/framework/collective adapters; CANN/HCCL/MindSpore and DeepSeek model/MLA/MoE/kernel tracks with pinned provenance and actual hardware gates |
+| Simple programming and future AI adaptability | Stable typed API, Python-style facade, reusable recipes and versioned extensions; generated or imported graphs retain capability/numerical validation |
+| Dynamic presentation and explainability | Explain placement, copies, memory and rejected alternatives; estimates, observations, stale and unknown values are visually distinct |
+| Secure operation and complex mathematics | Numerical/precision/tolerance contracts, matrix/complex-number roadmap; established cryptographic providers, external keys, authenticated transport and lifecycle tests |
+| Fast execution | Measure complete workload latency/throughput/energy against a qualified baseline; capacity gains and arithmetic microkernel speed do not imply total speedup |
+
+Initial implementation is deliberately bounded: local plan validation/explanation
+and a separately scoped artifact signature foundation. A signed artifact alone does
+not authenticate a worker, prevent job replay or implement encrypted transport.
+Update [validation](VALIDATION.md) with exact tests and failures before marking any
+source increment delivered; H1 remote execution and H4 model sharding remain open.
+
 Updated 2026-10-08. Originally isolated on `codex/hyperl-experimental`, based on
 Meshlit `77ac214`; the owner merged source commit `cdb06b6` into `main` via PR #1
 at `851576b`. HyperL and the Meshlit control/gateway source now share `main`, but

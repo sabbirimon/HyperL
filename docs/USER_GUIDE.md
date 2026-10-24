@@ -123,6 +123,7 @@ launcher path if you have not added a user-local PATH entry.
 | `data-import SOURCE DATASET KEYFILE MAX_BYTES` | Encrypts a local file as bounded chunks and authenticated manifest |
 | `data-export DATASET DESTINATION KEYFILE MAX_BYTES` | Verifies/decrypts chunks into a new output, published after full integrity checks |
 | `cluster-plan PROFILE.json` | Validates IPv6/capacity configuration; does not enroll/dispatch nodes |
+| `shard-plan REQUEST.json [OBSERVATION_TIME_MS]` | Estimates bounded elementwise partitions from supplied observations; no discovery, reservation or execution |
 | `node-probe ORIGIN TOKEN_FILE` | Authenticated read-only host metadata observation, no inference qualification |
 | `telecom-plan PROFILE.json` | Validates a research profile, reports stack unavailable/uncertified |
 
@@ -344,6 +345,12 @@ secure erasure or storage snapshot guarantee is implemented. The quota upper bou
 is 4 TiB, not a tested multi-terabyte performance claim. This is local storage IO;
 distributed large-data operators/shuffle/offload are future work.
 
+The JVM API also supports Ed25519 signatures over bounded artifact manifests and
+streamed SHA-256 verification. It requires a separately trusted public key and
+does not encrypt the artifact or authorize execution. `keygen` creates an AES
+dataset key, not an Ed25519 signing key. See [Cryptography](CRYPTOGRAPHY.md) for
+the API, metadata-only verification distinction, limits and replay precautions.
+
 ## 8. IPv6 nodes and configuration
 
 `examples/cluster-ipv6.json` contains an IPv6 **documentation address**, not a real
@@ -372,6 +379,47 @@ The existing companion protocol is reused rather than inventing another discover
 format. This alpha does not start a node server, enroll devices, transfer datasets
 remotely or dispatch distributed kernels. Independent hosts, trusted TLS and
 large-scale/failure behavior remain qualification work.
+
+### Sharding admission example
+
+The checked-in [sharding request](../examples/sharding-request.json) is a
+**synthetic FIXTURE**, with invented observations and a fixed clock. Its device
+names do not identify hardware that was tested. Run it with the explicit clock:
+
+```sh
+hyperl shard-plan examples/sharding-request.json 50000
+```
+
+It describes 131,072-element multiply/ReLU work, two hypothetical CPU workers
+with different compute/copy/link speeds, and small permitted working-memory
+budgets. These budgets represent assigned capacity, not each device's total RAM.
+Both directions of each link and shared source ingress/egress ceilings are
+declared. All timestamps are `50000`; omitting the explicit clock evaluates this
+historical fixture against current time and should report stale evidence.
+
+The planner returns candidate index ranges, per-domain memory admission,
+transfer-inclusive estimates, exclusions and a decision. Its output always states
+`executionActivated: false`, `reservationGuaranteed: false` and
+`timingsAreEstimates: true`. A sharding candidate is not a speed measurement,
+remote execution or a resource lease. A single-device preference can be a valid
+outcome when network overhead exceeds the expected compute benefit.
+
+For a real request, the embedding application must collect current observations,
+establish identity/owner permission, qualify each exact backend and graph, and
+bind benchmark measurements to the graph hash and element count. Observations
+must be no older than 30 seconds and cannot be from the future. Setting
+`qualified` or `authenticated` in JSON does not perform those checks. Memory
+aliases that share physical RAM must use one domain ID. The fixture's canonical
+program hash is `119c15f34d7576a08f98064ba8e090f933e2cda0658f1602f59ce6d623273077`;
+recompute it with `HyperLShardingPlanner.programSha256` if the graph changes.
+
+This H0 planner admits only independent f32 `add`, `multiply` and `relu` graphs:
+2–262,144 elements, up to eight workers, sixteen physical memory domains and
+64 directed links, within the language's retained-array limit. It rejects
+ordered `sum` rather than changing its numerical order. Authenticated dispatch,
+acknowledged cancellation, live load balancing, full LLM/tensor/model sharding,
+collective communication and complex-number/advanced math remain later work.
+See [the staged execution contract](SHARDING_EXECUTION_CONTRACT.md).
 
 ## 9. Telecom and extensions
 
