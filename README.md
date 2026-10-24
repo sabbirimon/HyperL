@@ -51,6 +51,21 @@ may use less energy for a particular workload. We welcome real power, throughput
 failure and device-lifetime data alongside correctness results, so future
 placement decisions can account for both useful work and resource cost.
 
+### Where this could lead
+
+- **Portable research:** one reviewed program and precision contract could be
+  exercised across qualified CPUs and future GPU/NPU/FPGA backends, making
+  cross-system results easier to reproduce.
+- **Useful life for mixed fleets:** admission and placement could help teams
+  assign suitable work to existing machines while measuring energy, latency and
+  failure instead of relying on a hardware label alone.
+- **Governed large-scale compute:** tenant controls, schedulers, datasets,
+  recovery and audit could support organization-owned clusters after the
+  [enterprise delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) pass.
+
+These are development directions. [Validation](docs/VALIDATION.md) records the
+smaller CPU, native and cross-device paths that have actually run.
+
 Dedicated enterprise clusters, datacenters and hyperscalers are primary design
 targets, alongside standalone workstations and edge nodes. Tenant isolation,
 large-data streaming, high-precision backends, recovery and demonstrated scale
