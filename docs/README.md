@@ -12,6 +12,7 @@ source. Guides separate working code, estimates, provider contracts and future p
 - [Progress and bug-fix record](PROGRESS_2026_10_24.md)
 - [Agent backlog and upcoming features](AGENT_BACKLOG.md)
 - [Current and historical validation](VALIDATION.md)
+- [Share measured hardware results and feedback](TEST_REPORTING.md)
 
 ## Runtime and developer APIs
 

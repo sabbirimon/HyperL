@@ -34,10 +34,61 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+## Why HyperL exists
+
+**Useful compute is already all around us.** A researcher may have a dependable
+CPU workstation, a lab may have mixed servers, and a large organization may own
+machines from several hardware generations. HyperL's purpose is to give those
+systems a clear program contract and honest capability checks, so work can be
+placed on hardware that actually passes the required correctness, memory and
+security tests. That can widen access to experimentation, help teams compare
+systems fairly and give existing equipment more useful work.
+
+**For AI that serves people:** researchers and builders should be able to see
+what ran, on which device, with what result and resource cost. Reproducible
+contracts can help useful AI reach more settings while keeping human control,
+correctness and honest limits in view.
+
+Longer use of working electronics can reduce new-material demand and delay
+e-waste, as described by the [US EPA's electronics guidance](https://www.epa.gov/electronics-batteries-management/electronics-basic-information-research-and-initiatives).
+HyperL does not claim a measured environmental saving. An efficient newer system
+may use less energy for a particular workload. We welcome real power, throughput,
+failure and device-lifetime data alongside correctness results, so future
+placement decisions can account for both useful work and resource cost.
+
+### Where this could lead
+
+- **Portable research:** one reviewed program and precision contract could be
+  exercised across qualified CPUs and future GPU/NPU/FPGA backends, making
+  cross-system results easier to reproduce.
+- **Useful life for mixed fleets:** admission and placement could help teams
+  assign suitable work to existing machines while measuring energy, latency and
+  failure instead of relying on a hardware label alone.
+- **Governed large-scale compute:** tenant controls, schedulers, datasets,
+  recovery and audit could support organization-owned clusters after the
+  [enterprise delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) pass.
+
+These are development directions. [Validation](docs/VALIDATION.md) records the
+smaller CPU, native and cross-device paths that have actually run.
+
 Dedicated enterprise clusters, datacenters and hyperscalers are primary design
 targets, alongside standalone workstations and edge nodes. Tenant isolation,
 large-data streaming, high-precision backends, recovery and demonstrated scale
 have explicit [delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md).
+
+## **Large organizations: help turn compute plans into measured evidence**
+
+![HyperL enterprise evidence path showing the bounded current CPU, GPU bridge and vector-worker foundation and the planned tenant, cluster and fabric gates](docs/assets/enterprise-evidence-path.svg)
+
+HyperL welcomes non-production tests and contributions from enterprise engineering
+teams, datacenters, universities and hardware vendors. Real CPU/GPU/NPU/FPGA systems,
+multiple host networks, memory tiers and failure conditions can reveal what the
+current contracts handle and where they fail. Share the exact hardware, driver,
+source revision, workload, correctness check, timings, resource use and failures
+through the [detailed test-report guide](docs/TEST_REPORTING.md). Redacted failed
+attempts are useful data too. Design and usability feedback is welcome even when
+you cannot run a benchmark. The [enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md)
+states which large-fleet services still need implementation and qualification.
 
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
@@ -59,7 +110,7 @@ loading. [Review fixes and remaining milestones](docs/FOUNDATION_HARDENING.md) Â
 These changes are not yet part of the published alpha.5 installers.
 
 Created by **Sabbir Hassan Imon (IMON)**. HyperL is independent;
-[Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
+[Meshlit](https://github.com/sabbirimon/meshlit) is a separate potential client.
 
 ## New programming and operations guides
 
@@ -422,6 +473,8 @@ preview foundation. [Report issues](https://github.com/sabbirimon/HyperL/issues)
 minimal programs and actual OS/compiler/driver evidence; keep credentials and private
 inputs out of reports. Contributions should preserve bounds and numerical contracts,
 name untested targets and retain upstream provenance/license notices.
+[Share measured results](docs/TEST_REPORTING.md) from workstations, servers or
+larger enterprise testbeds, including unsuccessful runs and the exact scope tested.
 
 Newly covered HyperL rights follow [LICENSE](LICENSE), with earlier Apache grants
 preserved in [licence history](docs/LICENSE_HISTORY.md). [NOTICE](NOTICE) records original Meshlit

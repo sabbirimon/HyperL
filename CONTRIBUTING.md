@@ -19,6 +19,23 @@ credit; the template is not evidence anyone signed.
 Licensing and contribution questions: sabbirimon@gmail.com.
 Do not send credentials or private datasets.
 
+## Hardware and enterprise test results
+
+Large organizations, hardware labs and individual owners are welcome to share
+non-production measurements. The most useful new coverage includes different
+CPU architectures, GPU drivers, accelerator availability, memory domains,
+multi-host links, device-loss cases and sustained workloads. Run the exact
+supported contract first; label a planned adapter or unsupported operator as
+unavailable instead of treating its presence in an inventory as execution.
+
+Follow the [test-report guide](docs/TEST_REPORTING.md). Include a source commit,
+toolchain and driver versions, hardware topology, reproducible workload, oracle
+or output hash, all measured samples, memory and transfer scope, and the precise
+failure or cancellation behavior. Mark permissions, data residency and shared
+cluster conditions that affect a result. Redact hostnames, credentials, private
+datasets and organizational identifiers. Existing reports in
+[validation](docs/VALIDATION.md) show the level of evidence expected.
+
 ## Implementation and documentation workflow
 
 Start with the [programming guide](docs/PROGRAMMING_GUIDE.md),

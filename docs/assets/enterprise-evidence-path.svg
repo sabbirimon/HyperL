@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 580" role="img" aria-labelledby="title desc">
+  <title id="title">HyperL enterprise evidence path</title>
+  <desc id="desc">Current measured foundation includes a bounded CPU reference, optional GPU host bridges, and verified vector shard workers. Planned enterprise track includes isolated tenants, schedulers, dataset and checkpoint services, and qualified heterogeneous fabrics. Large organizations are invited to contribute reproducible measurements.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111825"/><stop offset="1" stop-color="#152c35"/></linearGradient>
+    <linearGradient id="accent" x2="1"><stop stop-color="#7ce4d2"/><stop offset="1" stop-color="#bba7f8"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="13" flood-color="#000" flood-opacity=".3"/></filter>
+    <style>
+      text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+      .heading{font-size:39px;font-weight:750;fill:#f5f8fb}
+      .sub{font-size:17px;fill:#c1d0d8}
+      .label{font-size:13px;font-weight:750;letter-spacing:2px;fill:#89e3d8}
+      .card{fill:#21313e;stroke:#47606c;stroke-width:1.5}
+      .title{font-size:22px;font-weight:700;fill:#f3f7f9}
+      .body{font-size:15px;fill:#c3d1d9}
+    </style>
+  </defs>
+  <rect width="1280" height="580" fill="url(#bg)"/>
+  <rect x="42" y="35" width="108" height="6" rx="3" fill="url(#accent)"/>
+  <text x="42" y="95" class="heading">HyperL for large-scale compute research</text>
+  <text x="42" y="126" class="sub">A path from verified small workloads to enterprise fleets, driven by real hardware evidence.</text>
+
+  <text x="42" y="178" class="label">CURRENT, BOUNDED FOUNDATION</text>
+  <g filter="url(#shadow)">
+    <rect x="42" y="197" width="377" height="126" rx="19" class="card"/>
+    <rect x="451" y="197" width="377" height="126" rx="19" class="card"/>
+    <rect x="860" y="197" width="377" height="126" rx="19" class="card"/>
+  </g>
+  <circle cx="68" cy="225" r="6" fill="#7ce4d2"/>
+  <text x="86" y="231" class="title">CPU reference</text>
+  <text x="68" y="267" class="body">Bounded f32 kernels, admission</text>
+  <text x="68" y="291" class="body">and reproducible validation</text>
+  <circle cx="477" cy="225" r="6" fill="#a9c4ff"/>
+  <text x="495" y="231" class="title">GPU host bridges</text>
+  <text x="477" y="267" class="body">Explicit OpenCL / Metal paths;</text>
+  <text x="477" y="291" class="body">hardware coverage remains scoped</text>
+  <circle cx="886" cy="225" r="6" fill="#c1adf3"/>
+  <text x="904" y="231" class="title">Vector shard workers</text>
+  <text x="886" y="267" class="body">Authenticated bounded CPU splits</text>
+  <text x="886" y="291" class="body">with checked gathered results</text>
+
+  <path d="M640 325V355" stroke="#819fae" stroke-width="2" stroke-dasharray="6 7"/>
+  <text x="42" y="378" class="label" style="fill:#d1b7fa">ENTERPRISE DELIVERY GATES</text>
+  <g filter="url(#shadow)">
+    <rect x="42" y="397" width="377" height="111" rx="19" fill="#302a3e" stroke="#6c5b80" stroke-width="1.5"/>
+    <rect x="451" y="397" width="377" height="111" rx="19" fill="#302a3e" stroke="#6c5b80" stroke-width="1.5"/>
+    <rect x="860" y="397" width="377" height="111" rx="19" fill="#302a3e" stroke="#6c5b80" stroke-width="1.5"/>
+  </g>
+  <text x="68" y="433" class="title">Tenant control</text>
+  <text x="68" y="467" class="body">Identity, quotas and isolation</text>
+  <text x="477" y="433" class="title">Cluster operations</text>
+  <text x="477" y="467" class="body">Scheduling, recovery, stop policy</text>
+  <text x="886" y="433" class="title">Qualified fabrics</text>
+  <text x="886" y="467" class="body">Real CPU / GPU / NPU / FPGA tests</text>
+  <text x="42" y="550" class="sub">Contribute measured results: hardware, driver, workload, output check, latency, memory and failure behavior.</text>
+</svg>
