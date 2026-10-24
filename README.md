@@ -39,6 +39,20 @@ targets, alongside standalone workstations and edge nodes. Tenant isolation,
 large-data streaming, high-precision backends, recovery and demonstrated scale
 have explicit [delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md).
 
+## **Large organizations: help turn compute plans into measured evidence**
+
+![HyperL enterprise evidence path showing the bounded current CPU, GPU bridge and vector-worker foundation and the planned tenant, cluster and fabric gates](docs/assets/enterprise-evidence-path.svg)
+
+HyperL welcomes non-production tests and contributions from enterprise engineering
+teams, datacenters, universities and hardware vendors. Real CPU/GPU/NPU/FPGA systems,
+multiple host networks, memory tiers and failure conditions can reveal what the
+current contracts handle and where they fail. Share the exact hardware, driver,
+source revision, workload, correctness check, timings, resource use and failures
+through the [detailed test-report guide](docs/TEST_REPORTING.md). Redacted failed
+attempts are useful data too. Design and usability feedback is welcome even when
+you cannot run a benchmark. The [enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md)
+states which large-fleet services still need implementation and qualification.
+
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
 OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
@@ -59,7 +73,7 @@ loading. [Review fixes and remaining milestones](docs/FOUNDATION_HARDENING.md) Â
 These changes are not yet part of the published alpha.5 installers.
 
 Created by **Sabbir Hassan Imon (IMON)**. HyperL is independent;
-[Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
+[Meshlit](https://github.com/sabbirimon/meshlit) is a separate potential client.
 
 ## New programming and operations guides
 
@@ -422,6 +436,8 @@ preview foundation. [Report issues](https://github.com/sabbirimon/HyperL/issues)
 minimal programs and actual OS/compiler/driver evidence; keep credentials and private
 inputs out of reports. Contributions should preserve bounds and numerical contracts,
 name untested targets and retain upstream provenance/license notices.
+[Share measured results](docs/TEST_REPORTING.md) from workstations, servers or
+larger enterprise testbeds, including unsuccessful runs and the exact scope tested.
 
 Newly covered HyperL rights follow [LICENSE](LICENSE), with earlier Apache grants
 preserved in [licence history](docs/LICENSE_HISTORY.md). [NOTICE](NOTICE) records original Meshlit
