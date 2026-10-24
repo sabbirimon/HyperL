@@ -15,8 +15,8 @@ failure recovery and evidence gates. It is the implementation plan for this
 increment; the platform rows below remain qualification tracks, not delivered
 mixed-accelerator support.
 
-- Extend the existing bounded split/map/gather executor from tested same-host
-  processes to two independent authenticated physical hosts;
+- Preserve the fixed physical Samsung ARM64/Mac x86-64 CPU probe and extend
+  independent-host execution with general placement and durable recovery;
   then prove a real model's layers/state split across devices. Replicated model
   requests and profile grouping do not satisfy model sharding.
 - Add measured load balancing, variable-speed lanes, backpressure and lane telemetry.
@@ -38,8 +38,11 @@ mixed-accelerator support.
 Current alpha.6 evidence includes real bounded CPU shards across independently
 started JVM processes, verified TLS/trust/hostname behavior, separate Radeon Metal
 and Samsung Adreno Vulkan cases, generated cross-language contracts, compensated
-CPU reduction and HLM2 authenticated dataset/rekey. Same-host shard execution is
-not yet physical mixed-device or full-model qualification. Preserve the existing
+CPU reduction and HLM2 authenticated dataset/rekey. A fixed physical Samsung ARM64/
+Mac x86-64 CPU vector split now passes over wired and direct Wi-Fi TLS.
+This narrow [physical probe](ANDROID_CROSS_PLATFORM_PROBE.md) is slower than its
+small local reference and does not qualify model sharding, mixed accelerators,
+automatic placement or durable recovery. Preserve the existing
 alpha.5 installers and the [licence history](LICENSE_HISTORY.md). New H0 cost-aware
 planning complements [the existing executor](DISTRIBUTED_EXECUTION.md); its output
 is a local explanation, not an execution manifest or globally optimal allocation.
@@ -88,8 +91,8 @@ that device for a HyperL graph segment.
    timings and transfer bytes. Change placement only after measured end-to-end
    benefit, not based on aggregate advertised FLOPS.
 
-The next distributed qualification uses the existing bounded elementwise executor
-on two independent authenticated physical CPU hosts. Then qualify CPU/GPU partitions and a second actual
+Continue from the fixed physical CPU probe to general placement, additional network
+paths and durable failure recovery. Then qualify CPU/GPU partitions and another actual
 architecture after cancellation, device loss and numerical conformance pass.
 Move to shaped tensors, matmul/attention and actual model state only after
 the typed tensor IR or a reviewed model-engine boundary exists. Direct TPU/NPU paths require their own legal SDK,

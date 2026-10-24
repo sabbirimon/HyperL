@@ -5,6 +5,12 @@ phone or workstation, and design a path to large datacenters, enterprise AI clus
 and heterogeneous compute. This is a proposed architecture and delivery plan. It
 does not add a deployed service, production scheduler or certified enterprise SKU.
 
+**2026-10-24 scope clarification:** dedicated compute clusters for large entities,
+mainstream datacenters and hyperscalers are primary targets. Phones are one edge
+profile. High-end fabrics, FPGA/ASIC adapters, ultra-large datasets and explicitly
+high-precision numerical modes are required tracks; none is enabled by a label or
+an untested scale limit. See [fabric negotiation](ENTERPRISE_FABRICS.md).
+
 ## 1. Current foundation and deployment profiles
 
 Today: standalone Java 17+ desktop CLI/GUI, bounded f32 CPU reference, portable C ABI
@@ -15,8 +21,10 @@ cases on Radeon Pro 560X and a standalone Samsung Adreno 506 Vulkan host has its
 own listed-case evidence. These do not qualify full models or mixed clusters.
 The full SDK, phone app packages and a production fleet control plane are not delivered. Alpha.6
 adds a separate [bounded vector shard executor](DISTRIBUTED_EXECUTION.md), which
-has actual same-host process and TLS tests. Independent physical hosts, enterprise
-scheduling, model partitions and the scale below remain qualification gates.
+has actual same-host process and TLS tests. A separate Android probe now also passes
+bounded Samsung ARM64/Mac x86-64 CPU splits over USB and direct Wi-Fi TLS; see
+[physical evidence](ANDROID_CROSS_PLATFORM_PROBE.md). Enterprise scheduling, model
+partitions, durable recovery and the scale below remain qualification gates.
 Preserve existing alpha.5 installers, generated contracts, compensated CPU reduction
 and HLM2 authenticated storage/rekey. New orchestration follows the
 [Community/Enterprise licence scope](LICENSE_HISTORY.md); prior Apache grants remain.
@@ -31,6 +39,7 @@ installation to run a datacenter stack.
 | Workstation / edge appliance | Development, local inference and small datasets | Current CLI/GUI foundation; future native backend/model engine; optional explicitly configured remote client |
 | Small private cluster | Team inference and batch AI work | First authenticated 3–5 independent-host pilot; a durable coordinator and bounded workers; optional desktop client, no GUI required on servers |
 | Enterprise datacenter | Shared GPU/NPU fleets, quotas, batch/inference and governance | Headless services with tenant isolation, external identity, metrics, registry, lifecycle and audit; integrate an existing orchestrator first |
+| Dedicated hyperscaler cluster | Large managed fleets and isolated organization-owned compute | Hierarchical scheduling/failure domains, bounded metadata fanout, capacity reservations, SLOs, automated draining/upgrades and tested disaster recovery; no demonstrated hyperscale claim yet |
 | Multi-datacenter / region | Data residency, disaster recovery and controlled federation | Independent failure domains and local scheduling, explicit cross-site policy and bounded federation; WAN cost/latency included |
 
 A phone remains useful by itself. Remote access is optional and never required for
@@ -40,6 +49,33 @@ non-root is the default. iOS uses supported app entitlements/native APIs, not ro
 assumptions. See the [mobile and edge plan](MOBILE_AND_EDGE_PLAN.md).
 
 ## 2. Service architecture to build later
+
+### Large datasets and precision tracks
+
+Work on datasets larger than aggregate RAM through bounded chunks, partitioned
+object-storage manifests, resumable integrity-checked transfer and explicit spill.
+Account for staging, indexes, checkpoints, network traffic and temporary copies;
+storage capacity is not accelerator memory. Keep compute near approved data,
+support backpressure and cancellation, and validate restart/reconciliation before
+claiming large-scale capacity. Start with measured GB/TB workloads and larger
+reproducible deployment gates; no PB/EB operating capacity is established today.
+
+Precision is an explicit workload contract, independent of dataset size. Current
+graphs use ordered f32; the separate compensated sum uses binary64 accumulation
+followed by finite f32 output. It is not an arbitrary-precision engine. Next tracks:
+
+- FP64 operations with actual backend/operator coverage, reproducibility and error tests.
+- Optional decimal/arbitrary-precision reference providers with requested digits,
+  rounding modes, bounded intermediates and deterministic serialization.
+- Numerically stable reductions and linear algebra; report conditioning/error
+  bounds where applicable and preserve the requested numerical mode across shards.
+- Explicit mixed-precision modes only when the caller accepts their error contract;
+  unsupported high precision is rejected rather than silently rounded down.
+
+High precision can multiply storage, transfer and compute costs. Admission and
+placement must account for bytes per element and precision-specific benchmarks.
+Both precision and large-data claims require complete reference-checked workloads,
+failure recovery and measured resource use, not an aggregate memory/FLOPS total.
 
 Use owner-approved Rust cluster services and C/C++ kernels/adapters, linked by a
 versioned C ABI; see [native performance decision](NATIVE_PERFORMANCE_ARCHITECTURE.md).

@@ -1,5 +1,81 @@
 # Standalone alpha validation
 
+## Enterprise capability negotiation — 2026-10-24
+
+Final local `test installDist distZip distTar` passes in **27 seconds**:
+**84 JVM cases, 82 passed, two unavailable-GPU skips, zero failures/errors**.
+Nine new negotiation cases check exact workload/protocol/operator intersections,
+freshness, identity/owner/adapter approval, bidirectional lane evidence, FPGA/ASIC
+configuration/target rules, bounded malformed inputs and immutable snapshots of
+caller-owned collections. Fabric examples are fixtures, not hardware execution.
+The function returns candidates with execution and reservation flags false.
+The existing target vocabulary and generated contracts remain unchanged.
+
+Three native CTest cases and eighteen Python harness/script cases pass. Android
+assembly/lint and physical CPU tests below remain separate from JVM fixtures.
+Source changes are frozen for this validation; current-head remote CI and
+installer results must be checked independently before publication.
+
+## Standalone Android and desktop CPU probe — 2026-10-24
+
+A separate foreground-only Android probe compiles six unchanged portable HyperL
+CPU sources and uses the bounded worker protocol. It is independent of Meshlit,
+model weights and GPU/NPU adapters. The final 1,830,571-byte debug APK passes
+assembly/lint in seven seconds; its SHA-256 is
+`7e850367855b8bd5d3479768b80ec5f2454b7e7395cfa89de4fa4ec8d2aa0c56`.
+The selected physical Samsung passes local weighted ReLU `[0,6,12]` and compensated
+sum `1` with this APK, recording a 3.048073 ms combined check and zero remote shards.
+An earlier APK also passed locally in 3.97901 ms. These are local correctness
+checks, not repeated speed benchmarks.
+
+The first wired split attempt was rejected by host evidence validation: two phone
+runs reused one prepared run ID, producing a host completed-shard delta other than
+six. Exact arithmetic did not override the failed session correlation; those
+timings are not qualified. The app now consumes IDs atomically and preserves prior
+reports on missing setup or reused-session preflight. The host harness preserves
+rejected diagnostics with `crossDeviceVerified=false`. USB mode also requires the
+same observed `usb:` ADB device path before/after; Wi-Fi mode requires an observed
+bound Wi-Fi network. Four harness cases and eighteen total script cases pass.
+Duplicate-session/setup UI checks used the earlier 1,830,099-byte guarded APK
+`12529a00100e2f51cec7c6a7d2802347a31444746930188f3151079d7fc5af64`; a physical
+missing-configuration check confirmed prior-report preservation. Its guard code
+is unchanged in the final APK, but those UI checks were not repeated there.
+
+A subsequent Wi-Fi collection attempt failed because a local check overwrote the
+single latest report. Final code stores each split under its consumed UUID and
+the harness collects that prepared path. The final wired split report stayed
+byte-for-byte unchanged after a later local check. No timing from either rejected
+attempt is used as qualified evidence.
+
+The final APK passes **wired and direct Wi-Fi TLS** splits: Samsung SM-A207F/API 30
+`aarch64`, 64-bit process, and Darwin `x86_64` each compute an independent
+16,384-element range of one 32,768-element multiply/ReLU workload. Each transport
+has six remote completions: one warm-up and five measured runs. Host instance/job
+correlation and all independent output hashes pass. Wired mode preserves the same
+USB ADB path; direct Wi-Fi uses the observed `wlan0` network. Both modes use the same
+desktop worker process/instance. Harness shutdown and credential/mapping cleanup
+passed. Concurrent branch launch does not measure overlapping physical kernel
+intervals.
+
+| Final five-sample statistic | Wired TLS | Direct Wi-Fi TLS |
+|---|---:|---:|
+| Median split ms | 146.831562 | 205.884427 |
+| Median complete verified ms | 180.842344 | 235.587395 |
+| Median execute round-trip ms | 94.955365 | 137.330885 |
+| Nearest-rank p95 / maximum split ms | 162.256042 | 536.524479 |
+| Nearest-rank p95 / maximum complete verified ms | 198.552083 | 565.332083 |
+| Nearest-rank p95 / maximum execute round-trip ms | 98.742448 | 486.456615 |
+
+The full Android reference after each split has median 19.758959 ms wired and
+16.725729 ms Wi-Fi. Both split paths are slower for this small workload and provide
+no speedup evidence. Stage scopes differ and these sequential observations are
+not a randomized benchmark. Five-sample p95 is the maximum, not a production tail
+estimate. Full-model sharding, mixed accelerators, general planner dispatch and
+durable recovery remain open. See the [sanitized reports](evidence/android-desktop-2026-10-24.json)
+and [reproducer and measurement boundaries](ANDROID_CROSS_PLATFORM_PROBE.md) for
+all samples, excluded warm-ups and failed-attempt history. Current source CI and
+installer qualification remain separate from these probe results.
+
 ## Integrated placement and signature foundation — 2026-10-24
 
 This branch incorporates `dev` at `a57e09f`, preserving distributed execution,

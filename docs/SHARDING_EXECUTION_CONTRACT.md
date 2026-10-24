@@ -3,8 +3,8 @@
 Proposed implementation contract, 2026-10-24 (Asia/Dhaka). The owner requires genuine
 sharding, mixed processor architectures, load balancing, measured network lanes,
 memory tiers and future adapter support. This document defines delivery gates beyond
-the existing bounded vector executor; it does not establish physical multi-device
-qualification or a full model engine.
+the existing bounded vector executor and the narrowly qualified physical CPU probe;
+it does not establish a full model engine or production distributed runtime.
 The [heterogeneous plan](HETEROGENEOUS_EXECUTION_PLAN_2026-10-23.md) records vendor
 tracks and [validation](VALIDATION.md) records actual evidence.
 
@@ -18,10 +18,14 @@ separate hardware evidence. Alpha.6 also has a real authenticated
 CPU/checked OpenCL/Metal worker adapters, bounded credits/frames/deadlines, replay
 checks, cancellation and complete-result verification. Two independent JVM worker
 processes and TLS trust/hostname tests were qualified on one Mac and in OS CI.
-These are actual computations, not physical multi-device or mixed-GPU evidence.
+Those process tests are distinct from the new fixed 32,768-element probe: physical
+Samsung ARM64 and Mac x86-64 CPUs now contribute disjoint halves over wired and
+direct Wi-Fi TLS, with bitwise output, route and host-counter verification.
+[Probe scope and measurements](ANDROID_CROSS_PLATFORM_PROBE.md) show a slower split
+than the small local reference; no speedup or physical overlap interval is claimed.
 
 Cluster-profile validation and the new H0 `shard-plan` estimator remain separate
-from execution. Full tensor/model execution, physical mixed-device qualification,
+from execution. Full tensor/model execution, mixed-accelerator qualification,
 OS/VRAM reservation, collectives and a durable production scheduler remain open.
 Existing generated cross-language contracts, compensated CPU `precise-sum/1`, HLM2
 authenticated datasets/key rotation and alpha.5 installers are preserved. Meshlit's
@@ -55,7 +59,8 @@ No aggregate RAM/VRAM/FLOPS sum implies one coherent memory space or a speedup.
 | H6: operations and scale | Operational ledger/backup and multi-tenant services, one orchestrator adapter, optional cache, fair queues, telemetry and rollout | 3–5 independent hosts first, then measured 16/64/256-host steps; restart, partition, revoke, drain, backup/restore and tenant-isolation tests |
 
 H0 is a complementary planning increment, not a prerequisite that erases the
-existing executor. H1's physical-host and durable-recovery gates remain open.
+existing executor. The fixed physical CPU probe is a partial H1 milestone; H1's
+general plan integration, durable epochs/ledger and recovery gates remain open.
 H0/H1 work can proceed before all GPU and model import work. H4 remains a required
 delivery gate; completing H1 or adding an external complete-model endpoint cannot
 close it. Training and optimizer-state sharding follow inference qualification and

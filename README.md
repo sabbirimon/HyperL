@@ -34,6 +34,11 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+Dedicated enterprise clusters, datacenters and hyperscalers are primary design
+targets, alongside standalone workstations and edge nodes. Tenant isolation,
+large-data streaming, high-precision backends, recovery and demonstrated scale
+have explicit [delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md).
+
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
 OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
@@ -42,7 +47,7 @@ bounded parallel dispatch and checked gather. [Distributed execution](docs/DISTR
 Twelve ready-made recipes are available through Kotlin/JSON, the CLI and Python/C ABI preview.
 Native desktop installer previews bundle Java; the separate Meshlit port adds a local
 recipe workbench with per-function and emergency stop controls.
-The broader native compiler, Python-like text language, full SDK, mobile packages and
+The broader native compiler, Python-like text language, full SDK, production mobile packages and
 enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
 or a production distributed AI runtime. [Current evidence and limits](docs/VALIDATION.md).
 
@@ -72,6 +77,24 @@ and worker TLS remain separate layers. See the [usage guide](docs/USER_GUIDE.md)
 [cryptography guide](docs/CRYPTOGRAPHY.md) and [ordered sharding plan](docs/SHARDING_EXECUTION_CONTRACT.md).
 Full model sharding, complex-number/matrix operators, automatic planner dispatch
 and qualified NPU or mixed-accelerator execution remain required future work.
+
+The pair-level capability negotiation library now matches exact approved workload,
+protocol, adapter and bidirectional-lane evidence. Candidates preserve artifact,
+driver, firmware/configuration and lane snapshots for dispatch revalidation.
+PCIe/CXL/NVLink/InfiniBand/RoCE and FPGA/ASIC classifications describe qualification
+requirements; they do not load enterprise drivers or activate execution.
+[Enterprise fabrics and API boundary](docs/ENTERPRISE_FABRICS.md).
+
+**Physical CPU checkpoint:** a separate foreground Android probe and desktop worker
+now pass a fixed 32,768-element split on Samsung ARM64 and Mac x86-64 over both
+USB ADB forwarding and direct Wi-Fi LAN, with TLS on each route. Each physical CPU
+contributes a distinct half and all result bits are verified. This small workload
+is slower than its local Android reference;
+it establishes a bounded cross-platform path, not a speedup, model sharding or
+simultaneous measured hardware execution. Five-sample median split times are
+146.832 ms wired and 205.884 ms Wi-Fi; complete verified times are 180.842 and
+235.587 ms respectively.
+[Reproducer, timings and failed-attempt history](docs/ANDROID_CROSS_PLATFORM_PROBE.md).
 
 AI developers face different runtime APIs, memory domains and deployment environments.
 HyperL's direction is to put a stable program/adapter contract between developer intent
@@ -146,7 +169,7 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication; alpha.6 adds typed HLM2 records, grouped chunks and explicit rekey |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Earlier inventory validator; separate alpha.6 execution dispatches real bounded shards to explicitly configured workers |
-| Distributed execution (alpha.6) | Split/map/gather, authenticated CPU or checked OpenCL/Metal worker adapters, per-domain admission and ordered terminal reduction; see [distributed guide](docs/DISTRIBUTED_EXECUTION.md) |
+| Distributed execution (alpha.6) | Split/map/gather, authenticated CPU or checked OpenCL/Metal worker adapters, per-domain admission and ordered terminal reduction; see [distributed guide](docs/DISTRIBUTED_EXECUTION.md). A separate [Android/desktop probe](docs/ANDROID_CROSS_PLATFORM_PROBE.md) qualifies fixed CPU ranges over wired and Wi-Fi TLS |
 | Telecom research | Disabled/uncertified research profiles and a full-stack research plan; no RF or carrier stack activation |
 
 ```mermaid
@@ -262,6 +285,9 @@ services: identity/mTLS, tenant isolation, quotas, durable jobs/leases, schedule
 adapters, artifact/model registry, data/checkpoints, telemetry, human/agent policies,
 acknowledged global Stop, upgrades/rollback and disaster recovery. These are roadmap
 services; this release starts no enterprise control-plane listener.
+The [enterprise fabric and capability plan](docs/ENTERPRISE_FABRICS.md) separates
+device approval, compatible candidate negotiation and actual adapter execution,
+with qualification gates for PCIe/CXL, NVLink, RDMA, DPUs, FPGA/ASIC and future fabrics.
 
 ```mermaid
 flowchart TB
@@ -295,16 +321,16 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local integrated alpha.6 checks: **73 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
-native CTest **three passes (CPU contract, seeded stress and Metal discovery)** and Python scripts **fourteen passes**. GUI checks execute the real
+Local integrated alpha.6 checks: **82 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **three passes (CPU contract, seeded stress and Metal discovery)** and Python scripts **eighteen passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Current local JVM checks - 75 cases
-    "Passed" : 73
+    title Current local JVM checks - 84 cases
+    "Passed" : 82
     "Skipped - GPU unavailable" : 2
 ```
 
