@@ -1,9 +1,10 @@
 # HyperL use cases and ready-made library
 
 HyperL currently supplies bounded finite **f32 vector preprocessing**, local
-developer tools, a native C ABI preview and encrypted local dataset streaming.
+developer tools, a native C ABI preview, encrypted local dataset streaming and
+bounded authenticated vector split/map/gather.
 It is useful before or beside an existing AI model. Full models, training,
-attention, matrix multiplication and distributed execution are later milestones.
+attention, matrix multiplication and production fleet scheduling are later milestones.
 This guide distinguishes runnable workflows from the expansion plan.
 
 ## 1. Start with a ready-made recipe
@@ -116,6 +117,10 @@ work before publication. Editor contents are transient in this screen; persist
 them externally only through a future explicit storage workflow. No inputs are
 uploaded or delegated to agents. Physical-phone validation remains paused.
 
+That paragraph describes the separate Meshlit screen. HyperL's standalone Android
+probe has its own [Samsung/Mac wired and Wi-Fi evidence](ANDROID_CROSS_PLATFORM_PROBE.md)
+for one fixed CPU workload; it does not qualify every Meshlit feature or a mobile model engine.
+
 ## 4. Author a kernel, then choose an accelerator explicitly
 
 The same JSON/workspace can be validated on CPU and exported as CUDA, HIP,
@@ -144,7 +149,8 @@ Existing `keygen`, `data-import` and `data-export` commands stream bounded local
 datasets with authenticated encryption, manifests and integrity checks. Keep the
 private key outside the dataset/installation directory. Choose new destinations
 and explicit maximum sizes; failed integrity checks do not publish valid output.
-See [the programming guide](USER_GUIDE.md) for complete runnable commands.
+See [the user guide](USER_GUIDE.md) and [programming guide](PROGRAMMING_GUIDE.md)
+for complete runnable commands.
 
 This supports preparing local research data for later AI processing. The f32
 library is not a cryptographic primitive. No remote synchronization, automatic
@@ -165,9 +171,10 @@ The full SDK, package registries and native IDE/debugger integrations remain lat
 
 ## 7. Enterprise and datacenter expansion
 
-Today, isolated developer workstations can use the local library and explicit
-authenticated read-only node metadata probe. Capacity and telecom profiles are
-planning/validation tools, not operating distributed jobs or a telecom stack.
+Today, developer workstations can use the local library, authenticated metadata
+probes and explicit [distributed vector jobs](DISTRIBUTED_EXECUTION.md). Capacity,
+fabric and telecom profiles remain planning/validation tools; their presence does
+not implement enterprise scheduling, native fabrics or a telecom stack.
 
 Useful next services are tenant quotas, authenticated node enrollment, durable
 jobs/checkpoints, model-runtime adapters, telemetry, operator approvals, paginated
@@ -183,3 +190,14 @@ Intel, Apple, Huawei/Chinese frameworks, mobile NPUs and telecom providers requi
 individual version/license/security/hardware validation. Naming them is not
 evidence of compatibility. Signed deployment artifacts, lifecycle testing and
 independent security review are still required for a production release.
+
+## 8. Quantum experiments through a separate Python contract
+
+The standard-library simulator executes bounded h/x/rx/rz/cx circuits locally and
+returns labeled simulated counts/probabilities; it needs no provider account.
+Optional SDK bridges prepare/submit circuits through explicitly configured clients.
+Their contract-double tests are not evidence of installed SDK or physical QPU execution.
+See [the programming guide](PROGRAMMING_GUIDE.md) for examples and
+[quantum extension scope](QUANTUM_EXTENSION_PLAN.md) for remaining durable-job,
+budget and provider-qualification work. Circuit simulation neither shards an
+arbitrary quantum state across paired devices nor demonstrates quantum advantage.

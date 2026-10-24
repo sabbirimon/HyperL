@@ -1,8 +1,11 @@
 # macOS, Windows and Linux desktop installers
 
-The alpha.4 release contains portable ZIP/TAR archives and requires Java 17+.
-The alpha.5 packaging increment adds native **unsigned preview** installers with
-a bundled Java 21 runtime. Download assets matching your OS **and architecture**
+Published release history: alpha.4 contains portable ZIP/TAR archives and
+requires Java 17+; alpha.5 added native **unsigned preview** installers with a
+bundled Java 21 runtime. The current alpha.6 development source is not a new
+published installer release. The alpha.5 command examples below intentionally
+refer to existing historical assets; do not assume they include alpha.6 features.
+Download assets matching your OS **and architecture**
 from [Releases](https://github.com/sabbirimon/HyperL/releases). A source ZIP is not
 an installer. An installer build does not establish production certification.
 
@@ -18,8 +21,10 @@ The main **HyperL** launcher opens the graphical workbench. The lowercase
 **hyperl-cli** launcher accepts CLI commands. Neither adds a cloud account, model,
 GPU driver, background service or global PATH entry. The native CPU library is
 included; macOS includes the optional Metal bridge. GPU use still requires the
-explicit bridge path, exact device selection and correctness checks. The phone
-app is separate: these packages cannot install on Android or iOS.
+explicit bridge path, exact device selection and correctness checks. The standalone
+[Android CPU probe](ANDROID_CROSS_PLATFORM_PROBE.md) is separate: these desktop
+packages cannot install on Android or iOS. Optional quantum provider SDKs are not
+bundled or configured by these installers; see [the Python prototype](QUANTUM_EXTENSION_PLAN.md).
 
 ## Verify, launch and remove
 
@@ -87,7 +92,9 @@ bundled Java runtime retains its `legal/` notices. Native installer metadata use
 `1.1.5` for alpha.5 because native formats do not express SemVer prereleases and
 macOS requires a positive first integer. This independent metadata maps the
 application major plus one, minor, and alpha sequence; it is not a 1.0 release.
-the CLI and release retain `0.1.0-alpha.5`. Preview identity is explicit.
+The historical CLI/release retains `0.1.0-alpha.5`. Building the current
+`0.1.0-alpha.6` source produces native metadata `1.1.6`; packaging success alone
+does not publish a release. Preview identity is explicit.
 
 Before packaging, the script executes `capabilities`, checks all twelve library
 entries and runs weighted ReLU `[0,6,12]` **without JAVA_HOME or a PATH Java**.

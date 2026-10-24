@@ -11,7 +11,7 @@
 [![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
-[Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
+[Documentation](docs/README.md) · [Programming & diagrams](docs/PROGRAMMING_GUIDE.md) · [Debugging](docs/TROUBLESHOOTING.md) · [Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
 </div>
 
@@ -34,6 +34,11 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+Dedicated enterprise clusters, datacenters and hyperscalers are primary design
+targets, alongside standalone workstations and edge nodes. Tenant isolation,
+large-data streaming, high-precision backends, recovery and demonstrated scale
+have explicit [delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md).
+
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
 bounded f32 CPU reference, portable C ABI preview, backend source emitters, optional
 OpenCL and macOS Metal host bridges, memory-aware CPU admission and encrypted local dataset streaming.
@@ -42,7 +47,7 @@ bounded parallel dispatch and checked gather. [Distributed execution](docs/DISTR
 Twelve ready-made recipes are available through Kotlin/JSON, the CLI and Python/C ABI preview.
 Native desktop installer previews bundle Java; the separate Meshlit port adds a local
 recipe workbench with per-function and emergency stop controls.
-The broader native compiler, Python-like text language, full SDK, mobile packages and
+The broader native compiler, Python-like text language, full SDK, production mobile packages and
 enterprise cluster services are planned. This alpha is not a CUDA-compatible replacement
 or a production distributed AI runtime. [Current evidence and limits](docs/VALIDATION.md).
 
@@ -56,7 +61,56 @@ These changes are not yet part of the published alpha.5 installers.
 Created by **Sabbir Hassan Imon (IMON)** with Codex assistance. HyperL is independent;
 [Meshlit](https://github.com/sabbirimon/meshlit-v2) is a separate potential client.
 
+## New programming and operations guides
+
+Start with the [detailed programming guide](docs/PROGRAMMING_GUIDE.md) for JSON,
+Python, C, workers and quantum circuits, including flow and sequence diagrams.
+[Build/test](docs/BUILD_AND_TEST.md) · [Troubleshoot](docs/TROUBLESHOOTING.md) ·
+[Progress and fixes](docs/PROGRESS_2026_10_24.md) · [Pending features](docs/AGENT_BACKLOG.md).
+
+The Python package now includes a bounded, dependency-free classical quantum
+simulator and optional IBM, Google Engine, Azure IonQ and OriginQ submission
+bridges. Simulator tests execute actual local math; provider tests use SDK doubles.
+No physical QPU or live cloud service is qualified. OriginQ requires explicit
+HTTPS configuration. [Quantum API and limits](docs/QUANTUM_EXTENSION_PLAN.md).
+Explicit SHA-384/SHA-512 hashing joins default SHA-256; Ed25519 signatures and
+AES-GCM datasets retain their existing formats. [Crypto API](docs/CRYPTOGRAPHY.md) ·
+[Post-quantum migration plan](docs/CRYPTOGRAPHY_EVOLUTION_PLAN.md).
+
 ## Why build HyperL?
+
+### Current development increment: placement and artifact integrity
+
+The `shard-plan` command evaluates bounded elementwise placement using fresh
+workload, memory-domain and directed-link observations. Its JSON explains ranges,
+estimated time, excluded workers and single-device alternatives. These are estimates;
+the command does not dispatch work. The separately implemented `distributed-run`
+executes actual authenticated vector shards and verifies gathered output.
+
+The library also signs and verifies bounded artifact manifests with JCA Ed25519
+and SHA-256 using caller-owned trusted keys. Existing HLM2 AES-GCM storage, rekeying
+and worker TLS remain separate layers. See the [usage guide](docs/USER_GUIDE.md),
+[cryptography guide](docs/CRYPTOGRAPHY.md) and [ordered sharding plan](docs/SHARDING_EXECUTION_CONTRACT.md).
+Full model sharding, complex-number/matrix operators, automatic planner dispatch
+and qualified NPU or mixed-accelerator execution remain required future work.
+
+The pair-level capability negotiation library now matches exact approved workload,
+protocol, adapter and bidirectional-lane evidence. Candidates preserve artifact,
+driver, firmware/configuration and lane snapshots for dispatch revalidation.
+PCIe/CXL/NVLink/InfiniBand/RoCE and FPGA/ASIC classifications describe qualification
+requirements; they do not load enterprise drivers or activate execution.
+[Enterprise fabrics and API boundary](docs/ENTERPRISE_FABRICS.md).
+
+**Physical CPU checkpoint:** a separate foreground Android probe and desktop worker
+now pass a fixed 32,768-element split on Samsung ARM64 and Mac x86-64 over both
+USB ADB forwarding and direct Wi-Fi LAN, with TLS on each route. Each physical CPU
+contributes a distinct half and all result bits are verified. This small workload
+is slower than its local Android reference;
+it establishes a bounded cross-platform path, not a speedup, model sharding or
+simultaneous measured hardware execution. Five-sample median split times are
+146.832 ms wired and 205.884 ms Wi-Fi; complete verified times are 180.842 and
+235.587 ms respectively.
+[Reproducer, timings and failed-attempt history](docs/ANDROID_CROSS_PLATFORM_PROBE.md).
 
 AI developers face different runtime APIs, memory domains and deployment environments.
 HyperL's direction is to put a stable program/adapter contract between developer intent
@@ -128,10 +182,12 @@ See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
 | Backend source | C99/CPU, CUDA, HIP, OpenCL C, Metal and Vulkan GLSL emission; emission alone does not compile/run those backends |
 | Optional GPU | Explicit OpenCL/macOS Metal hosts; four bounded Metal cases passed on AMD Radeon Pro 560X, with CPU verification and expected overflow rejection. Other GPUs and full models need separate qualification |
 | Android GPU experiment | Samsung Galaxy A20s / Adreno 506 executes generated Vulkan kernels: 11 CPU-verified outputs and two expected overflow rejections. Native test runner; Meshlit GPU wiring and mobile installers remain separate. [Build and evidence](docs/ANDROID_VULKAN.md) |
+| Quantum experiments (alpha.6) | Bounded local classical simulator; optional SDK submission bridges with scoped opt-in; no live QPU qualification |
+| Cryptographic integrity (alpha.6) | JCA SHA-256/384/512 hashing and Ed25519 artifact signatures; caller-managed trust and keys |
 | Large local files | Bounded 4 MiB chunks, AES-256-GCM, authenticated manifest/integrity, quota, cancellation and no-overwrite publication; alpha.6 adds typed HLM2 records, grouped chunks and explicit rekey |
 | Node probe | Explicit authenticated read-only metadata request to a configured HTTPS endpoint, or numeric HTTP loopback |
 | Cluster profile | Earlier inventory validator; separate alpha.6 execution dispatches real bounded shards to explicitly configured workers |
-| Distributed execution (alpha.6) | Split/map/gather, authenticated CPU or checked OpenCL/Metal worker adapters, per-domain admission and ordered terminal reduction; see [distributed guide](docs/DISTRIBUTED_EXECUTION.md) |
+| Distributed execution (alpha.6) | Split/map/gather, authenticated CPU or checked OpenCL/Metal worker adapters, per-domain admission and ordered terminal reduction; see [distributed guide](docs/DISTRIBUTED_EXECUTION.md). A separate [Android/desktop probe](docs/ANDROID_CROSS_PLATFORM_PROBE.md) qualifies fixed CPU ranges over wired and Wi-Fi TLS |
 | Telecom research | Disabled/uncertified research profiles and a full-stack research plan; no RF or carrier stack activation |
 
 ```mermaid
@@ -247,6 +303,9 @@ services: identity/mTLS, tenant isolation, quotas, durable jobs/leases, schedule
 adapters, artifact/model registry, data/checkpoints, telemetry, human/agent policies,
 acknowledged global Stop, upgrades/rollback and disaster recovery. These are roadmap
 services; this release starts no enterprise control-plane listener.
+The [enterprise fabric and capability plan](docs/ENTERPRISE_FABRICS.md) separates
+device approval, compatible candidate negotiation and actual adapter execution,
+with qualification gates for PCIe/CXL, NVLink, RDMA, DPUs, FPGA/ASIC and future fabrics.
 
 ```mermaid
 flowchart TB
@@ -280,16 +339,16 @@ performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLA
 
 ## Evidence, not assumed performance
 
-Local post-alpha.4 source checks: **42 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
-native CTest **two passes (CPU contract and Metal discovery)** and Python scripts **fourteen passes**. GUI checks execute the real
+Local integrated alpha.6 checks: **87 JVM tests pass, two unavailable-GPU tests skip, zero failures**;
+native CTest **three passes (CPU contract, seeded stress and Metal discovery)** and Python scripts **53 passes**. GUI checks execute the real
 CPU/source/analysis actions and verify the bundled font families. Actual previews are
 checked at 1280×820 and 1000×700. [Validation record](docs/VALIDATION.md).
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'pie1':'#72e0ce','pie2':'#eac388','pieStrokeColor':'#2a394d','pieLegendTextColor':'#334155'}}}%%
 pie showData
-    title Current local JVM checks - 44 cases
-    "Passed" : 42
+    title Current local JVM checks - 89 cases
+    "Passed" : 87
     "Skipped - GPU unavailable" : 2
 ```
 

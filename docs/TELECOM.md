@@ -4,6 +4,13 @@ The owner selected full network-stack research, beyond AI traffic over cellular
 links. Current code is a typed plan validator only; no carrier/RAN/core stack,
 transmitter, SIM/subscriber credential service or standards certification exists.
 
+Implementation audit: 2026-10-24. The bounded [CPU worker protocol](DISTRIBUTED_EXECUTION.md)
+and [fabric capability negotiation](ENTERPRISE_FABRICS.md) are compute features,
+not a cellular network stack. The separate [quantum prototype](QUANTUM_EXTENSION_PLAN.md)
+does not add telecom authentication, radio capability or standards certification.
+The standards links below retain their research scope; pin a specific edition
+when an actual lab implementation is approved.
+
 Research layers: LTE/EPC and NR/5GC architecture; PHY DSP and FEC; MAC scheduling;
 RLC/PDCP/SDAP; RRC/NAS state machines; control/user planes and GTP-U; authenticated
 service interfaces; timing/synchronization, QoS/slicing; security/auth/key lifecycle;

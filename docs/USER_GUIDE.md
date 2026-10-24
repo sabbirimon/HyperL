@@ -1,5 +1,10 @@
 # HyperL installation, usage and programming guide
 
+For the detailed alpha.6 tutorial, Python/C examples and diagrams, read
+[Programming with HyperL](PROGRAMMING_GUIDE.md). See also
+[build/test](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md),
+[progress](PROGRESS_2026_10_24.md) and [all documentation](README.md).
+
 Download/install examples target the published Apache-licensed alpha.5 release.
 Sections explicitly marked alpha.6 describe unreleased development additions,
 with [new community/enterprise rights](LICENSING.md); [earlier grants](LICENSE_HISTORY.md)
@@ -141,13 +146,19 @@ launcher path if you have not added a user-local PATH entry.
 | `sum-precise INPUTS.json [MEMORY_BUDGET_BYTES]` (alpha.6) | Separate compensated CPU reduction of exactly one `x` vector, rounded once to finite f32 |
 | `data-rekey DATASET NEW_DATASET OLD_KEYFILE NEW_KEYFILE MAX_BYTES` (alpha.6) | Verifies the entire source and writes HLM2 under a different key without an intermediate plaintext export |
 | `cluster-plan PROFILE.json` | Validates IPv6/capacity configuration; does not enroll/dispatch nodes |
+| `shard-plan REQUEST.json [OBSERVATION_TIME_MS]` | Estimates bounded elementwise partitions from supplied observations; no discovery, reservation or execution |
+| `worker-token NEW_PRIVATE_TOKEN_FILE` | Creates a new private worker token without overwriting |
+| `worker WORKER_CONFIG.json` | Starts an explicitly configured bounded compute listener; non-loopback requires TLS |
+| `distributed-plan CONFIG.json PROGRAM.json INPUTS.json` | Contacts approved workers and computes bounded placements without running kernels |
+| `distributed-run CONFIG.json PROGRAM.json INPUTS.json` | Executes actual split/map/gather through configured CPU or checked OpenCL/Metal workers |
 | `node-probe ORIGIN TOKEN_FILE` | Authenticated read-only host metadata observation, no inference qualification |
 | `telecom-plan PROFILE.json` | Validates a research profile, reports stack unavailable/uncertified |
 
 Usage/input/backend failures exit with status 2 and a bounded error. Supported
 operation output is actual computation. No command silently falls back to a CPU
 when a requested GPU is unavailable. No network action occurs for math/emission/
-dataset commands. `node-probe` is an explicit network request to your selected host.
+dataset commands or `shard-plan`. `node-probe` and the separate distributed
+commands explicitly contact configured hosts; `worker` opens its configured listener.
 
 ## 3. Write a HyperL program
 
@@ -383,6 +394,12 @@ secure erasure or storage snapshot guarantee is implemented. The quota upper bou
 is 4 TiB, not a tested multi-terabyte performance claim. This is local storage IO;
 distributed large-data operators/shuffle/offload are future work.
 
+The JVM API also supports Ed25519 signatures over bounded artifact manifests and
+streamed SHA-256 verification. It requires a separately trusted public key and
+does not encrypt the artifact or authorize execution. `keygen` creates an AES
+dataset key, not an Ed25519 signing key. See [Cryptography](CRYPTOGRAPHY.md) for
+the API, metadata-only verification distinction, limits and replay precautions.
+
 ## 8. IPv6 nodes and configuration
 
 `examples/cluster-ipv6.json` contains an IPv6 **documentation address**, not a real
@@ -414,6 +431,56 @@ development adds separate explicit `worker`, `distributed-plan` and
 [distributed execution](DISTRIBUTED_EXECUTION.md) for adapters, tokens, TLS,
 memory ownership and cancellation. Enrollment, remote datasets, independent
 device qualification and fleet scale remain later.
+
+### Sharding admission example
+
+The checked-in [sharding request](../examples/sharding-request.json) is a
+**synthetic FIXTURE**, with invented observations and a fixed clock. Its device
+names do not identify hardware that was tested. Run it with the explicit clock:
+
+```sh
+hyperl shard-plan examples/sharding-request.json 50000
+```
+
+It describes 131,072-element multiply/ReLU work, two hypothetical CPU workers
+with different compute/copy/link speeds, and small permitted working-memory
+budgets. These budgets represent assigned capacity, not each device's total RAM.
+Both directions of each link and shared source ingress/egress ceilings are
+declared. All timestamps are `50000`; omitting the explicit clock evaluates this
+historical fixture against current time and should report stale evidence.
+
+The planner returns candidate index ranges, per-domain memory admission,
+transfer-inclusive estimates, exclusions and a decision. Its output always states
+`executionActivated: false`, `reservationGuaranteed: false` and
+`timingsAreEstimates: true`. A sharding candidate is not a speed measurement,
+remote execution or a resource lease. A single-device preference can be a valid
+outcome when network overhead exceeds the expected compute benefit.
+
+For a real request, the embedding application must collect current observations,
+establish identity/owner permission, qualify each exact backend and graph, and
+bind benchmark measurements to the graph hash and element count. Observations
+must be no older than 30 seconds and cannot be from the future. Setting
+`qualified` or `authenticated` in JSON does not perform those checks. Memory
+aliases that share physical RAM must use one domain ID. The fixture's canonical
+program hash is `119c15f34d7576a08f98064ba8e090f933e2cda0658f1602f59ce6d623273077`;
+recompute it with `HyperLShardingPlanner.programSha256` if the graph changes.
+
+This H0 planner admits only independent f32 `add`, `multiply` and `relu` graphs:
+2–262,144 elements, up to eight workers, sixteen physical memory domains and
+64 directed links, within the language's retained-array limit. It rejects
+ordered `sum` rather than changing its numerical order. Authenticated dispatch,
+worker admission and checked split/map/gather already exist in the separate
+`distributed-plan` / `distributed-run` path, which uses its own configuration and
+placement contract. This H0 request/plan is not automatically passed to that
+executor. The executor additionally supports a single terminal ordered sum using
+exact CPU workers and coordinator reduction; `shard-plan` does not admit it.
+
+The existing distributed path attempts authenticated cancellation; acknowledgment
+means requested, not proven termination. Live measured adaptive load balancing,
+full LLM/tensor/model sharding, collectives and complex-number math remain future
+work. The separate `sum-precise` CPU operation is implemented and does not change
+the ordered f32 sharding contract. See [distributed execution](DISTRIBUTED_EXECUTION.md)
+and [the staged execution contract](SHARDING_EXECUTION_CONTRACT.md).
 
 ## 9. Telecom and extensions
 
@@ -451,7 +518,8 @@ thin adapters; see UPSTREAM_REUSE.md. Never label an installed SDK as executed A
 
 Current use cases: AI vector preprocessing experiments, cross-backend source and
 correctness comparisons, C embedding, encrypted local dataset handling and bounded
-host capability observations. Future tensor/model/vision/DSP/distributed/telecom
+host capability observations and experimental bounded split/map/gather. Future
+tensor/model/vision/DSP/fleet-scale/telecom
 use cases need actual backends, measurements and acceptance. HyperL can reduce
 duplicate integration work while keeping provenance, device limits and human
 controls visible; speed and universal compatibility are outcomes to demonstrate.

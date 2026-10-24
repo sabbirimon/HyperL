@@ -6,6 +6,11 @@ Result: **`passed-listed-cases` — four GPU executions and one expected rejecti
 This validates these generated workloads on this exact GPU, not all AMD devices,
 full AI models, general numerical conformance or a speedup benchmark.
 
+Documentation audit: 2026-10-24. This 2026-10-08 hardware record, hashes and
+measurements are preserved unchanged. Later [CPU cluster tests](ANDROID_CROSS_PLATFORM_PROBE.md)
+and [capability negotiation](ENTERPRISE_FABRICS.md) are separate evidence; they
+do not broaden the Radeon workload qualification.
+
 ## Environment and provenance
 
 - Owner-identified MacBook Pro A1990; Intel/x86-64 host.

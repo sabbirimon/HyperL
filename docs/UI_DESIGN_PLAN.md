@@ -4,6 +4,16 @@ Owner request: polished UI that attracts developers, with the engineering clarit
 of mature accelerator tools. HyperL keeps its own name, colors, assets and visual
 language. This plan is not a claim about adoption or current GPU capabilities.
 
+## Current implementation boundary — 2026-10-24
+
+The historical alpha.3/alpha.4 layout decisions below remain a design record. The
+workbench still presents its existing editing/CPU/source/GPU workflows. New
+[capability negotiation](ENTERPRISE_FABRICS.md), [CLI shard planning](SHARDING_EXECUTION_CONTRACT.md)
+and [quantum Python APIs](QUANTUM_EXTENSION_PLAN.md) do not imply a new GUI panel,
+provider-account screen or enterprise cluster dashboard. The standalone
+[Android CPU probe](ANDROID_CROSS_PLATFORM_PROBE.md) is a separate qualification
+app. Screenshots and timing claims must identify the actual build tested.
+
 ## Product goals and first pass
 
 1. Put the useful first result within one screen: editable example, Run, output,
@@ -27,7 +37,7 @@ language. This plan is not a claim about adoption or current GPU capabilities.
 
 ## Implementation and performance boundaries
 
-This first alpha remains a Swing/JVM desktop workbench sharing the existing runtime.
+The current workbench remains a Swing/JVM application sharing the existing runtime.
 Use static native vector painting and locally bundled licensed fonts, with system
 font fallback. No runtime font download, image background, browser engine, web
 service or animation loop. UI/configuration stay outside kernel

@@ -43,10 +43,16 @@ jobs:
             --ndk "$ANDROID_HOME/ndk/28.2.13676358" \
             --cli "$PWD/build/install/hyperl/bin/hyperl" \
             --output "$PWD/build/android-vulkan"
+      - name: Build standalone Android CPU cross-platform probe
+        run: ./gradlew --no-daemon -p android/probe assembleDebug lintDebug
       - uses: actions/upload-artifact@v4
         with:
           name: android-vulkan-build-not-device-tested
           path: build/android-vulkan
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-hyperl-probe-debug-not-device-tested-by-ci
+          path: android/probe/build/outputs/apk/debug/*.apk
   check:
     strategy:
       fail-fast: false

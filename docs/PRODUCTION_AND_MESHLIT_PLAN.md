@@ -5,6 +5,12 @@ ready-made library, detailed use cases and macOS/Windows/Linux installers.
 Production readiness is an acceptance result, not a version-name change. Keep
 HyperL standalone and Meshlit as separate repositories and review branches.
 
+**2026-10-24 scope:** the [standalone Android CPU probe](ANDROID_CROSS_PLATFORM_PROBE.md)
+has narrow physical wired/Wi-Fi split evidence. The [precision/HPC plan](PRECISION_AND_HPC_PLAN.md)
+and [quantum prototype](QUANTUM_EXTENSION_PLAN.md) are separate extensions, not a
+production release or an automatic Meshlit port. Current licence/provenance boundaries
+continue to apply. The implementation list below records the original delivery track.
+
 ## Current implementation increment
 
 1. Harden the bounded runtime: validate the complete graph and shape/memory cost
@@ -54,7 +60,10 @@ Add typed tensors and qualified model runtimes before advertising inference or
 training libraries. Reuse reviewed ONNX Runtime, PyTorch/LibTorch, oneDNN,
 CUDA/cuBLAS/cuDNN, ROCm libraries, Metal/MPS/Core ML and Chinese-framework adapters
 through explicit provider/version/license contracts. No arbitrary binary import.
-Native Android/iOS GPU/NPU adapters, Rust cluster services, acknowledged fleet
-stop, authenticated remote execution and distributed collectives have separate
-operator configuration and hardware/failure acceptance. Single-phone local
-preprocessing remains useful while these later milestones develop.
+Native Android/iOS GPU/NPU adapters, Rust cluster services, acknowledged fleet stop
+and distributed collectives have separate operator and hardware/failure gates.
+The bounded authenticated vector executor already exists; production durability,
+fleet isolation and recovery remain unfinished. Single-phone local preprocessing
+remains useful while these milestones develop. Optional quantum provider bridges,
+including [OriginQ](ORIGINQ_ADAPTER.md), still require SDK, transport and physical
+provider qualification before production claims.

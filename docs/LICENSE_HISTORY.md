@@ -1,5 +1,13 @@
 # Licence scope and history
 
+New October 24 quantum modules, SHA-384/512 hashing API and documentation additions
+follow the existing Community/Enterprise terms for newly covered material. Optional
+provider SDKs remain separately installed and licensed; their source is not copied.
+
+The 2026-10-24 sharding-observation planner and Ed25519 artifact-signature additions
+follow the existing Community/Enterprise terms for newly covered material. They
+do not change any earlier Apache grant or third-party licence.
+
 The new distributed implementation under `src/main/kotlin/org/hyperl/distributed`
 and new alpha.6 OpenCL probe memory observations use the Community/Enterprise
 licence. Unchanged OpenCL execution and other earlier Apache foundations keep

@@ -49,8 +49,13 @@ with exactly one `x` input vector. These helpers are CPU-only.
 | NVIDIA CUDA / AMD HIP | Explicit vendor adapter and installed SDK/driver, owner-selected physical hardware, exact-device numerical and total-transfer timing checks; generated source is insufficient |
 | VRAM/NUMA and spill | Actual provider allocator observations, reservation/lifetime accounting, failure/pressure tests and authenticated spill recovery before any automatic spill feature |
 | Language/IDE tools | A versioned parser and semantic diagnostics, LSP integration and debugger/profiler behavior; current JSON editor/schema remain the delivered authoring tools |
-| Rust fleet services | Authenticated durable jobs, scoped quotas, isolation, retry/stop/failure protocols and multi-host acceptance; the current cluster configuration is not a scheduler |
+| Rust fleet services | Durable jobs, tenant quotas/isolation, recovery and production acceptance beyond the implemented bounded authenticated vector executor; configuration/negotiation alone is not a scheduler |
 
 Those milestones are independent projects and qualification gates. No unavailable
 backend is represented as a successful stub or silent CPU replacement. Licence
 scope, prior Apache rights and third-party notices remain in [LICENSING.md](LICENSING.md).
+Use the [programming guide](PROGRAMMING_GUIDE.md) for current runnable examples,
+the [precision plan](PRECISION_AND_HPC_PLAN.md) for future numerical types and the
+[quantum scope](QUANTUM_EXTENSION_PLAN.md) for separate Python simulation/provider
+contracts. Quantum provider tests use SDK doubles; installed SDK and QPU execution
+are not established by the foundation or contract-test suite.

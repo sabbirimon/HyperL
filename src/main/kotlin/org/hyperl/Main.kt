@@ -30,6 +30,7 @@ Usage:
   hyperl metal-run /absolute/path/to/hyperl-metal "EXACT METAL DEVICE NAME" PROGRAM.json INPUTS.json
   hyperl telecom-plan PROFILE.json
   hyperl cluster-plan PROFILE.json
+  hyperl shard-plan REQUEST.json [OBSERVATION_TIME_MS]
   hyperl node-probe ORIGIN TOKEN_FILE
   hyperl worker-token NEW_PRIVATE_TOKEN_FILE
   hyperl worker WORKER_CONFIG.json
@@ -63,6 +64,7 @@ Network access requires explicit node-probe or distributed worker settings; no s
             })}
             "telecom-plan"->{require(args.size==2);println(TelecomPlanner.plan(Workspace.json.decodeFromString<TelecomProfile>(Workspace.read(Path.of(args[1])))))}
             "cluster-plan"->{require(args.size==2);println(ClusterPlanner.plan(Workspace.json.decodeFromString<ClusterProfile>(Workspace.read(Path.of(args[1])))))}
+            "shard-plan"->{require(args.size in 2..3);val text=Workspace.read(Path.of(args[1]));ShardProtocol.checkJson(text,256*1024);val request=Workspace.json.decodeFromString<ShardingRequest>(text);println(Workspace.json.encodeToString(HyperLShardingPlanner.plan(request,args.getOrNull(2)?.toLong()?:System.currentTimeMillis())))}
             "node-probe"->{require(args.size==3);println(NodeProbe.observe(args[1],Path.of(args[2])))}
             "worker-token"->{require(args.size==2);TokenFiles.create(Path.of(args[1]));println("Private worker token created; keep it outside programs, prompts and source")}
             "worker"->{require(args.size==2);val settings=ShardProtocol.json.decodeFromString<WorkerSettings>(Workspace.read(Path.of(args[1])));settings.validate()
