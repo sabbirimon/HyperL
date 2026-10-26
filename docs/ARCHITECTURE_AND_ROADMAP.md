@@ -174,3 +174,7 @@ defines the later bounded text frontend/Python SDK, common IR, native execution,
 source diagnostics and onboarding gates; the alpha does not execute that proposed
 text syntax. A small explicit Python/C ABI preview is documented in
 [library interoperability](LIBRARY_INTEROPERABILITY.md); it is not the full SDK.
+
+## Owner-requested performance expansion — 2026-10-26
+
+[Mathematics-informed performance roadmap](MATH_PERFORMANCE_ROADMAP.md) defines M0–M5: measured baselines, bounded matrix contracts, practical qualified kernels, research constructions, restricted scheduling and product adoption. These are future gates; no unmeasured speedup or new cipher is claimed.

@@ -1,5 +1,9 @@
 # Standalone alpha validation
 
+## Exact reduction oracle — 2026-10-26
+
+[Research assessment](MATH_RESEARCH_2026_10_26.md) records 200 seeded exact-arithmetic comparison fixtures and three boundary cases. JVM 91 tests (two skipped), native 3 and Python 53 pass; installDist/distZip pass. No numerical/wire/backend change or new hardware proof.
+
 ## Quantum, hashing and documentation increment — 2026-10-24
 
 Final local `test installDist distZip distTar` passes in **25 seconds**:

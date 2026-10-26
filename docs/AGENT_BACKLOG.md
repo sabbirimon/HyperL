@@ -44,3 +44,11 @@ For every meaningful fix, record the symptom, cause, implementation files, test 
 reproducer, observed result and remaining limits. Link the commit/PR after pushing.
 Update the relevant guide and current status, while preserving dated measurements
 as historical evidence. Follow [BUILD_AND_TEST.md](BUILD_AND_TEST.md) before shipping.
+
+## Research follow-up — 2026-10-26
+
+See [math assessment](MATH_RESEARCH_2026_10_26.md). Independent reduction-oracle regression coverage is added. Matrix and scheduling theorem adoption remains gated on concrete algorithms, applicable assumptions and target benchmarks; no production planner or cipher change.
+
+## Owner-requested performance expansion — 2026-10-26
+
+[Mathematics-informed performance roadmap](MATH_PERFORMANCE_ROADMAP.md) defines M0–M5: measured baselines, bounded matrix contracts, practical qualified kernels, research constructions, restricted scheduling and product adoption. These are future gates; no unmeasured speedup or new cipher is claimed.
