@@ -5,6 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* 2026-10-29 liveness additions: LicenseRef-HyperL-Community-1.0.
+   Earlier Apache grants for the original runtime remain unchanged. */
+static void release_finished(float **values, const size_t *last_use, size_t index) {
+    for (size_t i = 0; i <= index; i++) {
+        if (last_use[i] == index) {
+            free(values[i]);
+            values[i] = NULL;
+        }
+    }
+}
+
 #if FLT_RADIX != 2 || FLT_MANT_DIG != 24 || FLT_MAX_EXP != 128
 #error "HyperL CPU ABI requires IEEE binary32 float semantics"
 #endif
@@ -18,6 +29,7 @@ enum hl_status hl_execute(const struct hl_vector *inputs, size_t input_count,
                           hl_cancel_fn cancelled, void *cancel_context) {
     size_t lengths[HL_MAX_VALUES] = {0};
     float *values[HL_MAX_VALUES] = {0};
+    size_t last_use[HL_MAX_VALUES] = {0};
     size_t retained = 0;
 
     if (!output_length) {
@@ -30,6 +42,9 @@ enum hl_status hl_execute(const struct hl_vector *inputs, size_t input_count,
     }
 
     /* Validate the whole graph before allocating or reading any input values. */
+    for (size_t i = 0; i < input_count + step_count; i++) {
+        last_use[i] = i;
+    }
     for (size_t i = 0; i < input_count; i++) {
         if (!inputs[i].data || inputs[i].length < 1 || inputs[i].length > HL_MAX_VECTOR_ELEMENTS) {
             return HL_INVALID;
@@ -51,6 +66,10 @@ enum hl_status hl_execute(const struct hl_vector *inputs, size_t input_count,
             return HL_INVALID;
         }
         lengths[index] = step.operation == HL_SUM ? 1 : lengths[step.a];
+        last_use[step.a] = index;
+        if (step.operation == HL_ADD || step.operation == HL_MULTIPLY) {
+            last_use[step.b] = index;
+        }
         retained += lengths[index];
         if (retained > HL_MAX_RETAINED_ELEMENTS) {
             return HL_MEMORY;
@@ -59,6 +78,9 @@ enum hl_status hl_execute(const struct hl_vector *inputs, size_t input_count,
     if (output_capacity < lengths[output_index]) {
         return HL_INVALID;
     }
+    /* Keep the chosen output until all instructions have been checked, including
+       unused branches. Admission still uses the original total-retention cap. */
+    last_use[output_index] = input_count + step_count;
 
     enum hl_status status = HL_OK;
     for (size_t index = 0; index < input_count + step_count; index++) {
@@ -84,6 +106,7 @@ enum hl_status hl_execute(const struct hl_vector *inputs, size_t input_count,
                 }
                 values[index][i] = value;
             }
+            release_finished(values, last_use, index);
             continue;
         }
 
@@ -129,6 +152,7 @@ enum hl_status hl_execute(const struct hl_vector *inputs, size_t input_count,
                 values[index][i] = value;
             }
         }
+        release_finished(values, last_use, index);
     }
 
     /* Publish only after all intermediate values passed validation. */

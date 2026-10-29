@@ -1,5 +1,11 @@
 # Licence scope and history
 
+The 2026-10-29 native CPU buffer-liveness additions, allocator regression test and
+before/after comparison harness use the existing Community/Enterprise terms for
+newly covered material. Earlier Apache grants for the original native runtime
+remain unchanged. These changes are not automatically copied into Meshlit's
+separate Apache port.
+
 New October 24 quantum modules, SHA-384/512 hashing API and documentation additions
 follow the existing Community/Enterprise terms for newly covered material. Optional
 provider SDKs remain separately installed and licensed; their source is not copied.

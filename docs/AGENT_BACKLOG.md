@@ -12,6 +12,13 @@ estimates; pair capability candidates; AES-GCM datasets/rekey; Ed25519 signature
 SHA-256/384/512 hashing; bounded classical quantum simulator and optional provider
 submission bridges. Evidence scope is described in the linked validation record.
 
+## 2026-10-29 update
+
+Native intermediate-buffer liveness is implemented and tested; ordered semantics
+and the original admission limit remain intact. Remaining work: actual RSS/energy
+measurements, device comparisons and integration qualification. Meshlit Inference
+has a separate optional-adapter plan; no license or automatic port is implied.
+
 ## Required and suggested next work
 
 | Priority | Feature | Acceptance before claiming delivered |
