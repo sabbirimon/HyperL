@@ -1,5 +1,130 @@
 # Standalone alpha validation
 
+## Native model sharding, fleet and resilience follow-up — 2026-11-02
+
+The optional native model builder passes with clean independently installed
+llama.cpp revision `4df29be4f4c3673f428170fda944a5b19f743bb8`, recording executable/
+library hashes. It builds the selected CPU/RPC backends without a UI/network model
+download. Local GGUF weights were already present; no model or engine binary is
+redistributed. [Provenance](LLM_BACKEND_PROVENANCE.json).
+
+**Actual pretrained model:** SmolLM2 135M Q4_K_M, 105,454,432 bytes, SHA-256
+`2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d`.
+The final native fixture produces the same **16 greedy tokens and text** on the
+single local CPU reference, two independent native CPU workers, two mTLS-wrapped
+worker routes, and two actual jobs submitted through the authenticated pull service.
+Observed assignments give both workers distinct model layers and nonzero KV buffers
+(12.0 and 10.5 MiB). Both workers execute native graphs/recomputations. Killing one
+worker after generation dispatch rejects the result. Profiles and result publication
+bind an owner-registered model digest/adapter. No uncertain generation is replayed.
+[Sanitized evidence](evidence/model-sharding-2026-11-02.json).
+
+An initial automatic-kernel 135M comparison diverged at token 16. The adapter now
+fixes f32 KV, flash attention off and repacking off; the final comparisons above
+pass. RPC route inventory names/log punctuation and strict Python 3.15 certificate
+extensions were also corrected before the passing fixture. These tests cover one
+prompt/seed and a short output, not every model/context, all numerical outputs,
+physical mixed-host/GPU execution or a speedup. Reported 3.557 s startup and 0.333 s
+request time are diagnostic single-run scopes, not a comparative benchmark.
+
+**JAX:** six actual tests pass in the isolated pinned JAX/JAXlib 0.4.38 environment,
+using four **logical CPU devices on one physical host**. They compare generated
+tokens/logits to an independent full-prefix NumPy reference; compare one/four-device
+weights/KV; execute the trusted on-disk model loader; save/restore token-boundary
+KV/logits and continue generation; reject tamper, invalid shapes/budgets, context
+exhaustion, cancellation and unavailable TPU selection. Dot products request
+`Precision.HIGHEST`; dtype is f32. No physical TPU is available. The owner explicitly
+selected adapter/tests without hardware; GPU/TPU/multi-controller qualification is
+unrun. Checkpoint recovery is same-backend and single-controller only.
+
+**General checks:** 101 JVM cases retain 99 passes and two unavailable-GPU skips.
+The standard Python script suite has **85 methods: 80 pass and five optional JAX
+execution cases skip** in the default interpreter; all six JAX methods separately
+pass in the pinned interpreter (the basic contract case overlaps). No failed/error
+case remains. Strict Release native CTest passes five cases, including the new
+Cauchy erasure contract and a Metal discovery case. Debug ASan/UBSan also passes
+five cases: four C cases are instrumented; Metal discovery is not. Local leak
+detection is disabled because this macOS sanitizer runtime does not support it;
+Ubuntu CI retains its own leak checks. Discovery is not GPU execution.
+
+Erasure tests use an independent polynomial-arithmetic parity oracle, exhaustive
+small two-fragment loss sets, larger seeded loss patterns, alias/bounds/cancel checks,
+actual corrupted/missing model blobs, trusted-manifest rejection and full-artifact
+recovery. HMAC audit tests cover key/algorithm downgrade, tampering, external heads,
+quota exhaustion and transaction rollback. Fleet tests exercise real mTLS role
+separation, cancellation/result fencing, duplicate keys, restart/epoch/profile
+revocation, concurrent claims and bounded pagination. Original independent JVM
+vector/tensor/TLS qualification also passes again with two CPU processes/eight
+shards/4,096 elements, trusted TLS and rejection of wrong-host/untrusted certificates.
+
+**Scale:** the final authenticated synthetic queue run stores 1,000,000 jobs in
+1,000-record batches, with 1,000 claim/start/finish cycles and 4,001 verified HMAC
+records. Insert time is 256.48 s; the transitions take 2.38 s. Database size is
+534,609,920 bytes and peak process RSS is 24,461,312 bytes. No live devices are
+connected by this benchmark. Earlier inventory/storage diagnostics remain below.
+[Sanitized queue evidence](evidence/fleet-queue-2026-11-02.json).
+
+Remaining gates: physical multi-host/architecture and GPU/TPU tests, broader model
+numerics/load, PKI/revocation/ingress operations, database replication, coordinated
+multi-controller checkpoint recovery and million-device live deployment. No formal
+NIST/FIPS/defence certification or hardware ECC is implied by software integrity,
+erasure repair or the [control mapping](HIGH_ASSURANCE_BASELINE.md). Rust is not
+installed on this host; native C/C++/XLA and native SQLite handle the new compute/
+storage work. No Meshlit tracked source, cloud resource, driver, release or installer
+publication was changed. Current-head remote CI is separate from these local results.
+
+
+## Logical devices, model storage and fleet directory — 2026-11-02
+
+The current local `test installDist distZip distTar` run passes in 41 seconds:
+**101 JVM cases: 99 passed, two unavailable-GPU skips, zero failures/errors**.
+Ten new tensor tests use actual loopback HTTP workers for resident chained compute,
+no repeated input uploads, named pools and cross-pool replication, exact outputs,
+immutable/CAS versions, ownership snapshots, shapes, bounded no-cache execution,
+incorrect-output rejection, cancellation/dependencies, directory-instance fences,
+worker loss, lease/credit cleanup and frame/digest rejection. GPU adapters are the
+existing checked paths; no new hardware execution is inferred from CPU fixtures.
+
+**65 Python script tests pass**. Twelve new cases cover streamed/deduplicated
+artifact import/export, reopen, quota/cancellation/tamper/order checks, bounded RAM
+cache, automatic/manual residency, state/staging/transfer accounting, GQA/quantized
+size estimates, incompatible backends/physical aliases, persistent fleet pages,
+pools, expiry, revocation, restart epochs and remote-origin rejection. Generated
+contract files match. Strict Release CMake/CTest passes **four cases**: three CPU
+checks and Metal discovery. The discovery check is not GPU execution.
+
+A synthetic **one-million-device inventory** inserts bounded 1,000-record batches
+in 46.24 s and pages all records in 16.16 s. Database size is 199,344,128 bytes;
+peak process RSS is 23,355,392 bytes. A 16-node cell and lease expiry are checked.
+There are **zero live device connections**. Separately, a **256 MiB synthetic
+artifact** streams through 64 checked chunks, importing in 6.94 s and exporting in
+9.62 s, with 30,044,160-byte peak process RSS and an independently checked complete
+SHA-256. These single-host diagnostics are not throughput comparisons or model
+inference evidence. [Sanitized measurements](evidence/logical-device-scale-2026-11-02.json).
+
+The installed CLI qualification runs two independent JVM CPU workers, eight shards,
+4,096 elements, original distributed execution and resident tensor execution with
+exact local-reference agreement. The tensor path uploads exactly 32,768 input
+payload bytes. Trusted TLS passes; untrusted certificates and wrong hostnames are
+rejected for both paths. All fixture workers/credentials are temporary and cleaned
+up. This remains one-host loopback HTTP/TLS evidence, not physical mixed-device
+qualification. The CI workflow now requests the tensor fixture; remote current-head
+CI has not been run from this workspace.
+
+Review found that caller-mutated returned shape lists could alter internal tensor
+metadata. The allocator now stores independent shape snapshots, job observations
+copy descriptors, and a regression case proves directory isolation. The final code
+suite and CLI qualification include this fix.
+
+Current implementation limits: the coordinator ledger is in-memory; worker chunks
+are in host RAM with expiring leases; model residency is advisory and cannot run
+LLMs. TPU/CUDA/NPU model backends, persistent VRAM buffers, collectives, hierarchical
+live fleet scheduling and durable cross-cell recovery remain open. Rust was not
+installed, so no Rust service is claimed. No physical phone/GPU, model checkpoint,
+live Internet fleet, installer publication or new release was exercised.
+[Usage and contracts](LOGICAL_DEVICES_AND_MODEL_STORAGE.md).
+
+
 ## Native buffer lifetime improvement — 2026-10-29
 
 The C99 executor now frees a private snapshot/intermediate after its last use.

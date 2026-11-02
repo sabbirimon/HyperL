@@ -1,5 +1,11 @@
 # HyperL documentation index
 
+
+[Native model sharding and fleet](MODEL_SHARDING_AND_FLEET.md) · [Error correction and assurance mapping](HIGH_ASSURANCE_BASELINE.md)
+
+
+[Logical devices, LLM residency and fleet inventory](LOGICAL_DEVICES_AND_MODEL_STORAGE.md) — 2026-11-02 development APIs and limits.
+
 Updated 2026-10-24. Alpha.5 is the published release; alpha.6 additions are development
 source. Guides separate working code, estimates, provider contracts and future plans.
 

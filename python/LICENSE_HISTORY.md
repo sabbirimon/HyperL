@@ -1,5 +1,11 @@
 # Licence scope and history
 
+The 2026-11-02 native-model adapter, original JAX decoder, authenticated fleet
+scheduler/audit and original Cauchy erasure codec are newly covered Community/
+Enterprise additions. External llama.cpp remains MIT; JAX and its dependencies
+retain their own grants. No upstream engine source or models are copied into
+HyperL, and earlier HyperL Apache grants remain unchanged.
+
 The pre-transition tree is commit
 `67b30e09741f4bba1672a891644fc73abb1f9855` ([source](https://github.com/sabbirimon/HyperL/tree/67b30e09741f4bba1672a891644fc73abb1f9855)).
 HyperL material offered there under Apache 2.0 keeps those grants. Published

@@ -82,12 +82,21 @@ jobs:
         run: |
           launcher=build/install/hyperl/bin/hyperl
           if [[ "$RUNNER_OS" = Windows ]]; then launcher="$launcher.bat"; fi
-          python scripts/qualify_distributed.py --cli "$launcher" --output build/distributed-qualification.json
+          python scripts/qualify_distributed.py --cli "$launcher" --output build/distributed-qualification.json --tensor
       - name: Pinned optional NumPy bridge checks
         run: python -m pip install numpy==2.3.3
       - name: Pinned PyTorch CPU bridge dependency
         if: matrix.os == 'ubuntu-latest'
         run: python -m pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cpu
+      - name: Explicit pinned JAX CPU sharding dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: python -m pip install -r requirements/jax-test.txt
+      - name: Actual four-logical-CPU decoder and KV checkpoint tests
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          XLA_FLAGS: --xla_force_host_platform_device_count=4
+          OMP_NUM_THREADS: '1'
+        run: python -m unittest discover -s scripts -p "test_jax_llm.py" -v
       - name: Install local Python preview
         run: python -m pip install ./python
       - name: Pinned local wheel build tools

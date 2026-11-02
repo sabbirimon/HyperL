@@ -1,0 +1,25 @@
+{
+  "format": "hyperl-model-profile/1",
+  "profile": {
+    "adapter": "llama.cpp",
+    "settings": {
+      "executable": "/owner/runtime/bin/llama-server",
+      "executable_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "model": "/owner/models/model.gguf",
+      "model_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "backend": "RPC",
+      "rpc": [
+        "127.0.0.1:50061",
+        "127.0.0.1:50062"
+      ],
+      "proportions": [
+        1,
+        1
+      ],
+      "split_mode": "layer",
+      "context": 2048,
+      "threads": 2,
+      "request_seconds": 120
+    }
+  }
+}

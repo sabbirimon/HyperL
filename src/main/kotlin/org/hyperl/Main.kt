@@ -36,6 +36,7 @@ Usage:
   hyperl worker WORKER_CONFIG.json
   hyperl distributed-plan DISTRIBUTED_CONFIG.json PROGRAM.json INPUTS.json
   hyperl distributed-run DISTRIBUTED_CONFIG.json PROGRAM.json INPUTS.json
+  hyperl tensor-run DISTRIBUTED_CONFIG.json PROGRAM.json INPUTS.json
   hyperl keygen KEYFILE
   hyperl data-import SOURCE DATASET_DIRECTORY KEYFILE MAX_BYTES
   hyperl data-export DATASET_DIRECTORY DESTINATION KEYFILE MAX_BYTES
@@ -74,6 +75,13 @@ Network access requires explicit node-probe or distributed worker settings; no s
             "distributed-plan","distributed-run"->{require(args.size==4);val settings=ShardProtocol.json.decodeFromString<DistributedSettings>(Workspace.read(Path.of(args[1])));settings.validate()
                 val (plan,result)=runBlocking{DistributedExecutor.run(Workspace.program(Workspace.read(Path.of(args[2]))),Workspace.inputs(Workspace.read(Path.of(args[3]))),settings,args[0]=="distributed-plan")}
                 println(if(result==null)ShardProtocol.json.encodeToString(plan)else ShardProtocol.json.encodeToString(result))}
+            "tensor-run"->{require(args.size==4);val settings=ShardProtocol.json.decodeFromString<DistributedSettings>(Workspace.read(Path.of(args[1])));settings.validate()
+                val program=Workspace.program(Workspace.read(Path.of(args[2])));val inputs=Workspace.inputs(Workspace.read(Path.of(args[3])))
+                runBlocking { val runtime=TensorRuntime.connect(settings)
+                    try { val handles=inputs.mapValues { runtime.allocate(it.value) };val output=runtime.execute(program,handles)
+                        val result=runtime.gather(output);println(ShardProtocol.json.encodeToString(TensorRunResult(output,result,runtime.stats())))
+                    } finally { runtime.close() }
+                }}
             "keygen"->{require(args.size==2);LargeData.keygen(Path.of(args[1]));println("Key created; keep it private and separate from datasets")}
             "data-import"->{require(args.size==5);println(runBlocking{LargeData.import(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}
             "data-export"->{require(args.size==5);println(runBlocking{LargeData.export(Path.of(args[1]),Path.of(args[2]),Path.of(args[3]),args[4].toLong())})}

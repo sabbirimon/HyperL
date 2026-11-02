@@ -1,0 +1,31 @@
+{
+  "format": "hyperl-backend-provenance/1",
+  "date": "2026-11-02",
+  "native": {
+    "source": "https://github.com/RunanywhereAI/llama.cpp",
+    "commit": "4df29be4f4c3673f428170fda944a5b19f743bb8",
+    "license": "MIT",
+    "integration": "Separately built owner-selected native executables through bounded loopback APIs. No upstream source or binary is redistributed here.",
+    "build_entry": "scripts/build_llm_runtime.py",
+    "runtime_downloads": false,
+    "rpc_scope": "Upstream experimental trusted-owner protocol. Bind raw RPC to loopback; remote routes require separately configured mutual TLS and isolated hosts.",
+    "numerical_settings": {"kv": "f32", "flash_attention": "off", "repacking": false, "split": "layer", "sampling": "greedy"},
+    "hardware_qualified_here": "Two independent CPU worker processes on one Intel macOS host. No new GPU execution."
+  },
+  "jax": {
+    "source": "https://github.com/jax-ml/jax",
+    "test_version": "0.4.38",
+    "jaxlib_test_version": "0.4.38",
+    "license": "Apache-2.0 and separately retained XLA/LLVM/dependency notices",
+    "dependency_lock": "requirements/jax-test.txt",
+    "integration": "Original f32 dense/GQA decoder using public JAX sharding and array APIs. No third-party model implementation is copied.",
+    "hardware_qualified_here": "Four logical CPU devices on one host; not four physical devices and not TPU evidence.",
+    "tpu": "Exact tpu backend and device IDs required; missing backend fails. Physical TPU qualification remains unrun at the owner's request."
+  },
+  "model_fixture": {
+    "name": "smollm2-135m-instruct-q4_k_m.gguf",
+    "sha256": "2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d",
+    "source": "Existing owner-provided local artifact; not downloaded or redistributed by this increment.",
+    "license_scope": "Model and dataset rights remain separate; this record does not grant redistribution rights."
+  }
+}

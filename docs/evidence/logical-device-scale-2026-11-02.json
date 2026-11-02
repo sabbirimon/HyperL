@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-02",
+  "scope": "Local synthetic directory and opaque artifact storage; zero live fleet devices and no LLM inference",
+  "fleet": {
+    "synthetic": true,
+    "records": 1000000,
+    "live_devices": 0,
+    "batch_size": 1000,
+    "page_size": 1000,
+    "insert_seconds": 46.238852233975194,
+    "page_all_seconds": 16.162435054022353,
+    "database_bytes": 199344128,
+    "peak_process_rss_bytes": 23355392,
+    "cell_size_checked": 16,
+    "expiry_checked": true
+  },
+  "storage": {
+    "synthetic": true,
+    "bytes": 268435456,
+    "chunks": 64,
+    "import_seconds": 6.944567971047945,
+    "export_seconds": 9.621745540993288,
+    "whole_artifact_verified": true,
+    "peak_process_rss_bytes": 30044160
+  },
+  "notes": [
+    "Diagnostic single-host observations, not a comparative performance claim.",
+    "Rust toolchain unavailable; no Rust service qualified.",
+    "Tensor GPU/TPU, live million-device scheduling and LLM execution not qualified."
+  ]
+}

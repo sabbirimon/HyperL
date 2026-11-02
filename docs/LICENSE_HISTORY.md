@@ -1,5 +1,16 @@
 # Licence scope and history
 
+The 2026-11-02 native-model adapter, original JAX decoder, authenticated fleet
+scheduler/audit and original Cauchy erasure codec are newly covered Community/
+Enterprise additions. External llama.cpp remains MIT; JAX and its dependencies
+retain their own grants. No upstream engine source or models are copied into
+HyperL, and earlier HyperL Apache grants remain unchanged.
+
+The 2026-11-02 logical tensor runtime/protocol, Python model storage/residency and
+fleet directory additions use the existing Community/Enterprise terms for new
+material. Existing vector/native/wire contracts and earlier Apache grants remain
+unchanged. No restricted changes are ported to Meshlit.
+
 The 2026-10-29 native CPU buffer-liveness additions, allocator regression test and
 before/after comparison harness use the existing Community/Enterprise terms for
 newly covered material. Earlier Apache grants for the original native runtime

@@ -1,0 +1,47 @@
+{
+  "format": "hyperl-fleet-agent/1",
+  "client": {
+    "format": "hyperl-fleet-client/1",
+    "origin": "https://scheduler.example.invalid:8443",
+    "certificate": "/owner/pki/cell-a.pem",
+    "key_file": "/owner/pki/cell-a.key",
+    "ca_file": "/owner/pki/ca.pem"
+  },
+  "cell": {
+    "id": "cell-a",
+    "instance": "owner-selected-instance",
+    "epoch": 1,
+    "pools": [
+      "combined"
+    ],
+    "profiles": [
+      "model-a"
+    ],
+    "slots": 1
+  },
+  "profiles": {
+    "model-a": {
+      "adapter": "llama.cpp",
+      "settings": {
+        "executable": "/owner/runtime/bin/llama-server",
+        "executable_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "model": "/owner/models/model.gguf",
+        "model_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "backend": "RPC",
+        "rpc": [
+          "127.0.0.1:50061",
+          "127.0.0.1:50062"
+        ],
+        "proportions": [
+          1,
+          1
+        ],
+        "split_mode": "layer",
+        "context": 2048,
+        "threads": 2,
+        "request_seconds": 120
+      }
+    }
+  },
+  "poll_seconds": 2
+}

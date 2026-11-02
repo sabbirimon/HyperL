@@ -1,0 +1,16 @@
+{
+  "format": "hyperl-rpc-tunnel/1",
+  "mode": "server",
+  "listen_host": "127.0.0.1",
+  "listen_port": 5443,
+  "target_host": "127.0.0.1",
+  "target_port": 50052,
+  "certificate": "/owner/pki/worker-a.pem",
+  "key_file": "/owner/pki/worker-a.key",
+  "ca_file": "/owner/pki/ca.pem",
+  "allowed_peers": [
+    "cell:cell-a"
+  ],
+  "max_connections": 8,
+  "idle_seconds": 300
+}

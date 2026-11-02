@@ -62,6 +62,23 @@ internal class ShardClient(private val endpoint: WorkerEndpoint, private val tim
         require(receipt.computeMs.isFinite() && receipt.computeMs in 0.0..30000.0)
         return values to ShardMeasurement(endpoint.id, meta.start, meta.end, target, (System.nanoTime() - started) / 1e6, receipt.computeMs, bytes.size, response.body().size)
     }
+    suspend fun tensor(meta: TensorRequest, values: List<FloatArray> = emptyList(), target: HyperLTarget): Pair<TensorReply, List<FloatArray>> {
+        val bytes = TensorProtocol.request(meta, values); val digest = ShardProtocol.digest(bytes)
+        val call = request("/hyperl/tensors").header("Content-Type", TensorProtocol.CONTENT_TYPE).header("X-HyperL-Job", meta.jobId)
+            .header("X-HyperL-SHA256", digest).POST(HttpRequest.BodyPublishers.ofByteArray(bytes)).build()
+        val response = send(call, ShardProtocol.MAX_FRAME, meta.jobId)
+        require(response.statusCode() == 200 && type(response) == TensorProtocol.CONTENT_TYPE) {
+            "Worker tensor request rejected (HTTP ${response.statusCode()}); no replay; completion may be unknown" }
+        require(response.headers().firstValue("X-HyperL-SHA256").orElse("") == ShardProtocol.digest(response.body()))
+        val result = TensorProtocol.readReply(response.body())
+        require(result.first.jobId == meta.jobId && result.first.requestSha256 == digest && result.first.backend == target)
+        when (meta.action) {
+            "get" -> require(result.first.chunks == meta.chunks)
+            "execute" -> require(result.first.chunks.size == 1 && result.first.chunks.single().slice == meta.output)
+            else -> require(result.first.chunks.isEmpty())
+        }
+        return result
+    }
     private fun request(path: String) = HttpRequest.newBuilder(origin.resolve(path)).timeout(Duration.ofMillis(timeoutMs))
         .header("Authorization", "Bearer $token").header("Accept", ShardProtocol.CONTENT_TYPE + ", application/json")
     private fun type(response: HttpResponse<ByteArray>) = response.headers().firstValue("Content-Type").orElse("").substringBefore(';')

@@ -45,3 +45,11 @@ SHA-256 digests are recorded in docs/FONT_PROVENANCE.md. No runtime font downloa
 The macOS Metal host is original Objective-C++ code using Apple's system SDK
 interfaces. Apple frameworks/toolchains retain their separate license terms;
 no Apple or NVIDIA implementation source is copied or redistributed here.
+
+Optional model backends (2026-11-02): llama.cpp, independently installed, MIT,
+RunanywhereAI/llama.cpp commit 4df29be4f4c3673f428170fda944a5b19f743bb8.
+See docs/licenses/llama-cpp-MIT.txt and docs/LLM_BACKEND_PROVENANCE.json.
+JAX/JAXlib 0.4.38 are explicit optional test dependencies (Apache-2.0 with
+separately retained XLA/LLVM/component notices). NumPy, SciPy, ml_dtypes and
+opt_einsum keep their respective licenses. These runtimes/models are not bundled
+or relicensed by the HyperL source distribution.

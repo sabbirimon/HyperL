@@ -1,5 +1,14 @@
 # Architecture, language choices and future build gates
 
+The 2026-11-02 model follow-up is documented in [native LLM sharding and fleet](MODEL_SHARDING_AND_FLEET.md)
+and [integrity/recovery controls](HIGH_ASSURANCE_BASELINE.md). Earlier vector-only
+limits below describe their original APIs; native/JAX model execution is separate.
+
+2026-11-02: see [logical devices and model storage](LOGICAL_DEVICES_AND_MODEL_STORAGE.md)
+for the new bounded resident tensor engine, named pools, scenario-aware model
+residency estimates and disk-backed fleet inventory. These additions do not qualify
+LLM execution, persistent VRAM residency or a million live devices.
+
 Owner scope: standalone CLI/GUI and library; all suitable platforms, device GPUs,
 AI/security/vision, memory tiers and networking, large data/IPv6/large clusters,
 full telecom research, optional direct/kernel execution and future AI systems.

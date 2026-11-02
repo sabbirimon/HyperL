@@ -1,5 +1,29 @@
 # HyperL agent handoff and pending features
 
+## Model/sharding/resilience follow-up — 2026-11-02
+
+Delivered: pinned optional native GGUF inference, actual layer/KV split across two
+CPU workers, mTLS routes and private local API keys; original f32/HIGHEST JAX decoder
+with tensor-parallel weights/KV and checked token-boundary checkpoints; live pull
+service/agent, immutable model-profile digests, durable queues/epoch/lease/result
+fences, warm sessions and authenticated quota-bounded audit; original native Cauchy
+erasure coding with whole-artifact checked repair. [Usage](MODEL_SHARDING_AND_FLEET.md)
+and [assurance mapping](HIGH_ASSURANCE_BASELINE.md).
+
+Evidence: 135M pretrained-model local/two-worker token/text agreement, direct and
+mTLS routes, two live audited jobs, killed-worker rejection; six JAX tests on four
+logical CPU devices; one million synthetic jobs/1,000 durable claim/start/finish
+cycles. These are not physical mixed-host/GPU/TPU or million-live-device evidence.
+
+Remaining P0: independent physical-host/architecture qualification and sustained
+load; production PKI/revocation/ingress and database replication; multi-controller
+checkpoint commit and recovery orchestration; qualified cross-backend collectives;
+actual GPU/TPU model acceptance and broader model/numerical conformance. The owner
+reported no TPU available and authorized the adapter/tests. Hardware ECC, formal
+NIST/FIPS/defence certification and production SLAs are not delivered by software
+repair or this control mapping. Preserve the scoped earlier backlog below.
+
+
 Updated 2026-10-24. This is a prioritized implementation backlog for **standalone
 HyperL**. Read [AGENTS.md](../AGENTS.md), [progress](PROGRESS_2026_10_24.md) and
 [validation](VALIDATION.md) before coding. Meshlit has its own repository/checkpoint.
@@ -18,6 +42,20 @@ Native intermediate-buffer liveness is implemented and tested; ordered semantics
 and the original admission limit remain intact. Remaining work: actual RSS/energy
 measurements, device comparisons and integration qualification. Meshlit Inference
 has a separate optional-adapter plan; no license or automatic port is implied.
+
+## 2026-11-02 logical-device increment
+
+Delivered: bounded resident f32 tensor handles/versions, named worker pools,
+locality-based dispatch, batched chunk transport and RAM LRU, explicit leases and
+job cancellation/status; opaque streaming model storage; advisory automatic/manual
+layer residency with LLM size estimates; persistent paginated fleet inventory.
+[Contracts, usage and limits](LOGICAL_DEVICES_AND_MODEL_STORAGE.md).
+
+Remaining P0: a qualified LLM operator/model backend, true GPU/TPU device-resident
+buffers, tensor-parallel collectives/KV ownership, durable coordinator recovery,
+authenticated hierarchical fleet services and cross-cell dispatch. One million
+synthetic inventory records do not qualify live fleet scheduling. Existing H0
+cost/evidence planner integration and physical mixed-architecture tests remain open.
 
 ## Required and suggested next work
 

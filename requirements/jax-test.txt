@@ -1,0 +1,9 @@
+# Explicit development/test environment; no automatic runtime installation.
+# 0.4.38 has an Intel macOS wheel for this test host. TPU deployments need
+# a separately qualified matching JAX/libtpu installation; no driver is installed.
+jax==0.4.38
+jaxlib==0.4.38
+numpy==2.3.3
+scipy==1.15.3
+ml_dtypes==0.5.3
+opt_einsum==3.4.0

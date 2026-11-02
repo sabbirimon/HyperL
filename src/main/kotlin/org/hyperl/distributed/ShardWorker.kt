@@ -98,6 +98,7 @@ class ShardWorker(private val settings: WorkerSettings, adapter: ShardComputeAda
     private val token: ByteArray
     private val server: HttpServer
     private val credits: MemoryCredits
+    private val tensors: TensorStore
     private val slots: java.util.concurrent.Semaphore
     private val instance = java.util.UUID.randomUUID().toString()
     private val completed = AtomicLong()
@@ -110,7 +111,7 @@ class ShardWorker(private val settings: WorkerSettings, adapter: ShardComputeAda
     val origin: String get() = "${if (server is HttpsServer) "https" else "http"}://${if (settings.bind.contains(':')) "[${settings.bind}]" else settings.bind}:${server.address.port}"
     init {
         settings.validate(); token = ShardProtocol.token(Path.of(settings.tokenFile)).toByteArray(Charsets.US_ASCII)
-        credits = MemoryCredits(settings.memoryBudgetBytes); slots = java.util.concurrent.Semaphore(settings.maxJobs)
+        credits = MemoryCredits(settings.memoryBudgetBytes); tensors = TensorStore(credits); slots = java.util.concurrent.Semaphore(settings.maxJobs)
         compute = adapter ?: ConfiguredAdapter(settings); require(compute.target == settings.backend)
         // Provider read limits complement the exchange deadline. Set before initializing the provider.
         System.setProperty("sun.net.httpserver.maxReqTime", "30")
@@ -122,6 +123,7 @@ class ShardWorker(private val settings: WorkerSettings, adapter: ShardComputeAda
         } else HttpServer.create(address, 16)
         server.executor = executor
         server.createContext("/hyperl") { exchange -> handle(exchange) }
+        deadlines.scheduleAtFixedRate({ tensors.expire() }, 1, 1, TimeUnit.SECONDS)
     }
     fun start(): ShardWorker { check(!stopped); server.start(); return this }
     fun capabilities(): WorkerCapabilities = WorkerCapabilities(id = settings.id, instanceId = instance, backend = compute.target,
@@ -149,6 +151,57 @@ class ShardWorker(private val settings: WorkerSettings, adapter: ShardComputeAda
                     val running = jobs[id]
                     if (running == null) status(exchange, 404) else { running.cancel(); status(exchange, 202) }
                     // 202 acknowledges cancellation requested, never remote termination.
+                }
+                path == "/hyperl/tensors" && exchange.requestMethod == "POST" -> {
+                    if (!slots.tryAcquire(100, TimeUnit.MILLISECONDS)) { status(exchange, 429); return }
+                    var lease = 0L; var id: String? = null
+                    try {
+                        require(exchange.requestHeaders.getFirst("Content-Type") == TensorProtocol.CONTENT_TYPE)
+                        require(exchange.requestHeaders["Content-Length"]?.size == 1)
+                        val length = exchange.requestHeaders.getFirst("Content-Length").toInt()
+                        require(length in 8..ShardProtocol.MAX_FRAME)
+                        id = exchange.requestHeaders.getFirst("X-HyperL-Job"); ShardProtocol.uuid(id)
+                        if (!claim(id)) { status(exchange, 409); return }
+                        val digest = exchange.requestHeaders.getFirst("X-HyperL-SHA256")
+                        require(digest?.matches(Regex("[a-f0-9]{64}")) == true)
+                        lease = 2L * length + 512L * 1024
+                        if (!credits.acquire(lease)) { lease = 0; status(exchange, 503); return }
+                        job = Job(); activeJob.set(job); jobs[id] = job
+                        val bytes = exchange.requestBody.readNBytes(length + 1)
+                        require(bytes.size == length && ShardProtocol.digest(bytes) == digest)
+                        val (request, values) = TensorProtocol.readRequest(bytes)
+                        require(request.jobId == id && request.workerInstanceId == instance)
+                        val ranges = request.chunks.map { it.slice } + request.inputs.values.map { it.slice } + listOfNotNull(request.output)
+                        require(ranges.all { it.end - it.start <= settings.maxShardElements })
+                        val estimated = if (request.action == "execute") ShardProtocol.shardBytes(request.program!!, request.output!!.end - request.output.start)
+                            else 512L * 1024 + ranges.sumOf { 16L * (it.end - it.start) }
+                        if (estimated > lease) {
+                            if (!credits.acquire(estimated - lease)) { status(exchange, 503); return }; lease = estimated
+                        }
+                        var resultChunks = emptyList<TensorChunk>(); var resultValues = emptyList<FloatArray>()
+                        runBlocking(job) { withTimeout(request.timeoutMs) {
+                            when (request.action) {
+                                "clear" -> tensors.clear(request.sessionId)
+                                "put" -> tensors.put(request.sessionId, request.chunks, values)
+                                "get" -> { resultValues = tensors.get(request.sessionId, request.chunks); resultChunks = request.chunks }
+                                "drop" -> tensors.drop(request.sessionId, request.chunks)
+                                "execute" -> {
+                                    val output = request.output!!
+                                    compute.memoryDomains.forEach { domain -> domain.maxAllocationBytes?.let { require(4L * (output.end - output.start) <= it) } }
+                                    val names = request.program!!.inputs.sorted()
+                                    val data = tensors.get(request.sessionId, names.map { request.inputs.getValue(it) })
+                                    val result = compute.execute(request.program, names.zip(data).toMap())
+                                    ensureActive()
+                                    val chunk = TensorChunk(output, TensorProtocol.digest(result))
+                                    tensors.put(request.sessionId, listOf(chunk), listOf(result))
+                                    resultChunks = listOf(chunk); resultValues = listOf(result); completed.incrementAndGet()
+                                }
+                            }
+                        } }
+                        val result = TensorProtocol.reply(TensorReply(jobId = id, requestSha256 = digest, chunks = resultChunks, backend = compute.target), resultValues)
+                        exchange.responseHeaders.set("X-HyperL-SHA256", ShardProtocol.digest(result))
+                        respond(exchange, 200, TensorProtocol.CONTENT_TYPE, result)
+                    } finally { if (id != null) jobs.remove(id); job?.cancel(); if (lease > 0) credits.release(lease); slots.release() }
                 }
                 path == "/hyperl/execute" && exchange.requestMethod == "POST" -> {
                     // The client may receive the previous body's last byte before its handler
@@ -203,7 +256,7 @@ class ShardWorker(private val settings: WorkerSettings, adapter: ShardComputeAda
         exchange.responseHeaders.set("Content-Type", type); exchange.responseHeaders.set("Cache-Control", "no-store")
         exchange.sendResponseHeaders(status, bytes.size.toLong()); exchange.responseBody.use { it.write(bytes) }
     }
-    override fun close() { stopped = true; jobs.values.forEach { it.cancel() }; server.stop(0); executor.shutdownNow(); deadlines.shutdownNow(); token.fill(0) }
+    override fun close() { stopped = true; jobs.values.forEach { it.cancel() }; server.stop(0); executor.shutdownNow(); deadlines.shutdownNow(); tensors.close(); token.fill(0) }
     private fun tls(keyFile: String, passwordFile: String): SSLContext {
         val path = Path.of(keyFile); val passwordPath = Path.of(passwordFile)
         require(path.isAbsolute && Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS) && Files.size(path) <= 1024 * 1024)

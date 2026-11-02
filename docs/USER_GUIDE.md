@@ -1,5 +1,14 @@
 # HyperL installation, usage and programming guide
 
+The 2026-11-02 model follow-up is documented in [native LLM sharding and fleet](MODEL_SHARDING_AND_FLEET.md)
+and [integrity/recovery controls](HIGH_ASSURANCE_BASELINE.md). Earlier vector-only
+limits below describe their original APIs; native/JAX model execution is separate.
+
+2026-11-02: see [logical devices and model storage](LOGICAL_DEVICES_AND_MODEL_STORAGE.md)
+for the new bounded resident tensor engine, named pools, scenario-aware model
+residency estimates and disk-backed fleet inventory. These additions do not qualify
+LLM execution, persistent VRAM residency or a million live devices.
+
 For the detailed alpha.6 tutorial, Python/C examples and diagrams, read
 [Programming with HyperL](PROGRAMMING_GUIDE.md). See also
 [build/test](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md),

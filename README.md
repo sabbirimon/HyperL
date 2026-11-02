@@ -34,6 +34,32 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+## Logical devices and model storage — development increment
+
+The new resident tensor path groups approved workers into one `combined` logical
+device or named subsets, gives bounded f32 tensors immutable global handles, and
+reuses checked worker chunks across elementwise operations. `tensor-run` executes
+this path; it is not a shared pointer space or model engine. Separate Python tools
+stream large model artifacts to checked storage, estimate scenario-aware
+GPU/TPU/RAM/storage residency, and maintain a paginated fleet directory.
+[How to combine devices, tune placement and store models](docs/LOGICAL_DEVICES_AND_MODEL_STORAGE.md).
+The directory was exercised with one million synthetic records. The native-model
+follow-up below adds working inference and bounded live scheduling; physical TPU
+and million-live-device qualification remain unrun.
+
+## Native LLM sharding and authenticated fleet cells
+
+The development tree now executes explicitly configured pretrained GGUF models,
+including real layer/KV sharding through native workers. A 135M model passes
+local/two-worker token agreement, mTLS transport, two live audited fleet jobs and
+worker-loss rejection. A separate f32 JAX decoder partitions weights/KV and exposes
+an explicit TPU backend; local tests use four logical CPU devices, with physical
+TPU qualification unrun. The durable scheduler stores one million synthetic jobs;
+that test does not qualify a million live devices.
+[Build, connect and run](docs/MODEL_SHARDING_AND_FLEET.md) ·
+[Error correction and high-assurance mapping](docs/HIGH_ASSURANCE_BASELINE.md).
+No military/security certification or production-scale guarantee is claimed.
+
 ## Why HyperL exists
 
 **Useful compute is already all around us.** A researcher may have a dependable

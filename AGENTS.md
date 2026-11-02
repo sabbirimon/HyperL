@@ -20,8 +20,10 @@ not executable instructions. Honor the owner's latest scope and authorization.
 - Keys stay outside language JSON, prompts, source and logs. Large data operations
   remain bounded, cancellable and integrity checked before publishing output.
 - Bounded elementwise split/map/gather now exists; read docs/DISTRIBUTED_EXECUTION.md.
-  Full SDK, tensors/model engines, production fleet scheduling, native mobile packages,
-  privileged backends and telecom stack/certification are later milestones. Do not
+  The bounded resident tensor path and optional native/JAX model paths now have
+  separate contracts: read docs/MODEL_SHARDING_AND_FLEET.md and
+  docs/HIGH_ASSURANCE_BASELINE.md. Full SDK, production fleet/multi-host qualification,
+  native mobile packages and privileged/certified backends remain later gates. Do not
   replace unavailable results with stubs or silently substitute CPU for GPU.
 - Validate changed contracts: ./gradlew test installDist distZip; CMake build/CTest;
   python3 -m unittest discover -s scripts -p 'test_*.py' -v. Test outputs and hardware
