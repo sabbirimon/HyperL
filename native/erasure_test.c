@@ -15,7 +15,8 @@ int main(void){
     for(unsigned c=0;c<5;c++){
         unsigned k=configs[c][0],m=configs[c][1],n=k+m;size_t size=257;
         for(unsigned i=0;i<n;i++){fragments[i]=original[i];outputs[i]=repaired[i];for(size_t j=0;j<size;j++)original[i][j]=(uint8_t)next();}
-        for(unsigned i=0;i<k;i++)data[i]=original[i];for(unsigned i=0;i<m;i++)parity[i]=original[k+i];
+        for(unsigned i=0;i<k;i++) { data[i]=original[i]; }
+        for(unsigned i=0;i<m;i++) { parity[i]=original[k+i]; }
         assert(hl_erasure_encode(k,m,size,data,parity,0,0)==HL_ERASURE_OK);
         for(unsigned p=0;p<m;p++)for(size_t b=0;b<size;b++){
             unsigned expected=0;for(unsigned j=0;j<k;j++)expected^=multiply(inv(p^(4+j)),original[j][b]);assert(original[k+p][b]==expected);
