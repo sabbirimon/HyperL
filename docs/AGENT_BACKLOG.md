@@ -1,5 +1,15 @@
 # HyperL agent handoff and pending features
 
+## HyperL-owned model engine — 2026-11-06
+
+The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.
+[Ordered plan and acceptance](HYPERL_STUDIO_ENGINE_PLAN_2026-11-06.md) covers expert
+caching, RAM/VRAM/disk placement, specialist routing and approved device cells.
+The first [MoE accounting increment](MOE_RESIDENCY_ACCOUNTING_2026-11-06.md) is
+implemented and tested; it does not execute sparse expert paging. Keep existing
+CPU/RPC model proof separate from AMD GPU and physical mixed-host qualification.
+Agreement work is deferred; preserve current artefacts and conserve build storage.
+
 ## Model/sharding/resilience follow-up — 2026-11-02
 
 Delivered: pinned optional native GGUF inference, actual layer/KV split across two
@@ -97,3 +107,11 @@ See [math assessment](MATH_RESEARCH_2026_10_26.md). Independent reduction-oracle
 ## Owner-requested performance expansion — 2026-10-26
 
 [Mathematics-informed performance roadmap](MATH_PERFORMANCE_ROADMAP.md) defines M0–M5: measured baselines, bounded matrix contracts, practical qualified kernels, research constructions, restricted scheduling and product adoption. These are future gates; no unmeasured speedup or new cipher is claimed.
+
+## Broader model formats — 2026-11-06
+
+[Format and adapter plan](MODEL_FORMATS_2026-11-06.md): extend model handling beyond
+GGUF, starting with bounded format inspection and a narrow SafeTensors import
+into the existing JAX decoder. Container recognition, architecture compatibility,
+execution readiness and sharding qualification remain separate. Upcoming formats
+require reviewed parsers/adapters; arbitrary downloaded model code is not loaded.

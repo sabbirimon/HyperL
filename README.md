@@ -2,9 +2,9 @@
 
 # HyperL
 
-### Bounded CPU and GPU compute experiments
+### Model execution, sharding and heterogeneous compute
 
-**Small programs, explicit limits, reproducible native execution.**
+**Explicit models, bounded placement and reproducible execution.**
 
 [![Licence: HyperL Community](https://img.shields.io/badge/Source-HyperL_Community-72e0ce)](LICENSE)
 [![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
@@ -34,6 +34,27 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+## Model engine checkpoint · 6 November 2026
+
+HyperL owns the reusable engine: **memory placement, model sharding, splitting
+across multiple locations, expert caching, device scheduling, execution and recovery**.
+Meshlit Studio is a planned application client; the same contracts serve CLI/SDK users.
+
+![HyperL model execution and sharding architecture](docs/assets/hyperl-model-engine-20261106.svg)
+
+| Available in development source | Still being built or qualified |
+| --- | --- |
+| Native GGUF layer/KV execution with scoped CPU-worker evidence | General physical mixed-device / remote sharding and automatic recovery |
+| Explicit JAX tensor-parallel decoder; logical CPU mesh tests | GPU/TPU execution and cross-backend collectives |
+| SafeTensors inspection and narrow standard-Llama conversion | Arbitrary architectures, tokenizer import and further runtime adapters |
+| MoE shared/router/expert memory accounting | Actual expert paging, caching and predictive placement |
+
+**Validation:** 106 Python tests passed with JAX enabled, plus 5 native tests.
+Those include synthetic conversion/logit/token equivalence; they do not establish
+pretrained quality or accelerator support. [Format support and commands](docs/MODEL_FORMATS_2026-11-06.md)
+· [Engine plan](docs/HYPERL_STUDIO_ENGINE_PLAN_2026-11-06.md)
+· [Validation scope](docs/VALIDATION.md).
+
 ## Logical devices and model storage — development increment
 
 The new resident tensor path groups approved workers into one `combined` logical
@@ -59,6 +80,20 @@ that test does not qualify a million live devices.
 [Build, connect and run](docs/MODEL_SHARDING_AND_FLEET.md) ·
 [Error correction and high-assurance mapping](docs/HIGH_ASSURANCE_BASELINE.md).
 No military/security certification or production-scale guarantee is claimed.
+
+## Measurements and workbench
+
+![Measured CPU versus experimental AMD partial-offload decode rate](docs/assets/hyperl-amd-probe-20261106.svg)
+
+This isolated four-layer AMD experiment passed its numerical checks and matching
+short generation, but was slower than CPU. It is not the default backend.
+[Exact settings, timings and limitations](docs/evidence/studio-amd560x-partial-offload-20261106.json).
+
+![Published HyperL workbench with an actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.4/workbench-alpha4-preview.png)
+
+Previously published alpha.4 capture: the actual Swing panel rendered headlessly
+after a real CPU run. It illustrates the editor, not the new model-format CLI,
+and does not establish native-window or GPU execution.
 
 ## Why HyperL exists
 
@@ -210,8 +245,6 @@ training, advanced crypto providers and hardware profiling need their own backen
 the current f32 kernels are not an encryption primitive or complete model engine.
 
 ## Developer workbench
-
-![HyperL workbench with actual CPU result](https://github.com/sabbirimon/HyperL/releases/download/v0.1.0-alpha.4/workbench-alpha4-preview.png)
 
 Choose **Graphite**, **Aurora** or **Paper** from the thin header strip. The workbench
 uses **Inter** for the interface and **JetBrains Mono** for code, compact spacing and
@@ -507,3 +540,7 @@ preserved in [licence history](docs/LICENSE_HISTORY.md). [NOTICE](NOTICE) record
 foundation provenance and pinned dependencies. Fonts retain OFL-1.1; FlatLaf retains
 Apache-2.0 and RSyntaxTextArea BSD-3-Clause. Proprietary vendor SDKs/drivers are separately
 installed/licensed; no NVIDIA artwork or Odysseus AGPL implementation is copied.
+
+## Model format support — 2026-11-06 development
+
+Read [format support and commands](docs/MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.

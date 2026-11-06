@@ -1,5 +1,15 @@
 # HyperL and Meshlit: owner requests and build plan
 
+## HyperL-owned model engine — 2026-11-06
+
+The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.
+[Ordered plan and acceptance](HYPERL_STUDIO_ENGINE_PLAN_2026-11-06.md) covers expert
+caching, RAM/VRAM/disk placement, specialist routing and approved device cells.
+The first [MoE accounting increment](MOE_RESIDENCY_ACCOUNTING_2026-11-06.md) is
+implemented and tested; it does not execute sparse expert paging. Keep existing
+CPU/RPC model proof separate from AMD GPU and physical mixed-host qualification.
+Agreement work is deferred; preserve current artefacts and conserve build storage.
+
 Historical foundation record from Meshlit. For the standalone build/current status,
 see [USER_GUIDE.md](USER_GUIDE.md), [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_AND_ROADMAP.md)
 and [VALIDATION.md](VALIDATION.md). Android/base-branch references below are provenance,
@@ -178,3 +188,11 @@ operator effort alongside throughput. A faster arithmetic microkernel with slowe
 transfers or unreliable stop behavior does not qualify the complete system. Keep
 AI compute/data paths lightweight; optional dashboards/profilers and security
 brokers should run outside hot loops, while retaining accountable control.
+
+## Broader model formats — 2026-11-06
+
+[Format and adapter plan](MODEL_FORMATS_2026-11-06.md): extend model handling beyond
+GGUF, starting with bounded format inspection and a narrow SafeTensors import
+into the existing JAX decoder. Container recognition, architecture compatibility,
+execution readiness and sharding qualification remain separate. Upcoming formats
+require reviewed parsers/adapters; arbitrary downloaded model code is not loaded.

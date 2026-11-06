@@ -150,5 +150,73 @@ class ModelPlannerTest(unittest.TestCase):
         self.assertTrue(all(plan["used_bytes"][t.id] <= t.available_bytes for t in tiers))
 
 
+class MoeResidencyTest(unittest.TestCase):
+    def layer(self, **changes):
+        breakdown = dict(total_experts=4, active_experts=2, expert_weight_bytes=100,
+                         shared_weight_bytes=24, router_weight_bytes=8)
+        breakdown.update(changes)
+        return ModelLayer("moe", 432, 24, breakdown)
+
+    def tiers(self, capacity=1000):
+        return [MemoryTier("gpu", "node", "GPU", capacity, 1000., "gpu-memory", "model/1"),
+                MemoryTier("ram", "node", "RAM", 2000, 100., "host-memory")]
+
+    def test_total_experts_shared_router_kv_cache_and_staging_count_separately(self):
+        policy = Workload(reserve_fraction=0, activation_bytes=8, cache_bytes=64)
+        plan = plan_model([self.layer()], self.tiers(), policy, manual={"moe": "ram"})
+        self.assertEqual(plan["used_bytes"], {"gpu": 528, "ram": 432})
+        self.assertEqual(plan["state_breakdown"], dict(kv_bytes=24, activation_bytes=8, cache_bytes=64, training_bytes=0))
+        self.assertEqual(plan["staging_bytes"], {"gpu": 432})
+        placement = plan["placements"][0]
+        self.assertEqual(placement["transfer_bytes_per_pass"], 432)
+        self.assertEqual(placement["moe"]["total_expert_weight_bytes"], 400)
+        self.assertEqual(placement["moe"]["active_expert_weight_bytes_per_token"], 200)
+        self.assertFalse(plan["execution_ready"])
+        self.assertFalse(plan["reservations_guaranteed"])
+
+    def test_active_count_never_discounts_residency_or_transfers(self):
+        policy = Workload(reserve_fraction=0)
+        plans = [plan_model([self.layer(active_experts=active)], self.tiers(), policy,
+                            manual={"moe": "ram"}) for active in (1, 4)]
+        for key in ("used_bytes", "staging_bytes", "state_bytes", "estimated_weight_transfer_seconds_per_pass"):
+            self.assertEqual(plans[0][key], plans[1][key])
+        with self.assertRaisesRegex(ValueError, "cannot fit"):
+            plan_model([self.layer(active_experts=1)], self.tiers(200), policy)
+        with self.assertRaisesRegex(ValueError, "cache"):
+            plan_model([self.layer()], self.tiers(), Workload(cache_bytes=2000))
+
+    def test_malformed_or_unsupported_moe_metadata_is_rejected(self):
+        cases = [{"active_experts": 0}, {"active_experts": 5}, {"total_experts": True},
+                 {"expert_weight_bytes": 99}, {"router_weight_bytes": 0},
+                 {"shared_weight_bytes": -1}, {"active_experts": 1.0}, {"expert_weight_bytes": [100]},
+                 {"speculative_experts": 2}]
+        for changes in cases:
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                plan_model([self.layer(**changes)], self.tiers())
+        for value in (True, -1, 1.5):
+            with self.assertRaises(ValueError):
+                plan_model([self.layer()], self.tiers(), Workload(cache_bytes=value))
+
+    def test_existing_cli_accepts_exact_moe_and_rejects_unknown_extensions(self):
+        import json
+        import subprocess
+        request = dict(format="hyperl-model-plan-request/1", layers=[dataclasses.asdict(self.layer())],
+                       tiers=[dataclasses.asdict(tier) for tier in self.tiers()],
+                       workload=dict(reserve_fraction=0, cache_bytes=64))
+        with tempfile.TemporaryDirectory() as directory:
+            file = pathlib.Path(directory) / "request.json"
+            file.write_text(json.dumps(request))
+            environment = dict(__import__("os").environ, PYTHONPATH=str(pathlib.Path(__file__).resolve().parents[1] / "python"))
+            result = subprocess.run([sys.executable, "-m", "hyperl.cluster", "model-plan", str(file)],
+                                    env=environment, capture_output=True, text=True, timeout=15)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["state_breakdown"]["cache_bytes"], 64)
+            request["layers"][0]["moe"]["speculative_experts"] = 1
+            file.write_text(json.dumps(request))
+            result = subprocess.run([sys.executable, "-m", "hyperl.cluster", "model-plan", str(file)],
+                                    env=environment, capture_output=True, text=True, timeout=15)
+            self.assertNotEqual(result.returncode, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,15 @@
 # Architecture, language choices and future build gates
 
+## HyperL-owned model engine — 2026-11-06
+
+The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.
+[Ordered plan and acceptance](HYPERL_STUDIO_ENGINE_PLAN_2026-11-06.md) covers expert
+caching, RAM/VRAM/disk placement, specialist routing and approved device cells.
+The first [MoE accounting increment](MOE_RESIDENCY_ACCOUNTING_2026-11-06.md) is
+implemented and tested; it does not execute sparse expert paging. Keep existing
+CPU/RPC model proof separate from AMD GPU and physical mixed-host qualification.
+Agreement work is deferred; preserve current artefacts and conserve build storage.
+
 The 2026-11-02 model follow-up is documented in [native LLM sharding and fleet](MODEL_SHARDING_AND_FLEET.md)
 and [integrity/recovery controls](HIGH_ASSURANCE_BASELINE.md). Earlier vector-only
 limits below describe their original APIs; native/JAX model execution is separate.

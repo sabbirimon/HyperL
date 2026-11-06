@@ -1,5 +1,15 @@
 # Production hardening, libraries and Meshlit delivery
 
+## HyperL-owned model engine — 2026-11-06
+
+The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.
+[Ordered plan and acceptance](HYPERL_STUDIO_ENGINE_PLAN_2026-11-06.md) covers expert
+caching, RAM/VRAM/disk placement, specialist routing and approved device cells.
+The first [MoE accounting increment](MOE_RESIDENCY_ACCOUNTING_2026-11-06.md) is
+implemented and tested; it does not execute sparse expert paging. Keep existing
+CPU/RPC model proof separate from AMD GPU and physical mixed-host qualification.
+Agreement work is deferred; preserve current artefacts and conserve build storage.
+
 Owner request, 2026-10-08: production-grade HyperL, a Meshlit app port, a rich
 ready-made library, detailed use cases and macOS/Windows/Linux installers.
 Production readiness is an acceptance result, not a version-name change. Keep

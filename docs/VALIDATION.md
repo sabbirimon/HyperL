@@ -717,3 +717,7 @@ one run does not establish throughput or a CPU speedup. The restricted agent/JVM
 test context's two GPU skips remain separate from this owner's hardware run.
 This qualifies these workloads on this exact Radeon, not all AMD devices, Intel
 UHD 630 execution, full models, ROCm/HIP or cluster capacity. Phone tests stay paused.
+
+## Model format support — 2026-11-06 development
+
+Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.

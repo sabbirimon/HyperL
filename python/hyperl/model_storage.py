@@ -225,6 +225,7 @@ class ModelLayer:
     name: str
     weight_bytes: int
     kv_bytes: int = 0  # caller estimates exact precision/context/concurrency cost
+    moe: dict | None = None  # optional exact homogeneous-expert weight breakdown; no routing prediction
 
 
 @dataclass(frozen=True)
@@ -240,6 +241,26 @@ class Workload:
     max_transfer_seconds: float = 60.0
     activation_bytes: int = 0
     training_state_multiplier: float = 4.0
+    cache_bytes: int = 0  # additional execution-memory cache allocation, not a discount on weights
+
+
+def _moe_breakdown(layer):
+    if layer.moe is None:
+        return None
+    fields = {"total_experts", "active_experts", "expert_weight_bytes", "shared_weight_bytes", "router_weight_bytes"}
+    if not isinstance(layer.moe, dict) or set(layer.moe) != fields:
+        raise ValueError("MoE requires an exact homogeneous-expert weight breakdown")
+    if any(type(value) is not int for value in layer.moe.values()):
+        raise ValueError("MoE dimensions and byte counts must be integers, not flags")
+    total, active = layer.moe["total_experts"], layer.moe["active_experts"]
+    expert, shared, router = (layer.moe[key] for key in ("expert_weight_bytes", "shared_weight_bytes", "router_weight_bytes"))
+    if not (1 <= active <= total <= 4096 and 1 <= expert <= 16 * 1024**4
+            and 0 <= shared <= 16 * 1024**4 and 1 <= router <= 16 * 1024**4):
+        raise ValueError("unsupported MoE counts or weight sizes")
+    if shared + router + total * expert != layer.weight_bytes:
+        raise ValueError("MoE weight_bytes must include shared, router and ALL expert weights")
+    return dict(layer.moe, total_expert_weight_bytes=total * expert,
+                active_expert_weight_bytes_per_token=active * expert)
 
 
 def plan_model(layers, tiers, workload=Workload(), *, manual=None):
@@ -260,6 +281,7 @@ def plan_model(layers, tiers, workload=Workload(), *, manual=None):
             or not math.isfinite(workload.reserve_fraction) or not 0 <= workload.reserve_fraction < 1
             or not math.isfinite(workload.max_transfer_seconds) or workload.max_transfer_seconds <= 0
             or not isinstance(workload.activation_bytes, int) or not 0 <= workload.activation_bytes <= 16 * 1024**4
+            or type(workload.cache_bytes) is not int or not 0 <= workload.cache_bytes <= 16 * 1024**4
             or not math.isfinite(workload.training_state_multiplier) or not 1 <= workload.training_state_multiplier <= 32):
         raise ValueError("invalid scenario policy")
     scenario = workload.scenario
@@ -272,6 +294,7 @@ def plan_model(layers, tiers, workload=Workload(), *, manual=None):
     for layer in layers:
         if not isinstance(layer.name, str) or not 1 <= len(layer.name) <= 256 or not isinstance(layer.weight_bytes, int) or not 1 <= layer.weight_bytes <= 16 * 1024**4 or not isinstance(layer.kv_bytes, int) or not 0 <= layer.kv_bytes <= 16 * 1024**4:
             raise ValueError("invalid layer size")
+    moe = {layer.name: _moe_breakdown(layer) for layer in layers}
     for tier in tiers:
         if (not tier.id or not tier.node or not tier.physical_domain or tier.kind not in {"GPU", "TPU", "NPU", "RAM", "STORAGE"}
                 or not isinstance(tier.available_bytes, int) or not 0 <= tier.available_bytes <= 16 * 1024**4
@@ -296,9 +319,11 @@ def plan_model(layers, tiers, workload=Workload(), *, manual=None):
     families = {t.backend for t in accelerators}
     if len(families) != 1 or "unqualified" in families:
         raise ValueError("select one explicit compatible model backend family per pool")
-    state_bytes = sum(l.kv_bytes for l in layers) + workload.activation_bytes
+    state_breakdown = dict(kv_bytes=sum(l.kv_bytes for l in layers), activation_bytes=workload.activation_bytes,
+                           cache_bytes=workload.cache_bytes, training_bytes=0)
     if scenario == "training":
-        state_bytes += math.ceil(sum(l.weight_bytes for l in layers) * (workload.training_state_multiplier - 1))
+        state_breakdown["training_bytes"] = math.ceil(sum(l.weight_bytes for l in layers) * (workload.training_state_multiplier - 1))
+    state_bytes = sum(state_breakdown.values())
     execution = sorted(accelerators, key=lambda t: (-t.bandwidth_bytes_per_second, t.id))
     # Reserve state by bounded partitions; weights are still placed as whole layers.
     state = {}
@@ -306,7 +331,7 @@ def plan_model(layers, tiers, workload=Workload(), *, manual=None):
     for tier in execution:
         take = min(left, remaining[tier.id]); state[tier.id] = take; remaining[tier.id] -= take; left -= take
     if left:
-        raise ValueError("KV/activation/training state does not fit execution memory; lower context/concurrency or add capacity")
+        raise ValueError("KV/activation/cache/training state does not fit execution memory; lower context/concurrency or add capacity")
     placements = []
     staging = {t.id: 0 for t in execution}
     transfer_seconds = 0.0
@@ -337,14 +362,15 @@ def plan_model(layers, tiers, workload=Workload(), *, manual=None):
             extra = max(0, layer.weight_bytes - staging[target.id]); remaining[target.id] -= extra; staging[target.id] += extra
         transfer_seconds += cost
         placements.append(dict(layer=layer.name, storage_tier=tier.id, execution_tier=target.id, weight_bytes=layer.weight_bytes,
-                               transfer_bytes_per_pass=0 if tier == target else layer.weight_bytes))
+                               transfer_bytes_per_pass=0 if tier == target else layer.weight_bytes,
+                               **({"moe": moe[layer.name]} if moe[layer.name] is not None else {})))
     order = {layer.name: index for index, layer in enumerate(layers)}
     placements.sort(key=lambda p: order[p["layer"]])
     return dict(format="hyperl-model-residency/1", process_id=str(uuid.uuid4()), scenario=scenario, reason=reason,
                 placements=placements, used_bytes={key: usable[key] - remaining[key] for key in usable}, state_bytes=state,
-                staging_bytes=staging, estimated_weight_transfer_seconds_per_pass=transfer_seconds,
+                staging_bytes=staging, state_breakdown=state_breakdown, estimated_weight_transfer_seconds_per_pass=transfer_seconds,
                 execution_ready=False, reservations_guaranteed=False,
-                limits="Advisory whole-layer placement. No LLM backend, tensor-parallel collectives, inter-layer activation transfer cost or speedup qualification. Bandwidth estimates exclude contention; token decoding can repeat weight transfers.")
+                limits="Advisory whole-layer placement; all MoE experts remain counted, active counts do not enable selective loading or change model math. No LLM backend, tensor-parallel collectives, inter-layer activation transfer cost or speedup qualification. Bandwidth estimates exclude contention; token decoding can repeat weight transfers.")
 
 
 @dataclass(frozen=True)

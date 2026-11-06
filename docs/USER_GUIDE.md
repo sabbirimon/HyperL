@@ -597,3 +597,7 @@ reviewed shared C library and selected Python environment; the full SDK remains 
 
 See the [software stack overview](SOFTWARE_STACK.md) for layers and deployment profiles,
 and [NVIDIA coverage](NVIDIA_COMPATIBILITY.md) for architecture/library qualification.
+
+## Model format support — 2026-11-06 development
+
+Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.

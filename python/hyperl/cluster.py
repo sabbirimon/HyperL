@@ -199,6 +199,8 @@ def main():
     ingest.add_argument("root"); ingest.add_argument("source"); ingest.add_argument("max_bytes", type=int)
     export = commands.add_parser("model-export")
     export.add_argument("root"); export.add_argument("artifact"); export.add_argument("destination"); export.add_argument("max_bytes", type=int)
+    inspect = commands.add_parser("model-inspect")
+    inspect.add_argument("source")
     plan = commands.add_parser("model-plan")
     plan.add_argument("request")
     enroll = commands.add_parser("fleet-enroll")
@@ -239,6 +241,9 @@ def main():
                 print(json.dumps(dict(exported=args.artifact)))
         finally:
             store.close()
+    elif args.command == "model-inspect":
+        from .model_formats import inspect_model
+        print(json.dumps(inspect_model(args.source), indent=2, allow_nan=False))
     elif args.command == "model-plan":
         request = read_json(args.request)
         if request.get("format") != "hyperl-model-plan-request/1":
