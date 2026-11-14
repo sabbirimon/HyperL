@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(HyperL VERSION 0.1.0 LANGUAGES C)
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 option(HYPERL_WARNINGS_AS_ERRORS "Reject native compiler warnings" ON)
 option(HYPERL_SANITIZERS "Build portable C contract with ASan and UBSan" OFF)
 option(HYPERL_BENCHMARK_REFERENCE "Build explicitly invoked preallocated CPU baseline" OFF)
@@ -79,11 +80,18 @@ install(TARGETS hyperl_cpu hyperl_cpu_runtime EXPORT HyperLTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES native/include/hyperl.h native/include/hyperl_contract.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT HyperLTargets FILE HyperLTargets.cmake NAMESPACE HyperL:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/HyperL)
+set(HYPERL_CMAKE_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/HyperL)
+configure_package_config_file(cmake/HyperLConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/HyperLConfig.cmake" INSTALL_DESTINATION "${HYPERL_CMAKE_INSTALL_DIR}")
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/HyperLConfigVersion.cmake"
+  VERSION "${PROJECT_VERSION}" COMPATIBILITY ExactVersion)
+install(EXPORT HyperLTargets FILE HyperLTargets.cmake NAMESPACE HyperL:: DESTINATION "${HYPERL_CMAKE_INSTALL_DIR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/HyperLConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/HyperLConfigVersion.cmake" DESTINATION "${HYPERL_CMAKE_INSTALL_DIR}")
 
 # Separate ABI for verified storage erasures; existing CPU numerical ABI is unchanged.
 add_library(hyperl_erasure SHARED native/erasure.c)
-target_include_directories(hyperl_erasure PUBLIC native/include)
+target_include_directories(hyperl_erasure PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/native/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(hyperl_erasure PROPERTIES C_STANDARD 99 WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_executable(hyperl_erasure_test native/erasure_test.c)
 target_link_libraries(hyperl_erasure_test PRIVATE hyperl_erasure)
@@ -101,5 +109,5 @@ if(HYPERL_SANITIZERS)
   endforeach()
 endif()
 add_test(NAME hyperl_erasure_contract COMMAND hyperl_erasure_test)
-install(TARGETS hyperl_erasure ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS hyperl_erasure EXPORT HyperLTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES native/include/hyperl_erasure.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

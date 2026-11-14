@@ -1,5 +1,9 @@
 # Licence scope and history
 
+The 2026-11-14 Python SDK facade, explicit backend selectors and hardware
+verification command are newly covered Community/Enterprise additions. Prior
+Apache grants and third-party runtime licences are preserved.
+
 The 2026-11-02 native-model adapter, original JAX decoder, authenticated fleet
 scheduler/audit and original Cauchy erasure codec are newly covered Community/
 Enterprise additions. External llama.cpp remains MIT; JAX and its dependencies

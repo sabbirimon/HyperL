@@ -1,5 +1,11 @@
 # HyperL and Meshlit: owner requests and build plan
 
+## SDK and hardware outreach · 2026-11-14
+
+The owner requests the full HyperL SDK, CUDA and equivalents, and public
+contributor testing. See [implementation scope and next gates](SDK.md) and
+[hardware testing](HARDWARE_TESTING.md).
+
 ## HyperL-owned model engine — 2026-11-06
 
 The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.

@@ -1,5 +1,11 @@
 # Licence scope and history
 
+## SDK and hardware verification additions
+
+The 2026-11-14 SDK facade, backend selector changes, examples, and hardware
+verification tooling are newly covered HyperL Community/Enterprise additions.
+Earlier Apache grants and third-party runtime terms remain unchanged.
+
 The 2026-11-02 native-model adapter, original JAX decoder, authenticated fleet
 scheduler/audit and original Cauchy erasure codec are newly covered Community/
 Enterprise additions. External llama.cpp remains MIT; JAX and its dependencies

@@ -11,11 +11,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "python"))
 from hyperl.llm import LLAMA_REVISION, file_digest
 
 
+ACCELERATORS = ("metal", "cuda", "hip", "vulkan", "sycl")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--backend", choices=["cpu", "metal", "cuda", "vulkan"], default="cpu")
+    parser.add_argument("--backend", choices=("cpu", *ACCELERATORS), default="cpu")
     parser.add_argument("--parallel", type=int, default=2)
     args = parser.parse_args()
     if not args.source.is_absolute() or not args.source.is_dir() or not args.output.is_absolute() or not 1 <= args.parallel <= 32:
@@ -27,7 +30,7 @@ def main():
     flags = ["-DCMAKE_BUILD_TYPE=Release", "-DGGML_RPC=ON", "-DGGML_RPC_RDMA=OFF", "-DGGML_NATIVE=OFF",
              "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DLLAMA_BUILD_TOOLS=ON",
              "-DLLAMA_BUILD_SERVER=ON", "-DLLAMA_TOOLS_INSTALL=OFF", "-DLLAMA_BUILD_UI=OFF", "-DLLAMA_USE_PREBUILT_UI=OFF", "-DLLAMA_BUILD_APP=OFF"]
-    flags += [f"-DGGML_{name.upper()}={'ON' if args.backend == name else 'OFF'}" for name in ("metal", "cuda", "vulkan")]
+    flags += [f"-DGGML_{name.upper()}={'ON' if args.backend == name else 'OFF'}" for name in ACCELERATORS]
     subprocess.run(["cmake", "-S", str(args.source), "-B", str(args.output), *flags], check=True)
     subprocess.run(["cmake", "--build", str(args.output), "--config", "Release", "--target", "llama-server", "ggml-rpc-server", "--parallel", str(args.parallel)], check=True)
     suffix = ".exe" if sys.platform == "win32" else ""

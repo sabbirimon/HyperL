@@ -1,5 +1,24 @@
 # Standalone alpha validation
 
+## SDK and accelerator selection — 2026-11-14
+
+On Intel macOS 15.8.3, **111 Python script tests**, **5 CTest cases**, the installed
+CMake consumer, **4 isolated platform wheel tests**, and **3 JVM/C/NumPy
+conformance tests** passed. Gradle test/installDist/distZip passed with **99 JVM
+tests passing and 2 hardware-dependent skips**. The installed Python SDK CPU check
+matched every one of 65,536 known-answer outputs. A real pinned Qwen2.5 1.5B GGUF
+generated eight tokens on CPU through `open_model()` and its owned server exited
+when the context closed. JAX CPU model lifecycle and tamper rejection ran in the
+script suite. The optional PyTorch 2.2.2 CPU dispatch also passed on Intel macOS;
+a CUDA request was correctly rejected on that system.
+
+A separate [Radeon run](evidence/sdk-radeon-metal-20261114.json) completed four
+GPU f32 cases with CPU agreement plus the expected overflow rejection.
+This is bounded Metal arithmetic; no CUDA/ROCm/XPU/SYCL device execution,
+new model offload qualification, multi-GPU proof or speedup is claimed. Runtime
+selection tests cover rejection without CPU fallback. See the [SDK guide](SDK.md)
+and [contributor test instructions](HARDWARE_TESTING.md).
+
 ## Native model sharding, fleet and resilience follow-up — 2026-11-02
 
 The optional native model builder passes with clean independently installed

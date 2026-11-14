@@ -124,6 +124,12 @@ jobs:
           subprocess.run([str(python), '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheel.resolve())], check=True, env=environment_vars)
           subprocess.run([str(python), '-I', 'python/tests/test_bundled.py', '-v'], check=True, env=environment_vars)
           PYTHON
+      - name: Build against the installed C SDK
+        run: |
+          cmake --install build/native --config Release --prefix build/sdk-prefix
+          cmake -S examples/sdk-cmake -B build/sdk-example -DCMAKE_PREFIX_PATH="${{ github.workspace }}/build/sdk-prefix"
+          cmake --build build/sdk-example --config Release
+          ctest --test-dir build/sdk-example -C Release --output-on-failure
       - uses: actions/upload-artifact@v4
         with:
           name: hyperl-${{ matrix.os }}

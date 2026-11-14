@@ -27,6 +27,7 @@ distributions {
             from("docs") { into("docs") }
             from("native") { into("sdk/native"); exclude("hyperl-opencl", "hyperl-opencl.exe", "hyperl-metal") }
             from("CMakeLists.txt") { into("sdk") }
+            from("cmake") { into("sdk/cmake") }
             from("scripts") { into("scripts"); exclude("__pycache__/**", "*.pyc") }
         }
     }

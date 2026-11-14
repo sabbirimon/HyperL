@@ -1,21 +1,50 @@
 """Optional actual PyTorch elementwise dispatch with mandatory native CPU agreement."""
-from .native import NativeCpu, Program, MAX_VECTOR
+from .native import NativeCpu, Program, MAX_VECTOR, MAX_RETAINED
 from .interop import from_torch
 import re
 
 
+class BackendUnavailable(RuntimeError):
+    """Requested PyTorch runtime or device could not be selected."""
+
+
+def _resolve_device(torch, selector):
+    # ROCm uses the CUDA device namespace inside PyTorch, but the SDK requires
+    # the user to name the actual runtime so its results cannot be mislabelled.
+    match = re.fullmatch(r"(cuda|rocm|xpu):([0-9]{1,3})", selector) if isinstance(selector, str) else None
+    if selector == "cpu":
+        return "cpu"
+    if match:
+        target, index = match[1], int(match[2])
+        if target == "xpu":
+            runtime = getattr(torch, "xpu", None)
+            if runtime and runtime.is_available() and index < runtime.device_count():
+                return f"xpu:{index}"
+        else:
+            hip = getattr(torch.version, "hip", None)
+            cuda = getattr(torch.version, "cuda", None)
+            matches_build = bool(hip) if target == "rocm" else bool(cuda) and not hip
+            if matches_build and torch.cuda.is_available() and index < torch.cuda.device_count():
+                return f"cuda:{index}"
+    else:
+        raise ValueError("select cpu, cuda:index, rocm:index, xpu:index")
+    raise BackendUnavailable(f"requested {selector} device/runtime unavailable; no CPU fallback")
+
+
 class TorchBackend:
-    """Explicit cpu/cuda:index only. No autograd, graph compile, reduction or fallback."""
+    """Verified f32 vector dispatch on an explicitly selected PyTorch runtime."""
     def __init__(self, reference, device):
-        import torch
         if not isinstance(reference, NativeCpu):
             raise TypeError("mandatory configured native CPU reference required")
-        if not isinstance(device, str) or not re.fullmatch(r"cpu|cuda:[0-9]{1,3}", device):
-            raise ValueError("select cpu or an explicit cuda:index")
+        try:
+            import torch
+        except ModuleNotFoundError as error:
+            if error.name != "torch":
+                raise
+            raise BackendUnavailable("PyTorch not installed; no CPU fallback") from error
+        self.target = device
         self._torch = torch
-        self.device = torch.device(device)
-        if self.device.type == "cuda" and (not torch.cuda.is_available() or self.device.index >= torch.cuda.device_count()):
-            raise RuntimeError("requested CUDA device unavailable; no CPU fallback")
+        self.device = torch.device(_resolve_device(torch, device))
         self.reference = reference
 
     def execute(self, program, inputs, cancelled=None):
@@ -31,16 +60,22 @@ class TorchBackend:
                 raise RuntimeError("PyTorch work cancelled at host boundary; accepted device work may still complete")
         values = {}
         cpu_inputs = {}
+        retained_inputs = 0
         for name in program.inputs:
             check()
             value = inputs[name]
             if not isinstance(value, torch.Tensor) or value.device != self.device or value.dtype != torch.float32 or value.ndim != 1 or not value.is_contiguous() or value.requires_grad or not 1 <= value.numel() <= MAX_VECTOR:
                 raise ValueError("inputs must be bounded contiguous float32 tensors on the selected device, without autograd")
-            # This preview deliberately copies input snapshots to CPU for verification.
-            cpu_inputs[name] = from_torch(value.detach().to("cpu"))
-            values[name] = value.detach().clone()
-        expected = self.reference.execute(program, cpu_inputs, cancelled=cancelled)
+            retained_inputs += value.numel()
+            if retained_inputs > MAX_RETAINED or 4 * retained_inputs > self.reference.budget_bytes:
+                raise MemoryError("PyTorch input snapshots exceed the selected budget")
         with torch.no_grad():
+            for name in program.inputs:
+                check()
+                snapshot = inputs[name].detach().clone()
+                values[name] = snapshot
+                cpu_inputs[name] = from_torch(snapshot.to("cpu"))
+            expected = self.reference.execute(program, cpu_inputs, cancelled=cancelled)
             for step in program.steps:
                 check()
                 a = values[step.inputs[0]]
@@ -51,6 +86,7 @@ class TorchBackend:
         check()
         result = values[program.output]
         actual = from_torch(result.detach().to("cpu"))
-        if len(actual) != len(expected) or any(a != b for a, b in zip(actual, expected)):
+        check()
+        if result.device != self.device or len(actual) != len(expected) or any(a != b for a, b in zip(actual, expected)):
             raise RuntimeError("PyTorch result differs from native CPU reference")
         return result

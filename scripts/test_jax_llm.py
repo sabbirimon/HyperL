@@ -5,7 +5,8 @@ import sys
 import tempfile
 import unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "python"))
-from hyperl.jax_llm import DecoderConfig, JaxDecoder, JaxSettings, JaxModelSession
+from hyperl import open_model
+from hyperl.jax_llm import DecoderConfig, JaxDecoder, JaxSettings
 from hyperl.llm import file_digest
 import json
 
@@ -125,16 +126,14 @@ class JaxExecutionTest(unittest.TestCase):
             manifest = root / "manifest.json"
             manifest.write_text(json.dumps(dict(format="hyperl-llama-f32/1", config=cfg.__dict__, tensors=records)))
             settings = JaxSettings(str(root), file_digest(manifest), "cpu", (0,), budget_bytes=16 * 1024 * 1024)
-            session = JaxModelSession(settings)
-            try:
+            with open_model(settings) as session:
                 result = session.complete([1, 2, 3], max_tokens=2)
                 self.assertEqual(len(result["tokens"]), 2)
                 self.assertEqual(result["checkpoint_manifest_sha256"], settings.manifest_sha256)
-            finally:
-                session.close()
+            self.assertTrue(session.closed)
             (root / "0.q.npy").write_bytes(b"wrong")
-            with self.assertRaises(ValueError):
-                JaxModelSession(settings)
+            with self.assertRaises(ValueError), open_model(settings):
+                self.fail("tampered model session opened")
 
     def test_unavailable_tpu_memory_mesh_cancel_and_context_reject(self):
         cfg, weights = self.fixture()

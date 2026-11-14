@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 import shutil
 import tempfile
+import subprocess
+import sys
 import unittest
 import hyperl
 from hyperl import NativeCpu, Program, Step, f32
@@ -17,6 +19,16 @@ class BundledWheelTests(unittest.TestCase):
         self.assertEqual([1], list(cpu.precise_sum(f32([16777216, 1, -16777216]))))
         with self.assertRaisesRegex(RuntimeError, 'cancelled'):
             cpu.execute(program, {'x': f32([-1, 2, 3])}, cancelled=lambda: True)
+
+    def test_sdk_entry_point_runs_installed_cpu_known_answer(self):
+        proc = subprocess.run([sys.executable, "-I", "-m", "hyperl", "verify-compute",
+                               "--bundled", "--elements", "257"], check=True,
+                              capture_output=True, text=True, timeout=30)
+        result = json.loads(proc.stdout)
+        self.assertEqual("passed", result["status"])
+        self.assertEqual("cpu", result["device"])
+        self.assertEqual("abe9898f162d325f5cb18ee5bebcf6aef1c64318e824acee6c8d7c5e29e58da2",
+                         result["output_sha256"])
 
     def test_binary_corruption_is_rejected_before_load(self):
         installed = Path(hyperl.__file__).parent / '_native'

@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.20)
+project(HyperLExample LANGUAGES C)
+find_package(HyperL 0.1.0 EXACT CONFIG REQUIRED)
+enable_testing()
+add_executable(hyperl_example main.c)
+target_link_libraries(hyperl_example PRIVATE HyperL::hyperl_cpu)
+set_target_properties(hyperl_example PROPERTIES C_STANDARD 99)
+add_test(NAME installed_hyperl_example COMMAND hyperl_example)

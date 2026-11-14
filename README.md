@@ -34,6 +34,14 @@ across CPUs, GPUs and other accelerators. Its goal is to give developers approac
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
 
+## Build with HyperL
+
+Start with the [C/CMake and Python SDK guide](docs/SDK.md). The SDK explicitly
+selects native CPU, PyTorch CUDA, ROCm or Intel XPU and exposes managed GGUF/JAX
+model sessions. Accelerator support depends on the installed runtime and the
+qualification recorded for that device. **Have a different GPU or CPU?**
+[Run a hardware test and share the result](docs/HARDWARE_TESTING.md).
+
 ## Model engine checkpoint · 6 November 2026
 
 HyperL owns the reusable engine: **memory placement, model sharding, splitting

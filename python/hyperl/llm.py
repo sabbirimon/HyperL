@@ -49,8 +49,8 @@ def file_digest(path, *, max_bytes=16 * 1024**4, cancelled=lambda: False):
     return digest.hexdigest()
 
 
-def _verify(path, digest, maximum):
-    if not isinstance(digest, str) or not _DIGEST.fullmatch(digest) or file_digest(path, max_bytes=maximum) != digest:
+def _verify(path, digest, maximum, *, cancelled=lambda: False):
+    if not isinstance(digest, str) or not _DIGEST.fullmatch(digest) or file_digest(path, max_bytes=maximum, cancelled=cancelled) != digest:
         raise ValueError("artifact identity/digest mismatch")
 
 
@@ -158,7 +158,13 @@ class LlamaSettings:
     load_mode: str = "mmap"
     upstream_revision: str = LLAMA_REVISION
 
+    gpu_layers: int | None = None  # GPU only; None preserves full offload request.
+
     def validate(self):
+        if self.gpu_layers is not None:
+            _integer(self.gpu_layers, 1, 999)
+            if self.backend != "GPU":
+                raise ValueError("gpu_layers requires the explicit local GPU backend")
         if self.upstream_revision != LLAMA_REVISION:
             raise ValueError("unqualified native revision; use the pinned source or qualify a new adapter revision")
         _integer(self.context, 64, 131072); _integer(self.threads, 1, 256)
@@ -170,7 +176,8 @@ class LlamaSettings:
             raise ValueError("invalid explicit device selection")
         if self.backend == "CPU" and (self.rpc or self.devices or self.proportions):
             raise ValueError("CPU execution cannot hide configured accelerator work")
-        if self.backend == "GPU" and (not self.devices or self.rpc):
+        if self.backend == "GPU" and (not self.devices or self.rpc or len(set(self.devices)) != len(self.devices)
+                or any(d.lower() in {"cpu", "none"} for d in self.devices)):
             raise ValueError("GPU backend requires exact local device names")
         if self.backend == "RPC":
             if not 1 <= len(self.rpc) <= 16 or len(set(self.rpc)) != len(self.rpc):
@@ -228,8 +235,10 @@ class LlamaSession:
     def __init__(self, settings, *, cancelled=lambda: False):
         settings.validate()
         self.settings = settings
-        _verify(settings.executable, settings.executable_sha256, 512 * 1024 * 1024)
-        _verify(settings.model, settings.model_sha256, settings.max_model_bytes)
+        _verify(settings.executable, settings.executable_sha256, 512 * 1024 * 1024, cancelled=cancelled)
+        _verify(settings.model, settings.model_sha256, settings.max_model_bytes, cancelled=cancelled)
+        if cancelled():
+            raise InterruptedError("native model startup cancelled")
         self.id = str(uuid.uuid4())
         self.port = _port()
         self._gate = threading.Lock()
@@ -251,7 +260,8 @@ class LlamaSession:
                 if probe.returncode != 0 or len(probe.stdout) + len(probe.stderr) > 262144 or listed != list(zip(devices, settings.rpc)):
                     raise RuntimeError("RPC route/device inventory mismatch; expose one exact device per route")
                 command += ["--rpc", ",".join(settings.rpc)]
-            command += ["--device", ",".join(devices), "--n-gpu-layers", "999", "--split-mode", settings.split_mode]
+            layers = settings.gpu_layers if settings.gpu_layers is not None else 999
+            command += ["--device", ",".join(devices), "--n-gpu-layers", str(layers), "--split-mode", settings.split_mode]
             if settings.proportions:
                 command += ["--tensor-split", ",".join(str(p) for p in settings.proportions)]
         self._private = tempfile.TemporaryDirectory(prefix="hyperl-model-session-")

@@ -20,6 +20,10 @@ CTest's Metal discovery case is not GPU execution. Quantum SDK doubles are not l
 provider acceptance. Optional OpenCL/Metal targets may be unavailable on a CI host.
 Do not edit compiled source while a validation run is in flight.
 
+To validate the installed CMake package and isolated Python wheel, see the
+[SDK guide](SDK.md). Use [hardware testing](HARDWARE_TESTING.md) to exercise
+an explicitly selected accelerator.
+
 ## Focused loops
 
 ```sh

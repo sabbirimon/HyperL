@@ -1,5 +1,10 @@
 # Developer experience: Python-style ease, native execution
 
+## SDK preview update · 2026-11-14
+
+The [SDK guide](SDK.md) supersedes the older preview entry points below; the
+full production SDK and stable cross-language bindings remain on this roadmap.
+
 Owner requirement, 2026-10-08 (Asia/Dhaka): easy to start and program, comparable to
 Python's approachable workflow. This is a language/API and onboarding plan, not a
 complete SDK or text-language compiler. The alpha.3 increment adds a small explicit

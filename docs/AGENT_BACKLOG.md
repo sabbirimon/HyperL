@@ -1,5 +1,12 @@
 # HyperL agent handoff and pending features
 
+## SDK and accelerator qualification · 2026-11-14
+
+The [SDK preview](SDK.md) and [hardware testing call](HARDWARE_TESTING.md)
+cover explicit CUDA/ROCm/XPU selection, local model sessions and installable C
+targets. Continue with physical GPU and model tests, stable public contracts, and
+qualified packages/bindings before calling this a full production SDK.
+
 ## HyperL-owned model engine — 2026-11-06
 
 The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.

@@ -1,0 +1,130 @@
+{
+  "format": "hyperl-metal-qualification/1",
+  "timeUtc": "2026-11-14T16:44:04.212050+00:00",
+  "os": "15.8.3",
+  "status": "passed-listed-cases",
+  "requestedDevice": "Radeon Pro 560X",
+  "scope": "Generated bounded elementwise cases only; no model, speedup, capacity or general backend qualification",
+  "cases": [
+    {
+      "elements": 3,
+      "status": "pass",
+      "cpuCliWallMs": 416.09159499785164,
+      "metalCliWallMsIncludingCpuVerification": 575.7153900012781,
+      "nativeMetrics": {
+        "format": "hyperl-metal-result/1",
+        "device": "AMD Radeon Pro 560X",
+        "storageMode": "managed",
+        "gpuCompletionConfirmed": true,
+        "compileMs": 6.042182,
+        "submitAndWaitMs": 3.278332,
+        "gpuMs": 0.04016000093542971
+      },
+      "sample": [
+        0.0,
+        6.0,
+        12.0
+      ]
+    },
+    {
+      "elements": 257,
+      "status": "pass",
+      "cpuCliWallMs": 486.6861730006349,
+      "metalCliWallMsIncludingCpuVerification": 649.6804140006134,
+      "nativeMetrics": {
+        "format": "hyperl-metal-result/1",
+        "device": "AMD Radeon Pro 560X",
+        "storageMode": "managed",
+        "gpuCompletionConfirmed": true,
+        "compileMs": 4.142719,
+        "submitAndWaitMs": 1.221119,
+        "gpuMs": 0.045759999920846894
+      },
+      "sample": [
+        24.0,
+        14.0,
+        6.0
+      ]
+    },
+    {
+      "elements": 65536,
+      "status": "pass",
+      "cpuCliWallMs": 1153.337438001472,
+      "metalCliWallMsIncludingCpuVerification": 1110.8699000033084,
+      "nativeMetrics": {
+        "format": "hyperl-metal-result/1",
+        "device": "AMD Radeon Pro 560X",
+        "storageMode": "managed",
+        "gpuCompletionConfirmed": true,
+        "compileMs": 6.232914,
+        "submitAndWaitMs": 2.496283,
+        "gpuMs": 0.0911999995878432
+      },
+      "sample": [
+        24.0,
+        14.0,
+        6.0
+      ]
+    },
+    {
+      "elements": 5,
+      "status": "pass",
+      "operation": "multiply/add/relu",
+      "metalCliWallMsIncludingCpuVerification": 1022.6386609974725,
+      "nativeMetrics": {
+        "format": "hyperl-metal-result/1",
+        "device": "AMD Radeon Pro 560X",
+        "storageMode": "managed",
+        "gpuCompletionConfirmed": true,
+        "compileMs": 224.940142,
+        "submitAndWaitMs": 1.248545,
+        "gpuMs": 0.04303999958210625
+      }
+    },
+    {
+      "status": "expected-rejection",
+      "operation": "overflow before relu",
+      "gpuDispatched": false
+    }
+  ],
+  "probe": {
+    "inferenceQualified": false,
+    "backend": "Metal GPU",
+    "devices": [
+      {
+        "lowPower": false,
+        "recommendedMaxWorkingSetSize": 4294967296,
+        "maxBufferLength": 3221225472,
+        "hasUnifiedMemory": false,
+        "name": "AMD Radeon Pro 560X",
+        "index": 0
+      },
+      {
+        "lowPower": true,
+        "recommendedMaxWorkingSetSize": 1610612736,
+        "maxBufferLength": 2147483648,
+        "hasUnifiedMemory": true,
+        "name": "Intel(R) UHD Graphics 630",
+        "index": 1
+      }
+    ],
+    "available": true,
+    "format": "hyperl-metal-probe/1"
+  },
+  "device": "AMD Radeon Pro 560X",
+  "lastMetalResult": {
+    "elements": 5,
+    "backend": "METAL_GPU",
+    "device": "AMD Radeon Pro 560X",
+    "cpuVerified": true,
+    "nativeMetrics": {
+      "format": "hyperl-metal-result/1",
+      "device": "AMD Radeon Pro 560X",
+      "storageMode": "managed",
+      "gpuCompletionConfirmed": true,
+      "compileMs": 224.940142,
+      "submitAndWaitMs": 1.248545,
+      "gpuMs": 0.04303999958210625
+    }
+  }
+}

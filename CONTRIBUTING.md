@@ -28,6 +28,7 @@ multi-host links, device-loss cases and sustained workloads. Run the exact
 supported contract first; label a planned adapter or unsupported operator as
 unavailable instead of treating its presence in an inventory as execution.
 
+Choose a device and command in [hardware testing](docs/HARDWARE_TESTING.md).
 Follow the [test-report guide](docs/TEST_REPORTING.md). Include a source commit,
 toolchain and driver versions, hardware topology, reproducible workload, oracle
 or output hash, all measured samples, memory and transfer scope, and the precise

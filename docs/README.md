@@ -11,6 +11,9 @@ source. Guides separate working code, estimates, provider contracts and future p
 
 ## Learn, build and diagnose
 
+- [C/CMake and Python SDK](SDK.md)
+- [Hardware testing and contributor reports](HARDWARE_TESTING.md)
+
 - [Programming guide with diagrams](PROGRAMMING_GUIDE.md)
 - [Installation and CLI/workbench reference](USER_GUIDE.md)
 - [Build, validation and packaging](BUILD_AND_TEST.md)

@@ -107,7 +107,7 @@ class NativeTests(unittest.TestCase):
             self.skipTest("PyTorch/CUDA not installed")
         import torch
         from hyperl.torch_backend import TorchBackend
-        if not torch.cuda.is_available():
+        if not torch.version.cuda or torch.version.hip or not torch.cuda.is_available():
             with self.assertRaisesRegex(RuntimeError, "no CPU fallback"):
                 TorchBackend(self.cpu, "cuda:0")
             self.skipTest("CUDA unavailable; constructor rejection passed, actual dispatch unrun")
