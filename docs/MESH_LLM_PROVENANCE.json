@@ -1,0 +1,26 @@
+{
+  "format": "hyperl-upstream-review/1",
+  "project": "Mesh-LLM",
+  "repository": "https://github.com/Mesh-LLM/mesh-llm",
+  "revision": "5f54a094e2c6ec52a1ad71813bad691e312d0deb",
+  "reviewed_on": "2026-11-14",
+  "root_license": "Apache-2.0",
+  "integration": "original external HTTP client, separately installed upstream daemon",
+  "source_copied": false,
+  "binaries_bundled": false,
+  "models_bundled": false,
+  "files": {
+    "LICENSE": "44459b86c2e96fdbfd8a6b5c33d30d4b04b5293fcb2ec96fe4dcc4e0f90b8962",
+    "README.md": "4b2cb65dbc5120a0a7a3a756902d8637b95b44268d9c1f0dc8930d4f4896f845",
+    "mesh/website/src/docs/pages/openai-compatible-api.md": "75bdd02d20fb3af41569df24d96d56fa9b862c863e68cf0e784779e06c592ab9",
+    "skippy/crates/skippy-inference-api/src/chat.rs": "c72d754b7a525d94c4c13da1db5786c8b173449536ef67abf16d226cb7deac69",
+    "mesh/docs/MESHES.md": "f350e6f8cd12076719079452858f62b5ac896edd99baff3e71004159a41efbf9",
+    "skippy/docs/SKIPPY_SPLITS.md": "8dab2923eb36d7efdcd9a882e3325d958d1d780873011f2f915e353977290422"
+  },
+  "qualification": {
+    "http_contract": "controlled loopback fixtures; see scripts/test_mesh_llm.py",
+    "mesh_runtime_generation": false,
+    "physical_sharding": false,
+    "intel_amd": false
+  }
+}

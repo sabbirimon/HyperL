@@ -1,5 +1,32 @@
 # Architecture, language choices and future build gates
 
+## Optional Mesh-LLM backend — 2026-11-14
+
+[Mesh-LLM integration](MESH_LLM.md) adds an explicit external model-catalog and
+text-completion client through Python and `hyperl.cluster` CLI commands. Requests
+are bounded, cancellable and tied to an operator-configured destination. Results
+identify the external backend and keep model-artifact, placement, routing-scope
+and sharding qualification unverified. This is not a native fleet/profile adapter.
+No public mesh join, model download, installer, automatic fallback or provider
+credential transfer is performed. Meshlit independently connects its chat/bot
+model picker to the same API; Suparagent coworker features belong in Meshlit.
+
+Next: evaluate immutable Skippy stage packages, layer-range readiness and runtime
+ABI compatibility; qualify peer admission and physical execution before adding
+placement monitoring. Flash-MoE's SSD expert streaming is currently single-node,
+not proof of distributed expert paging. Intel/AMD native Mac hosting and Samsung
+hosting remain unqualified. Engine work retains priority over agreements.
+
+
+Intel Mac live qualification on 14 November: the reviewed release contains no
+x86_64 macOS host/runtime asset, and the required native build toolchain was not
+available at the probe. The real local catalog request failed explicitly because
+no Mesh daemon was running. No fake catalog or alternate engine was substituted.
+No Samsung was connected for a new host test. [Recorded host/probe evidence](evidence/mesh-llm-intel-host-20261114.json).
+Next live gate: an independently configured supported remote host or a qualified
+Intel native source build, followed by actual generation and placement checks.
+
+
 ## HyperL-owned model engine — 2026-11-06
 
 The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.

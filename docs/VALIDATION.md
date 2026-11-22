@@ -1,5 +1,24 @@
 # Standalone alpha validation
 
+
+## Optional Mesh-LLM adapter — 2026-11-14
+
+15 new HTTP/TLS/CLI contract checks pass, including bounded input and response,
+redirect/proxy rejection, authenticated TLS, timeout, cancellation and malformed
+provider envelopes. The complete Python suite passes **121/121**, zero skips,
+with pinned JAX and four logical CPU devices. Gradle test/installDist/distZip
+succeeded; unchanged JVM tests were up-to-date. No native kernel changed, so
+native hardware qualification was not rerun. These fixtures are not a running
+Mesh/Skippy model or physical peer deployment. See [adapter guide](MESH_LLM.md).
+
+Intel Mac live qualification on 14 November: the reviewed release contains no
+x86_64 macOS host/runtime asset, and the required native build toolchain was not
+available at the probe. The real local catalog request failed explicitly because
+no Mesh daemon was running. No fake catalog or alternate engine was substituted.
+No Samsung was connected for a new host test. [Recorded host/probe evidence](evidence/mesh-llm-intel-host-20261114.json).
+Next live gate: an independently configured supported remote host or a qualified
+Intel native source build, followed by actual generation and placement checks.
+
 ## Native model sharding, fleet and resilience follow-up — 2026-11-02
 
 The optional native model builder passes with clean independently installed

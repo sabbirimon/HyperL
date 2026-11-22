@@ -1,5 +1,12 @@
 # Licence scope and history
 
+
+The 2026-11-14 Mesh-LLM API adapter is original HyperL Community/Enterprise
+material. Mesh-LLM remains an independently installed Apache-2.0 project; no
+upstream engine source, model or native executable is incorporated. Its earlier
+and dependency grants are unchanged. Meshlit's separate original API preset does
+not copy this adapter implementation.
+
 The 2026-11-02 native-model adapter, original JAX decoder, authenticated fleet
 scheduler/audit and original Cauchy erasure codec are newly covered Community/
 Enterprise additions. External llama.cpp remains MIT; JAX and its dependencies

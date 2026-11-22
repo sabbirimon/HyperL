@@ -201,6 +201,10 @@ def main():
     export.add_argument("root"); export.add_argument("artifact"); export.add_argument("destination"); export.add_argument("max_bytes", type=int)
     inspect = commands.add_parser("model-inspect")
     inspect.add_argument("source")
+    mesh_models = commands.add_parser("mesh-models", help="List an explicitly configured external Mesh-LLM endpoint")
+    mesh_models.add_argument("config")
+    mesh_chat = commands.add_parser("mesh-chat", help="Send bounded text chat to an explicitly configured Mesh-LLM endpoint")
+    mesh_chat.add_argument("config"); mesh_chat.add_argument("request")
     plan = commands.add_parser("model-plan")
     plan.add_argument("request")
     enroll = commands.add_parser("fleet-enroll")
@@ -227,6 +231,10 @@ def main():
         else:
             command.add_argument("--manifest-sha256", required=True)
     args = parser.parse_args()
+    if args.command in {"mesh-models", "mesh-chat"}:
+        from .mesh_llm import execute_cli
+        print(json.dumps(execute_cli(args.command, args.config, getattr(args, "request", None)), indent=2, allow_nan=False))
+        return
     if args.command in {"llm-run", "rpc-worker", "rpc-tunnel", "fleet-register", "fleet-serve", "fleet-agent", "fleet-submit", "fleet-status", "fleet-cancel", "artifact-hash", "audit-key-new", "audit-verify", "model-protect", "model-repair"}:
         execute_command(args)
         return

@@ -601,3 +601,9 @@ and [NVIDIA coverage](NVIDIA_COMPATIBILITY.md) for architecture/library qualific
 ## Model format support — 2026-11-06 development
 
 Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.
+
+## Optional Mesh-LLM endpoint — 2026-11-14
+
+See [Mesh-LLM setup and commands](MESH_LLM.md) for `mesh-models` and `mesh-chat`.
+The configured service owns routing and any native stage splitting; this API
+client does not certify those properties or control the HyperL native scheduler.

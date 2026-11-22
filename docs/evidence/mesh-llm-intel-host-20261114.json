@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-14",
+  "host": {
+    "system": "Darwin",
+    "architecture": "x86_64"
+  },
+  "reviewedSourceRevision": "5f54a094e2c6ec52a1ad71813bad691e312d0deb",
+  "release": {
+    "tag": "v0.79.0",
+    "commit": "e8c9e7fba8bf88b3fa65a4187862d1147dce372c",
+    "url": "https://github.com/Mesh-LLM/mesh-llm/releases/tag/v0.79.0",
+    "publishedAt": "2026-11-10T22:01:38Z",
+    "macAssets": [
+      {
+        "name": "mesh-llm-aarch64-apple-darwin.tar.gz",
+        "size": 67020091,
+        "digest": "sha256:9d0c8870b9b1fbd98eb9a6141d8f22e01da25907777c7177f64f07e51a4533bf"
+      },
+      {
+        "name": "mesh-llm-aarch64-apple-darwin.tar.gz.sha256",
+        "size": 103,
+        "digest": "sha256:4e3bcd38941a61ccbd2933456534b0d74a882b7ae15ae5be544e3fae072cdde5"
+      },
+      {
+        "name": "mesh-llm-node-sdk-addon-0.79.0-darwin-arm64.tar.gz",
+        "size": 30893186,
+        "digest": "sha256:93e1a5b018c7815e7d18e1b2bc7efbc140158d74e77e34e4f0999a95816f8957"
+      },
+      {
+        "name": "mesh-llm-node-sdk-addon-0.79.0-darwin-arm64.tar.gz.sha256",
+        "size": 117,
+        "digest": "sha256:12577bfaf6e871a21c9abac215e979c76e1ace3d242adda6d904116a02f46429"
+      },
+      {
+        "name": "mesh-llm-v0.79.0-aarch64-apple-darwin.tar.gz",
+        "size": 67020091,
+        "digest": "sha256:9d0c8870b9b1fbd98eb9a6141d8f22e01da25907777c7177f64f07e51a4533bf"
+      },
+      {
+        "name": "mesh-llm-v0.79.0-aarch64-apple-darwin.tar.gz.sha256",
+        "size": 111,
+        "digest": "sha256:a8e69c0e2fc0f011675c6b9e314424ae0991bd12f5200e001167fca7209ad0ba"
+      },
+      {
+        "name": "meshllm-native-darwin-aarch64-metal-0.79.0.crate",
+        "size": 59537489,
+        "digest": "sha256:7b7603ff1942d876a228124762636cf3ecf7f1c8987b2f67747f1ff4b7c10dac"
+      },
+      {
+        "name": "meshllm-native-darwin-aarch64-metal.tar.gz",
+        "size": 59912846,
+        "digest": "sha256:d087b37a3792cfac31a7601b0c205e416a5463adfbe6f8f84deb9ab7f1185251"
+      },
+      {
+        "name": "meshllm-native-darwin-aarch64-metal.tar.gz.sha256",
+        "size": 109,
+        "digest": "sha256:49628d933b4f554423f16bf316d14fc68079551f661879c725be52fa9d3fc28e"
+      },
+      {
+        "name": "meshllm-native-runtime-darwin-aarch64-metal.tar.gz",
+        "size": 26285639,
+        "digest": "sha256:765cd9968b4062b7d5230332eda25461adcd1f0ff5dcf6ded2159f452fe36ad9"
+      },
+      {
+        "name": "meshllm-native-runtime-darwin-aarch64-metal.tar.gz.sha256",
+        "size": 117,
+        "digest": "sha256:aeb115a1acd5011bfc30c5c51e5ffbd22fd0a38d52df8be84fafc31f449f3a81"
+      },
+      {
+        "name": "skippy-v0.79.0-darwin-aarch64-cli.tar.gz",
+        "size": 13971005,
+        "digest": "sha256:3afedf78ba1fdab8d56541c82301e11656e8a08b210dd7a3987232f225c2f5ce"
+      },
+      {
+        "name": "skippy-v0.79.0-darwin-aarch64-cli.tar.gz.sha256",
+        "size": 107,
+        "digest": "sha256:1566cb7bc3e51438beea19de45aef1c02a85d2adb5c93c8550821beba87b10af"
+      }
+    ],
+    "intelMacHostAssetCount": 0,
+    "assetDownloaded": false,
+    "digestStatus": "GitHub API metadata only; no incompatible asset downloaded or locally hashed"
+  },
+  "installedTools": {
+    "mesh-llm": false,
+    "skippy": false,
+    "rustc": false,
+    "cargo": false,
+    "just": false,
+    "sccache": false,
+    "docker": false,
+    "cmake": true,
+    "node": true
+  },
+  "localCatalogProbe": {
+    "endpoint": "http://127.0.0.1:9337/v1/models",
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "HyperL control failed: Mesh-LLM transport or response failed validation",
+    "expectedUnavailable": true
+  },
+  "nativeSourceBuildAttempted": false,
+  "nativeSourceBuildReason": "No Rust toolchain, just or sccache installed; pinned full runtime/host bootstrap would be a separate larger build, not an available supported Intel Mac release",
+  "meshRuntimeStarted": false,
+  "generationQualified": false,
+  "shardingQualified": false,
+  "publicMeshJoined": false,
+  "modelDownloaded": false,
+  "nextGate": "Qualified x86_64 macOS source/runtime build or owner-configured supported remote Mesh-LLM host"
+}

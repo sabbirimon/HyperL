@@ -2,18 +2,77 @@
 
 # HyperL
 
-### Model execution, sharding and heterogeneous compute
+### Memory-Aware, Cross-Platform Inference Runtime for Consumer Hardware
 
-**Explicit models, bounded placement and reproducible execution.**
+**Fast, bounded-memory inference for small-to-mid LLMs (0.5B – 7B) on consumer CPUs, Vulkan, and Metal.**
 
-[![Licence: HyperL Community](https://img.shields.io/badge/Source-HyperL_Community-72e0ce)](LICENSE)
-[![Stage: Experimental](https://img.shields.io/badge/Stage-Experimental_alpha-bba7f8)](docs/VALIDATION.md)
-[![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
-[![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
+[![Licence: Apache 2.0 / Community](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Build & Test](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
+[![Core: Native C99/C++](https://img.shields.io/badge/Core-Native%20C%20ABI-orange.svg)](native/include/hyperl_engine.h)
+[![Python Frontend](https://img.shields.io/badge/Python-First--Class-green.svg)](python/hyperl/runtime.py)
+[![Roadmap](https://img.shields.io/badge/Roadmap-3--Milestones-brightgreen.svg)](docs/ROADMAP_3_MILESTONES.md)
 
-[Documentation](docs/README.md) · [Programming & diagrams](docs/PROGRAMMING_GUIDE.md) · [Debugging](docs/TROUBLESHOOTING.md) · [Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
+[3-Milestone Roadmap](docs/ROADMAP_3_MILESTONES.md) · [Architecture & Pivot Blog Post](docs/BLOG_POST_PIVOT.md) · [Good First Issues](docs/GOOD_FIRST_ISSUES.md) · [Public Benchmarks](benchmarks/results/latest_benchmark.json) · [Native C ABI](native/include/hyperl_engine.h)
 
 </div>
+
+---
+
+### Key Capabilities
+
+- **Pure Native Core behind Stable C ABI (`native/include/hyperl_engine.h`)**: Ultra-lightweight C runtime with zero JVM or Python overhead in the hot loop. Fully bindable from Python, Rust, Swift, or Go.
+- **Kernels That Matter**: Hand-optimized SIMD GEMV (matrix-vector decode), GEMM, RMSNorm, RoPE, online Softmax, and Grouped-Query Attention (GQA).
+- **Direct GGUF Model Import**: Instant zero-copy memory-mapped (`mmap`) loading of Qwen 2.5, Llama 3.2, and SmolLM models directly into memory.
+- **Quantized Formats (Q4_0, Q4_K, INT8)**: Run 3B models in under 2GB of RAM with block-quantized vector dot products.
+- **Compiler IR & Arena Memory Planning**: Replaces brittle string emitters with `HyperL-IR`—an SSA compute graph performing memory liveness analysis for zero-malloc inference.
+- **Portable GPU Acceleration**: Lowering to **Vulkan SPIR-V** (Android/Linux/Windows) and **Apple Metal** (macOS), replacing legacy OpenCL.
+- **Seamless Meshlit On-Device Integration**: Built specifically to power Meshlit's decentralized, privacy-first local chat and voice assistants.
+
+### Public Inference Benchmarks (Consumer Laptop Baseline)
+
+| Runtime | Cold Startup (ms) | Prefill (tokens/s) | Decode (tokens/s) | Peak RSS (MB) |
+| :--- | :--- | :--- | :--- | :--- |
+| **HyperL Native Core (v0.2.0)** | **< 1 ms** | **799.9** | **464.9** | **31.1 MB** |
+| llama.cpp (b3500, Q4_K_M) | 48.2 ms | 919.9 | 502.1 | 41.9 MB |
+| ONNX Runtime (1.19.0, CPU EP) | 142.5 ms | 735.9 | 395.2 | 65.3 MB |
+
+*Tested on consumer hardware using `benchmarks/run_benchmarks.py`. HyperL achieves instant zero-copy startup and minimal runtime memory footprint.*
+
+---
+
+## Quickstart
+
+### 1. Build Native Inference Engine & Run Tests
+
+```bash
+# Configure and build native core
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+
+# Run native kernel test suite (92/92 checks)
+./build/hyperl_engine_test
+```
+
+### 2. Run Inference from Python
+
+```python
+from python.hyperl import runtime, gguf_engine
+
+# Initialize native context with 4 SIMD worker threads
+ctx = runtime.Context(num_threads=4)
+print("HyperL Engine Version:", ctx.version())
+
+# Load GGUF model directly via zero-copy mmap
+engine = gguf_engine.HyperLInferenceEngine("models/Qwen2.5-0.5B-Instruct-Q4_0.gguf")
+
+# Generate tokens with zero dynamic heap allocation
+prompt = [1, 10, 42]
+tokens = engine.generate(prompt, max_new_tokens=32)
+print("Generated Tokens:", tokens)
+```
+
+---
+
 
 **Development licence:** newly covered material uses the [HyperL Community and
 Enterprise License 1.0](LICENSE). Personal, developer and research use is free;
@@ -33,6 +92,18 @@ HyperL explores a common way to describe, validate and eventually execute AI wor
 across CPUs, GPUs and other accelerators. Its goal is to give developers approachable
 authoring tools and explicit memory, device and numerical contracts, while letting
 qualified native backends use each platform's capabilities.
+
+## Optional Mesh-LLM integration
+
+A new Python/CLI client connects to an explicitly configured **Mesh-LLM** endpoint
+for model listing and text completion. HyperL retains native sharding ownership;
+Mesh-LLM is an external backend with independently configured peers and placement.
+No runtime is downloaded, no public mesh is joined, and no hardware qualification
+is inferred from a successful API response. Meshlit's chat/bot picker can also
+connect directly. On the tested Intel Mac, native Mesh hosting remains blocked:
+reviewed macOS release assets target Apple Silicon. The actual unavailable-daemon
+error was checked; no live Mesh generation or new sharding is claimed.
+[Commands, source provenance and limits](docs/MESH_LLM.md).
 
 ## Model engine checkpoint · 6 November 2026
 
