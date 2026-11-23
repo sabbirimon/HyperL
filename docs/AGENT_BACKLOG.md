@@ -7,6 +7,8 @@ For the redesign, prioritize persistent GPU buffers, native distributed-worker p
 
 
 Full desktop CPU inference is exercised on three host systems. Two mutually authenticated scheduler partitions are covered by integration tests. Next qualify lease recovery under load and cross-host model-layer execution on independently administered devices. See [fleet deployment](MODEL_SHARDING_AND_FLEET.md).
+Two-host CPU sharding and a small authenticated fleet stage passed on November 24. Next qualification needs additional independent clients, cross-site restore and larger real models. [Host and fleet evidence](MODEL_SHARDING_AND_FLEET.md#physical-mac-and-windows-qualification-2026-11-24).
+
 
 ## Optional Mesh-LLM backend — 2026-11-14
 

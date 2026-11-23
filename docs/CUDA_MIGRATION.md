@@ -56,7 +56,7 @@ A target in this table names the artifact HyperL can produce. A vendor SDK may a
 | Windows DirectML (`directml`) | onnx-text | Qualify the graph with DmlExecutionProvider on Windows. [Reference](https://onnxruntime.ai/docs/execution-providers/DirectML-ExecutionProvider.html) |
 | WebGPU (`webgpu`) | wgsl | WGSL compute plus buffer and dispatch metadata. [Reference](https://www.w3.org/TR/WGSL/) |
 | Triton kernel compiler (`triton`) | SDK port | Port the operator to Triton and qualify the selected backend. [Reference](https://github.com/triton-lang/triton) |
-| PyTorch / Inductor (`pytorch`) | SDK port | Existing TorchBackend dispatches bounded operations on explicit devices. Inductor compilation requires separate integration. [Reference](https://docs.pytorch.org/docs/stable/torch.compiler.html) |
+| PyTorch / Inductor (`pytorch`) | pytorch | Emits a rank-one f32 function with an explicit input binding map. CPU Inductor full-graph compilation and eager MPS execution matched exact expected results on 137 elements for add, subtract and multiply with PyTorch 2.2.2. [Reference](https://docs.pytorch.org/docs/stable/torch.compiler.html) |
 | JAX / XLA (`jax`) | stablehlo | StableHLO tensor operation. HyperL also has an explicit PJRT graph path. [Reference](https://openxla.org/stablehlo) |
 | TensorFlow / XLA (`tensorflow`) | stablehlo | Supply the module to an accepting XLA toolchain. TensorFlow model import needs an adapter. [Reference](https://openxla.org/xla) |
 | Mojo (`mojo`) | SDK port | Implement the operator using the Modular SDK. [Reference](https://docs.modular.com/mojo/) |

@@ -11,6 +11,12 @@ from native model buffers. Physical TPU and million-device live qualification re
 Development increment: 2026-11-02. Standalone HyperL only; newly covered material
 uses the Community/Enterprise licence. Existing `hyperl/1`, `hyperl-shard/1`,
 native ABI, ordered reductions and historical hardware evidence are unchanged.
+## Three-tier decode on Intel macOS
+
+On the discrete-GPU Mac, a process-local Metal memory cap rejected an all-resident allocation after 19 of 30 blocks. HyperL planned the weight and KV assignments independently. Eight weight blocks used Metal, seven used RAM and fifteen used file-backed storage. The KV counts were eleven, eight and eleven. The host held the tied embedding and output projection. The 16 greedy output tokens matched the pinned native CPU reference. Warm first-token latency was 4.56 s and subsequent decode averaged 0.98 tokens/s. File-backed reads can use the OS cache.
+
+Run `python scripts/qualify_tiered_decode.py /path/to/smollm2-135m-instruct-q4_k_m.gguf --tokens 16` with PyTorch MPS, NumPy, safetensors and the pinned llama.cpp gguf-py on the Python path. The runner checks the model digest and reference tokens. Broader architectures and automatic selection in Studio need separate qualification. [Measurements and budgets](evidence/metal-ram-ssd-2026-11-24.json).
+
 
 ## What combines the devices
 

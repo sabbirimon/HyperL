@@ -1,0 +1,132 @@
+{
+  "format": "hyperl-wifi-qualification/1",
+  "physical_hosts": 2,
+  "worker_cpus": [
+    "Intel Mac x86_64",
+    "Windows Intel Core i5-8265U"
+  ],
+  "transport": "SSH Wi-Fi loopback forwarding",
+  "model_sha256": "2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d",
+  "source_revision": "4df29be4f4c3673f428170fda944a5b19f743bb8",
+  "windows_executable_sha256": "63dd26d1d38f9d66709401cbe657af6428a70a46ffe8548c53476c7f7d70dd15",
+  "mac_worker_sha256": "e01a3b83364dc21907d3ea08637a3a59521dae8f5855c0b0f4d91d39c8dae596",
+  "reference": {
+    "load_seconds": 0.381139863980934,
+    "request_seconds": 0.19011952599976212,
+    "tokens": [
+      28,
+      339,
+      436,
+      253,
+      1805,
+      555,
+      351,
+      10074,
+      282,
+      4295,
+      253,
+      20184,
+      30,
+      339,
+      4957,
+      929
+    ]
+  },
+  "split": {
+    "load_seconds": 48.49379568401491,
+    "request_seconds": 1.9977118209935725,
+    "tokens": [
+      28,
+      339,
+      436,
+      253,
+      1805,
+      555,
+      351,
+      10074,
+      282,
+      4295,
+      253,
+      20184,
+      30,
+      339,
+      4957,
+      929
+    ]
+  },
+  "assigned_layers": {
+    "0": "RPC0",
+    "1": "RPC0",
+    "2": "RPC0",
+    "3": "RPC0",
+    "4": "RPC0",
+    "5": "RPC0",
+    "6": "RPC0",
+    "7": "RPC0",
+    "8": "RPC0",
+    "9": "RPC0",
+    "10": "RPC0",
+    "11": "RPC0",
+    "12": "RPC0",
+    "13": "RPC0",
+    "14": "RPC0",
+    "15": "RPC0",
+    "16": "RPC1",
+    "17": "RPC1",
+    "18": "RPC1",
+    "19": "RPC1",
+    "20": "RPC1",
+    "21": "RPC1",
+    "22": "RPC1",
+    "23": "RPC1",
+    "24": "RPC1",
+    "25": "RPC1",
+    "26": "RPC1",
+    "27": "RPC1",
+    "28": "RPC1",
+    "29": "RPC1",
+    "30": "RPC1"
+  },
+  "kv_mib": {
+    "RPC0[127.0.0.1:50555]": 10.5,
+    "RPC0[127.0.0.1:50567]": 12.0
+  },
+  "model_mib": {
+    "CPU_Mapped": 28.69,
+    "RPC0[127.0.0.1:50555]": 61.04,
+    "RPC0[127.0.0.1:50567]": 37.82
+  },
+  "worker_graph_counts": {
+    "mac": 16,
+    "hp": 16
+  },
+  "interrupted_generation": "RemoteDisconnected",
+  "fresh_session_after_worker_restart": {
+    "load_seconds": 46.99576431995956,
+    "request_seconds": 2.062606078980025,
+    "tokens": [
+      28,
+      339,
+      436,
+      253,
+      1805,
+      555,
+      351,
+      10074,
+      282,
+      4295,
+      253,
+      20184,
+      30,
+      339,
+      4957,
+      929
+    ]
+  },
+  "recovery_mode": "explicit reload and new request after worker loss",
+  "worker_order": [
+    "Mac",
+    "HP"
+  ],
+  "prompt": "Once upon a time"
+}

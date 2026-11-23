@@ -14,6 +14,8 @@ operating environment's compliance. [Official NIST catalog](https://csrc.nist.go
 Using standard algorithms also does not establish FIPS 140-3 module validation.
 [Official FIPS 140-3 publication](https://csrc.nist.gov/pubs/fips/140-3/final) and
 [CMVP guidance](https://csrc.nist.gov/projects/cryptographic-module-validation-program/faqs).
+The November 24 same-site restore used two physical hosts. The Windows HP opened the Mac fleet backup, verified the authenticated audit chain and recovered all 13 jobs. Independent assessment, key lifecycle qualification and geographically separate restore remain open. [Measured results](evidence/mac-hp-fleet-2026-11-24.json).
+
 
 ## Storage error correction
 

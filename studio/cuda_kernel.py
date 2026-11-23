@@ -131,6 +131,17 @@ def interchange(target, spec):
     spec["graphInputs"] = ids
     spec["graphOutput"] = out
     spec["graphContract"] = "Inputs have identical shape [length]. Assign the returned vector to the active prefix of the destination."
+    if target == "pytorch":
+        # Only numeric binding indices and operations accepted by lower() enter this module.
+        args = ", ".join(f"data{i}" for i in ids)
+        lines = ["import torch", "", "", "def forward(" + args + "):"]
+        for i in ids:
+            lines.append(f"    torch._assert(data{i}.dim() == 1 and data{i}.dtype == torch.float32, 'Expected an f32 vector')")
+        if lhs != rhs:
+            lines.append(f"    torch._assert(data{lhs}.shape == data{rhs}.shape, 'Input lengths must match')")
+            lines.append(f"    torch._assert(data{lhs}.device == data{rhs}.device, 'Input devices must match')")
+        lines.append(f"    return torch.{op.lower()}(data{lhs}, data{rhs})")
+        return "\n".join(lines) + "\n"
     if target == "stablehlo":
         signature = ", ".join(f"%data{i}: tensor<?xf32>" for i in ids)
         operation = {"Add": "add", "Sub": "subtract", "Mul": "multiply"}[op]

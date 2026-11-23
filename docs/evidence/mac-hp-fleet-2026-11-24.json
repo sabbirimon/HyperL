@@ -1,0 +1,26 @@
+{
+  "stages": [
+    {
+      "parallel_requests": 1,
+      "accepted": 1,
+      "seconds": 0.05504510000173468
+    },
+    {
+      "parallel_requests": 4,
+      "accepted": 4,
+      "seconds": 0.09646510000311537
+    },
+    {
+      "parallel_requests": 8,
+      "accepted": 8,
+      "seconds": 0.18275549999816576
+    }
+  ],
+  "over_quota_status": 422,
+  "restore": {
+    "audit_verified": true,
+    "restored_jobs": 13,
+    "snapshot_sha256": "33ecbb53f11a355c85ced95947140033f6275692340c45dac48b4f4da60b0c4e"
+  },
+  "reconnect_returned_original_id": true
+}

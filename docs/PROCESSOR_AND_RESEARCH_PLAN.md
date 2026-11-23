@@ -2,6 +2,8 @@
 
 [CUDA migration and accelerator support](CUDA_MIGRATION.md)
 
+The bounded SmolLM2 pressure test exercised automatic weight and KV placement on three tiers. Integrating the qualified approach into general model loading and measuring other hosts remain open. [Three-tier decode](LOGICAL_DEVICES_AND_MODEL_STORAGE.md#three-tier-decode-on-intel-macos).
+
 
 ## Architecture decision
 

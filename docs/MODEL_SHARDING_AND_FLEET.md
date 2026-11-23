@@ -7,6 +7,14 @@
 artifact work. The original `hyperl/1`, native CPU ABI and vector numerics remain
 unchanged. These model adapters have separate execution and numerical contracts.
 
+## Physical Mac and Windows qualification, 2026-11-24
+
+The Intel Mac coordinator loaded SmolLM2 135M Q4_K_M with one CPU RPC worker on each laptop. Both workers used the pinned llama.cpp revision documented below. The Windows worker listened on loopback, reached through a Wi-Fi SSH forward. A 1:1 split assigned slots 0–15 to the Mac and 16–30 to the HP, including the output slot. Each worker recorded 16 graph calls. Greedy generation of 16 tokens from `Once upon a time` matched the local CPU token IDs exactly.
+
+The Mac-only request took 0.190 s. The two-worker request took 1.998 s after 48.494 s of loading. Stopping the HP worker during a longer request interrupted generation. Restarting it, reloading the model and issuing a fresh request reproduced the reference in 2.063 s after loading. These are single observations. [Token IDs, buffer placements, binary hashes and timings](evidence/mac-hp-wifi-2026-11-24.json).
+
+The HP also sent mutually authenticated fleet requests to the Mac in batches of 1, 4 and 8 over SSH forwarding. All 13 jobs were accepted. The next distinct request exceeded the test quota and returned HTTP 422. A reconnect with the original idempotency key returned the original job ID. HyperL opened a transferred SQLite snapshot on the HP and verified the audit chain and all 13 jobs. [Fleet results](evidence/mac-hp-fleet-2026-11-24.json).
+
 ## What now executes
 
 | Path | Working behavior | Evidence boundary |

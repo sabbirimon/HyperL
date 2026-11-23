@@ -1,0 +1,55 @@
+{
+  "model_sha256": "2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d",
+  "prompt_tokens": [
+    6403,
+    1980,
+    253,
+    655
+  ],
+  "generated_tokens": [
+    28,
+    339,
+    436,
+    253,
+    1805,
+    555,
+    351,
+    10074,
+    282,
+    4295,
+    253,
+    20184,
+    30,
+    339,
+    4957,
+    929
+  ],
+  "pytorch": "2.2.2",
+  "weight_layer_counts": {
+    "metal": 8,
+    "ram": 7,
+    "ssd": 15
+  },
+  "kv_layer_counts": {
+    "metal": 11,
+    "ram": 8,
+    "ssd": 11
+  },
+  "block_resident_budget_bytes": {
+    "metal": 134217728,
+    "ram": 100663296
+  },
+  "kv_resident_budget_bytes": {
+    "metal": 368640,
+    "ram": 245760
+  },
+  "metal_memory_fraction": 0.09,
+  "all_resident_allocation_failed_after_blocks": 19,
+  "metal_driver_bytes_after_decode": 154644480,
+  "host_embedding_bytes": 113246208,
+  "file_backed_weight_bytes": 212416320,
+  "file_backed_kv_bytes": 337920,
+  "first_token_seconds": 4.557144484017044,
+  "decode_tokens_per_second": 0.9753227417360795,
+  "scope": "Application budgets on Intel Mac with discrete GPU. Warm model, OS file caching permitted."
+}

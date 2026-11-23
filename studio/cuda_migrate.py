@@ -18,7 +18,7 @@ HIPIFY = Path(__file__).resolve().parent / "vendor/hipify/hipify-perl"
 HIPIFY_SHA = "7993ebf035c2336b90d398a956de72f893367042c3e2f1a5eb3a09c590dd5091"
 SHADERS = {"wgsl": ".wgsl", "spirv": ".spv", "metal": ".metal", "hlsl": ".hlsl"}
 EXT = {".cu", ".cuh", ".cc", ".cpp", ".c", ".h", ".hpp"}
-INTERCHANGE = {"opencl": ".cl", "onnx-text": ".onnxtxt", "stablehlo": ".mlir"}
+INTERCHANGE = {"opencl": ".cl", "onnx-text": ".onnxtxt", "stablehlo": ".mlir", "pytorch": ".py"}
 PORTABLE = {*SHADERS, *INTERCHANGE}
 TARGETS = ("hip", "sycl", *SHADERS, *INTERCHANGE)
 
@@ -150,7 +150,7 @@ def migrate(source, output, target, engine=None):
                 copy.write_bytes(raw)
             elif target in INTERCHANGE:
                 _, bindings = lower(raw.decode("utf-8"))
-                bindings["entry"] = {"stablehlo": "main", "opencl": "hyperl_kernel", "onnx-text": "hyperl_pointwise"}[target]
+                bindings["entry"] = {"stablehlo": "main", "opencl": "hyperl_kernel", "onnx-text": "hyperl_pointwise", "pytorch": "forward"}[target]
                 text = interchange(target, bindings)
                 (stage / ("kernel" + INTERCHANGE[target])).write_text(text, encoding="utf-8")
                 report["interface"] = bindings

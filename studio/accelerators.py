@@ -17,7 +17,7 @@ STACKS = {
     "directml": ("Windows DirectML", "onnx-text", "Qualify the graph with DmlExecutionProvider on Windows.", "https://onnxruntime.ai/docs/execution-providers/DirectML-ExecutionProvider.html"),
     "webgpu": ("WebGPU", "wgsl", "WGSL compute plus buffer and dispatch metadata.", "https://www.w3.org/TR/WGSL/"),
     "triton": ("Triton kernel compiler", None, "Port the operator to Triton and qualify the selected backend.", "https://github.com/triton-lang/triton"),
-    "pytorch": ("PyTorch / Inductor", None, "Existing TorchBackend dispatches bounded operations on explicit devices. Inductor compilation requires separate integration.", "https://docs.pytorch.org/docs/stable/torch.compiler.html"),
+    "pytorch": ("PyTorch / Inductor", "pytorch", "Generates an f32 vector function for PyTorch and torch.compile. Qualify the selected backend and device.", "https://docs.pytorch.org/docs/stable/torch.compiler.html"),
     "jax": ("JAX / XLA", "stablehlo", "StableHLO tensor operation. HyperL also has an explicit PJRT graph path.", "https://openxla.org/stablehlo"),
     "tensorflow": ("TensorFlow / XLA", "stablehlo", "Supply the module to an accepting XLA toolchain. TensorFlow model import needs an adapter.", "https://openxla.org/xla"),
     "mojo": ("Mojo", None, "Implement the operator using the Modular SDK.", "https://docs.modular.com/mojo/"),

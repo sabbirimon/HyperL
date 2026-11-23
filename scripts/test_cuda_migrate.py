@@ -10,7 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "studio"))
 from cuda_migrate import HIPIFY, migrate, perl
-from cuda_kernel import lower
+from cuda_kernel import interchange, lower
 
 SOURCE = (ROOT / "examples/cuda/add.cu").read_text()
 
@@ -29,6 +29,18 @@ class Migration(unittest.TestCase):
                 lower(src)
 
     @unittest.skipUnless(perl(), "requires Perl 5")
+    def test_pytorch_uses_the_recorded_buffer_order(self):
+        for expression, expected, bindings in [
+            ("right[i] - left[i]", "torch.sub(data1, data0)", [1, 0]),
+            ("left[i] * left[i]", "torch.mul(data0, data0)", [0]),
+        ]:
+            _, spec = lower(SOURCE.replace("left[i] + right[i]", expression))
+            code = interchange("pytorch", spec)
+            compile(code, "kernel.py", "exec")
+            self.assertEqual(spec["graphInputs"], bindings)
+            self.assertIn(expected, code)
+            self.assertIn("dtype == torch.float32", code)
+
     def test_batch_matches_upstream_including_unknown_apis(self):
         with tempfile.TemporaryDirectory() as folder:
             base = Path(folder)
@@ -57,7 +69,7 @@ class Migration(unittest.TestCase):
             base = Path(folder)
             source = base / "example.cu"
             source.write_text(SOURCE)
-            for target, suffix in [("opencl", "cl"), ("stablehlo", "mlir"), ("onnx-text", "onnxtxt")]:
+            for target, suffix in [("opencl", "cl"), ("stablehlo", "mlir"), ("onnx-text", "onnxtxt"), ("pytorch", "py")]:
                 report = migrate(source, base / target, target)
                 self.assertTrue((base / target / ("kernel." + suffix)).is_file())
                 self.assertFalse(report["hardwareExecuted"])
