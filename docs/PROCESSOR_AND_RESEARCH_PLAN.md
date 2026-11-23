@@ -33,6 +33,14 @@ Give Rust ownership of admission, buffer lifetimes, cancellation, and publicatio
 
 The [offline index](research/manuscripts.csv) contains one pinned PDF link per manuscript. It covers 721 manuscripts in 373 families. The index records publication metadata. Individual proof validity, practical crossover, rights to redistribute code and deployment readiness require separate review. To revisit a family, filter the CSV by family ID and read the linked manuscript and corrections. Rebuild the index with `python3 scripts/index_math_catalog.py overview.tex index.csv` using the pinned [source catalog](https://github.com/openai/math/blob/4eaee87548250b2682affda7d05d947c05554bae/overview.tex).
 
+## Model-proposed weight edits
+
+Fan et al. tested Qwen3.5 at 2B, 4B, 9B and 27B. On their held-out evaluation the strongest 27B edit gained 6.6 percentage points. It changed a bias specific to the model's linear-attention layers. The smaller models either declined to edit or degraded. The authors kept the editor frozen while it proposed and compared edits to another instance. [Paper, methods and evaluation](https://arxiv.org/html/2611.21885v2)
+
+An experimental HyperL backend would need named weights, a verified architecture mapping, access to hidden activations for the relevant probes, and the ability to run both the original and a candidate. Start with a local floating-point checkpoint and store candidate changes separately, keyed to the original digest. Compare scores with matched prompts, seeds and token budgets. Reserve separate held-out examples, check ordinary chat and unrelated tasks for regressions, and report evaluation cost. Promote an edit only after it passes these checks. A GGUF export needs its own post-quantization evaluation before it can be served in Meshlit.
+
+Meshlit can present evaluation results for any compatible text endpoint. Editing the served weights additionally requires control of the checkpoint and inference backend. An API-only provider can propose an edit to a different local checkpoint. That would be cross-model editing. Neither path has been qualified in this project.
+
 ## Goose language trial
 
 The [matched scheduling experiment](../benchmarks/goose/README.md) found C++ fastest on the flat dependency table, followed by Goose and Rust. Goose compiles to C and can call native C functions, making an isolated metadata pass a viable future experiment. Keep the shipped Rust engine and C ABI while evaluating variable-size record workloads. [Goose compiler and native interface](https://github.com/aardappel/goose/tree/2239b92eb2ae0e8f390f98640b09ff57a17698fc)
