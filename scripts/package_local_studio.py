@@ -29,6 +29,7 @@ def main():
     suffix = ".exe" if os.name == "nt" else ""
     [server] = (native / "bin").rglob("llama-server" + suffix)
     subprocess.run([sys.executable, "-m", "PyInstaller", "--clean", "--onefile", "--name", "HyperL-Studio",
+                    "--add-data", str(ROOT / "studio/vendor/hipify") + os.pathsep + "vendor/hipify",
                     "--paths", str(ROOT / "python/hyperl"), "--exclude-module", "numpy",
                     "studio/hyperl_studio.py"], check=True)
     with tempfile.TemporaryDirectory() as temp:
@@ -45,6 +46,7 @@ def main():
         for file in files:
             shutil.copy2(file, stage / file.name)
         shutil.copy2(source / "LICENSE", stage / "llama.cpp-LICENSE")
+        shutil.copy2(ROOT / "studio/vendor/hipify/LICENSE.txt", stage / "HIPIFY-LICENSE.txt")
         (stage / "local-runtime.json").write_text(json.dumps({"revision": LLAMA_REVISION, "server_sha256": file_digest(server)}))
         archive = ROOT / "hyperl-desktop.zip"
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=1) as out:
@@ -55,7 +57,12 @@ def main():
             for name in ["HyperL-Studio", "llama-server", "hyperl-engine"]:
                 item = Path(target) / (name + suffix)
                 item.chmod(item.stat().st_mode | stat.S_IXUSR)
-            subprocess.run([str(Path(target) / ("HyperL-Studio" + suffix)), "--local-check"], check=True, timeout=300)
+            app = str(Path(target) / ("HyperL-Studio" + suffix))
+            for backend in ("hip", "wgsl", "metal", "hlsl", "spirv"):
+                dest = Path(target) / ("migration-" + backend)
+                subprocess.run([app, "--migrate-cuda", str(ROOT / "examples/cuda/add.cu"), str(dest), "--target", backend], check=True, timeout=90)
+                assert json.loads((dest / "migration.json").read_text())["target"] == backend
+            subprocess.run([app, "--local-check"], check=True, timeout=300)
 
 
 if __name__ == "__main__":

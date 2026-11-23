@@ -6,6 +6,7 @@ license-file = "../LICENSE"
 description = "HyperL mapped-weight processor and execution planner"
 
 [dependencies]
+naga = { version = "=24.0.0", features = ["wgsl-in", "wgsl-out", "msl-out", "hlsl-out", "spv-out"] }
 constriction = "=0.5.0"
 memmap2 = "=0.9.12"
 safetensors = "=0.8.0"

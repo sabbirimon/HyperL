@@ -53,3 +53,8 @@ JAX/JAXlib 0.4.38 are explicit optional test dependencies (Apache-2.0 with
 separately retained XLA/LLVM/component notices). NumPy, SciPy, ml_dtypes and
 opt_einsum keep their respective licenses. These runtimes/models are not bundled
 or relicensed by the HyperL source distribution.
+
+The desktop CUDA migration tool includes hipify-perl from AMD HIPIFY,
+revision 118b213d89bea7bb7bedddae3e5ec7b14d4a26c5 (MIT license).
+The source distribution includes studio/vendor/hipify/LICENSE.txt.
+The native shader translator uses Naga 24.0.0 under MIT OR Apache-2.0.

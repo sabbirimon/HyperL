@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LicenseRef-HyperL-Community-1.0
+mod shader;
 use hyperl_engine::{
     archive::{transcode, Codec},
     Projection, Weights,
@@ -16,7 +17,7 @@ use std::{
 };
 use tempfile::NamedTempFile;
 
-const USAGE: &str = "hyperl-engine processors\nhyperl-engine {plan|project} FILE SHA256 INPUT WEIGHT BYTE_BUDGET {auto|WORKERS|gpu:ADAPTER} [OUTPUT for project] [--int4-scale SCALE]\nhyperl-engine pack {auto|arithmetic|huffman|ans|raw} INPUT OUTPUT MAX_PLAIN_BYTES\nhyperl-engine unpack INPUT OUTPUT MAX_PLAIN_BYTES";
+const USAGE: &str = "hyperl-engine processors\nhyperl-engine {plan|project} FILE SHA256 INPUT WEIGHT BYTE_BUDGET {auto|WORKERS|gpu:ADAPTER} [OUTPUT for project] [--int4-scale SCALE]\nhyperl-engine pack {auto|arithmetic|huffman|ans|raw} INPUT OUTPUT MAX_PLAIN_BYTES\nhyperl-engine unpack INPUT OUTPUT MAX_PLAIN_BYTES\nhyperl-engine translate-shader INPUT.wgsl {wgsl|spirv|metal|hlsl} NEW_OUTPUT";
 
 fn publish(path: &Path, shape: [usize; 2], data: &[u8], stop: &AtomicBool) -> io::Result<()> {
     let parent = path
@@ -86,6 +87,11 @@ fn run() -> Result<(), Box<dyn Error>> {
     let stop = Arc::new(AtomicBool::new(false));
     let signal = Arc::clone(&stop);
     ctrlc::set_handler(move || signal.store(true, Ordering::Relaxed))?;
+    if let [cmd, input, target, output] = args.as_slice() {
+        if cmd == "translate-shader" {
+            return shader::translate(Path::new(input), target, Path::new(output), &stop);
+        }
+    }
     let archive = match args.as_slice() {
         [cmd, mode, src, dst, max] if cmd == "pack" => {
             let codec = match mode.as_str() {

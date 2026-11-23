@@ -130,6 +130,14 @@ class Studio:
                 ttk.Button(pane, text="Browse…", command=lambda k=key: self.browse(k)).grid(row=row, column=2)
         tools = ttk.Frame(pane)
         tools.grid(row=10, columnspan=3, sticky="w", pady=12)
+        migration = ttk.Frame(pane)
+        migration.grid(row=12, columnspan=3, sticky="w", pady=8)
+        from cuda_migrate import TARGETS
+        self.target = ttk.Combobox(migration, values=TARGETS, state="readonly", width=8)
+        self.target.current(0)
+        self.target.pack(side="left")
+        ttk.Button(migration, text="Migrate CUDA file…", command=self.migrate).pack(side="left", padx=4)
+        ttk.Button(migration, text="Migrate source folder…", command=lambda: self.migrate(True)).pack(side="left")
         self.actions = []
         for action, label in [("processors", "Find processors"), ("plan", "Preview plan"), ("project", "Run projection")]:
             button = ttk.Button(tools, text=label, command=lambda a=action: self.start(a))
@@ -149,12 +157,33 @@ class Studio:
         if path:
             self.fields[key].set(path)
 
+    def migrate(self, folder=False):
+        if self.process is not None:
+            return
+        source = filedialog.askdirectory() if folder else filedialog.askopenfilename()
+        if not source:
+            return
+        dest = filedialog.askdirectory(title="Parent directory for the new translated folder")
+        if not dest:
+            return
+        dest = str(Path(dest) / (Path(source).stem + "-" + self.target.get()))
+        launcher = [sys.executable] if getattr(sys, "frozen", False) else [sys.executable, __file__]
+        args = launcher + ["--migrate-cuda", source, dest, "--target", self.target.get(), "--engine", self.fields["engine"].get()]
+        self.spawn("migrate", {}, args)
+
     def start(self, action):
         if self.process is not None:
             return
         values = {k: v.get() for k, v in self.fields.items()}
         try:
             args = command(values, action)
+        except (ValueError, OSError) as err:
+            self.status.set(str(err))
+            return
+        self.spawn(action, values, args)
+
+    def spawn(self, action, values, args):
+        try:
             # File-backed output keeps device discovery from blocking on full pipes.
             self.log = tempfile.TemporaryFile()
             try:
@@ -167,7 +196,7 @@ class Studio:
         except (ValueError, OSError) as err:
             self.status.set(str(err))
             return
-        self.status.set({"processors": "Discovering processors…", "plan": "Verifying model and planning…",
+        self.status.set({"migrate": "Translating CUDA source…", "processors": "Discovering processors…", "plan": "Verifying model and planning…",
                          "project": "Running projection…"}[action])
         for button in self.actions:
             button.state(["disabled"])
@@ -188,7 +217,7 @@ class Studio:
             return
         if code == 0 and action == "processors":
             self.devices["values"] = ["auto"] + [s for s in result.splitlines() if s.startswith("gpu:")]
-        if code == 0 and action != "processors":
+        if code == 0 and action in ("plan", "project"):
             try:
                 save_settings(self.settings, values)
             except OSError as err:
@@ -216,6 +245,15 @@ class Studio:
 
 
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--accelerators"]:
+        from accelerators import STACKS
+        for stack, (label, route, step, _) in STACKS.items():
+            print(f"{stack:18} {label}: {route or 'SDK port required'}. {step}")
+        sys.exit(0)
+    if sys.argv[1:2] == ["--migrate-cuda"]:
+        from cuda_migrate import main
+        main(sys.argv[2:], engine_path())
+        sys.exit(0)
     if len(sys.argv) == 2 and sys.argv[1] == "--local-check":
         from local_inference import generate, bundle_dir
         proof = generate(bundle_dir(), "What is two plus two? Answer briefly.")

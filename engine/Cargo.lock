@@ -482,6 +482,7 @@ dependencies = [
  "constriction",
  "ctrlc",
  "memmap2",
+ "naga",
  "pollster",
  "safetensors",
  "sha2",
