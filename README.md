@@ -21,6 +21,10 @@ hyperl-engine project model.safetensors "$MODEL_SHA256" x w 536870912 auto resul
 
 The executable in these examples is the one built above. `project` computes `x @ w.T`. CPU weights can be F32, BF16, FP8 E4M3FN or E5M2. Packed signed INT4 uses two values per U8, low nibble first, and an explicit positive per-tensor scale supplied with `--int4-scale`. CPU accumulates in f32. An F32 GPU projection accepts the exact quoted `gpu:...` identifier printed by `processors` in place of `auto`. GPU inputs are uploaded and results copied back. [Engine contracts and examples](docs/NATIVE_ENGINE.md)
 
+## Desktop Studio
+
+Launch `python studio/hyperl_studio.py` with Python 3.9 or later and Tk. Studio finds the release engine in the checkout or in the extracted desktop bundle. Select an immutable SafeTensors file, paste its expected SHA-256, and enter the two matrix names. **Find processors** lists the native engine's adapters. **Preview plan** reports CPU workers and byte usage. **Run projection** writes the result to a new file. Studio remembers the processor selection and tensor budget on this computer.
+
 ## Storage and inference
 
 ```sh

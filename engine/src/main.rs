@@ -61,6 +61,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         }
         return Ok(());
     }
+    if args.as_slice() == ["--version"] {
+        println!("hyperl-engine {}", env!("CARGO_PKG_VERSION"));
+        return Ok(());
+    }
     if args.as_slice() == ["--help"] {
         println!("{USAGE}");
         return Ok(());

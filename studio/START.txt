@@ -1,0 +1,11 @@
+HyperL Studio 0.2
+Extract the archive into one folder. Install Python 3.9 or later with Tk.
+Windows: py hyperl_studio.py
+macOS or Linux: python3 hyperl_studio.py
+For command-line help, run hyperl-engine --help from the extracted folder.
+On Unix use ./hyperl-engine and grant execute permission if your unzip tool stripped it.
+
+Choose a local immutable SafeTensors file, enter its trusted SHA-256 and the
+activation and weight tensor names. Keep the file unchanged during execution.
+CPU plan previews report the native allocation budget. For GPU projection,
+find processors and select an adapter. Write each result to a new file.

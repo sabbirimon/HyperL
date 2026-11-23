@@ -253,7 +253,7 @@ impl<'a> Projection<'a> {
             return Err(invalid("projection widths differ"));
         }
         let available = thread::available_parallelism()?.get();
-        let plan = Plan::for_projection(
+        let mut plan = Plan::for_projection(
             x.rows,
             w.rows,
             file.mapped_bytes(),
@@ -261,6 +261,10 @@ impl<'a> Projection<'a> {
             available,
             workers,
         )?;
+        if workers.is_none() {
+            let products = x.rows.saturating_mul(w.rows).saturating_mul(x.cols);
+            plan.workers = plan.workers.min(products.div_ceil(32768));
+        }
         Ok(Self { x, w, plan })
     }
     pub fn plan(&self) -> &Plan {
@@ -268,6 +272,41 @@ impl<'a> Projection<'a> {
     }
     pub fn shape(&self) -> [usize; 2] {
         [self.x.rows, self.w.rows]
+    }
+
+    fn compute_cells(&self, first: usize, chunk: &mut [u8], stop: &AtomicBool) -> io::Result<()> {
+        for (i, cell) in chunk.chunks_exact_mut(4).enumerate() {
+            let linear = first + i;
+            let x_start = (linear / self.w.rows) * self.x.cols;
+            let w_start = (linear % self.w.rows) * self.w.cols;
+            let mut sum = 0f32;
+            if matches!(
+                (self.x.encoding, self.w.encoding),
+                (Encoding::F32, Encoding::F32)
+            ) {
+                let x = &self.x.data[x_start * 4..(x_start + self.x.cols) * 4];
+                let w = &self.w.data[w_start * 4..(w_start + self.w.cols) * 4];
+                for (xs, ws) in x.chunks(4096).zip(w.chunks(4096)) {
+                    checkpoint(stop)?;
+                    for (a, b) in xs.chunks_exact(4).zip(ws.chunks_exact(4)) {
+                        sum += f32::from_le_bytes(a.try_into().unwrap())
+                            * f32::from_le_bytes(b.try_into().unwrap());
+                    }
+                }
+            } else {
+                for k in 0..self.x.cols {
+                    if k % 1024 == 0 {
+                        checkpoint(stop)?;
+                    }
+                    sum += self.x.value(x_start + k) * self.w.value(w_start + k);
+                }
+            }
+            if !sum.is_finite() {
+                return Err(invalid("nonfinite projection"));
+            }
+            cell.copy_from_slice(&sum.to_le_bytes());
+        }
+        Ok(())
     }
 
     /// Returns little-endian F32 bytes ready for SafeTensors output. No
@@ -279,32 +318,18 @@ impl<'a> Projection<'a> {
             .try_reserve_exact(self.plan.output_bytes)
             .map_err(io::Error::other)?;
         result.resize(self.plan.output_bytes, 0);
+        if self.plan.workers == 1 {
+            self.compute_cells(0, &mut result, stop)?;
+            checkpoint(stop)?;
+            return Ok(result);
+        }
         let chunk_cells = (result.len() / 4).div_ceil(self.plan.workers);
         thread::scope(|scope| {
             let mut jobs = Vec::new();
             for (group, chunk) in result.chunks_mut(chunk_cells * 4).enumerate() {
-                jobs.push(thread::Builder::new().spawn_scoped(
-                    scope,
-                    move || -> io::Result<()> {
-                        for (i, cell) in chunk.chunks_exact_mut(4).enumerate() {
-                            let linear = group * chunk_cells + i;
-                            let offset = (linear / self.w.rows) * self.x.cols;
-                            let c = linear % self.w.rows;
-                            let mut sum = 0f32;
-                            for k in 0..self.x.cols {
-                                if k % 1024 == 0 {
-                                    checkpoint(stop)?;
-                                }
-                                sum += self.x.value(offset + k) * self.w.value(c * self.w.cols + k);
-                            }
-                            if !sum.is_finite() {
-                                return Err(invalid("nonfinite projection"));
-                            }
-                            cell.copy_from_slice(&sum.to_le_bytes());
-                        }
-                        Ok(())
-                    },
-                )?);
+                jobs.push(thread::Builder::new().spawn_scoped(scope, move || {
+                    self.compute_cells(group * chunk_cells, chunk, stop)
+                })?);
             }
             for job in jobs {
                 job.join()

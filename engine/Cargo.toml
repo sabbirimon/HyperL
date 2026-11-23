@@ -1,6 +1,6 @@
 [package]
 name = "hyperl-engine"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license-file = "../LICENSE"
 description = "HyperL mapped-weight processor and execution planner"
