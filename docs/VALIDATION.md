@@ -1,5 +1,9 @@
 # Standalone alpha validation
 
+## Desktop projection benchmark
+
+On an Intel Core i9 MacBook Pro, the 0.1 baseline took 76.17 ms and the 0.2 candidate took 44.59 ms for an F32 projection of 64 × 512 inputs by 256 × 512 weights. Both release executables used one CPU worker. These medians cover 11 alternating runs per binary after warm-up and include process startup, file verification, computation and output publication. Both produced the same output SHA-256. Reproduce with `python3 benchmarks/compare_projection.py BASELINE CANDIDATE`. Other shapes, machines and GPU workloads require their own measurements.
+
 ## Native redesign, 2026-11-23
 
 Six Rust integration tests passed across CPU projections and HLZ1 archives. Separate physical runs on the AMD Radeon Pro 560X and Intel UHD Graphics 630 each computed an [11,17] by [13,17] transposed projection via Metal. All 143 results matched an independently accumulated f64 oracle within 1e-5. Release and ASan/UBSan CTest each passed six cases. Existing Rust binding tests passed. The pinned JAX suite ran 124 Python tests with one IREE skip on Intel macOS. Verified StableHLO matmul/GEMV and attention executed on CPU through XLA. The Intel host could not execute the ARM-only IREE command embedded in the wheel. Linux CI compiled and executed an F32 matmul through IREE local-task and compiled a BF16-input variant. All five native, sanitizer and compiler jobs passed on the [implementation commit](https://github.com/sabbirimon/HyperL/actions/runs/45163599185). No NVIDIA hardware was available for a matched CUDA comparison.

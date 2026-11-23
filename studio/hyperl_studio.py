@@ -145,8 +145,6 @@ class Studio:
         values = {k: v.get() for k, v in self.fields.items()}
         try:
             args = command(values, action)
-            if action != "processors":
-                save_settings(self.settings, values)
             # File-backed output keeps device discovery from blocking on full pipes.
             self.log = tempfile.TemporaryFile()
             try:
@@ -164,11 +162,11 @@ class Studio:
         for button in self.actions:
             button.state(["disabled"])
         self.stop.state(["!disabled"])
-        self.poll(action)
+        self.poll(action, values)
 
-    def poll(self, action):
+    def poll(self, action, values):
         if self.process.poll() is None:
-            self.root.after(80, self.poll, action)
+            self.root.after(80, self.poll, action, values)
             return
         code = self.process.returncode
         self.process = None
@@ -180,6 +178,11 @@ class Studio:
             return
         if code == 0 and action == "processors":
             self.devices["values"] = ["auto"] + [s for s in result.splitlines() if s.startswith("gpu:")]
+        if code == 0 and action != "processors":
+            try:
+                save_settings(self.settings, values)
+            except OSError as err:
+                result += f"\nSettings could not be saved: {err}"
         self.status.set(result or ("Finished" if code == 0 else f"Engine exited with code {code}"))
         self.stop.state(["disabled"])
         for button in self.actions:
