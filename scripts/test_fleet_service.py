@@ -14,6 +14,37 @@ from tls_fixtures import certificates
 
 @unittest.skipUnless(shutil.which("openssl"), "explicit OpenSSL test prerequisite unavailable")
 class FleetServiceTest(unittest.IsolatedAsyncioTestCase):
+    async def test_two_live_authorities_reject_misrouted_tenant(self):
+        from hyperl.fleet import shard_for
+        with tempfile.TemporaryDirectory() as temporary:
+            root = pathlib.Path(temporary)
+            certs = await asyncio.to_thread(certificates, root)
+            schedulers = []
+            servers = []
+            try:
+                for index in range(2):
+                    ledger = FleetScheduler(root / f"{index}.db", audit_key=b"k"*32)
+                    schedulers.append(ledger)
+                    ledger.register_profile("model-a", "0"*64, "llama.cpp")
+                    servers.append(await FleetService(ledger, server_tls(*certs["server"]),
+                        partition_index=index, partition_count=2).start())
+                tenant = next(k for k in certs if k.startswith("tenant:"))
+                clients = [FleetClient(f"https://127.0.0.1:{server.port}",client_tls(*certs[tenant])) for server in servers]
+                right = shard_for(tenant.split(":",1)[1], 2)
+                request = {"jobs":[{"key":"test","profile":"model-a","pool":"pool-a","payload":{}}]}
+                first = await asyncio.to_thread(clients[right].call, "/v1/jobs/submit", request)
+                self.assertEqual(first, await asyncio.to_thread(clients[right].call, "/v1/jobs/submit", request))
+                with self.assertRaises((ValueError,RuntimeError)):
+                    await asyncio.to_thread(clients[1-right].call, "/v1/jobs/submit", request)
+                self.assertEqual(schedulers[1-right].db.execute("SELECT COUNT(*) FROM jobs").fetchone()[0],0)
+                with self.assertRaises(ValueError):
+                    schedulers[right].bind_partition(0,1)
+            finally:
+                for server in servers:
+                    await server.close()
+                for ledger in schedulers:
+                    ledger.close()
+
     async def test_mutual_tls_real_dispatch_authority_roles_cancel_and_result_fences(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = pathlib.Path(temporary)

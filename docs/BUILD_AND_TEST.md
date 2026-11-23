@@ -1,5 +1,7 @@
 # Build, test and package HyperL
 
+For the full desktop preview, CI builds the pinned llama.cpp CPU server and packages Studio with its UI runtime and verified Qwen2.5 0.5B weights. Each host runs the extracted launcher with `--local-check`. For Android, run `python3 scripts/package_android_cpu.py "$ANDROID_HOME" HyperL-unsigned.apk` with Android 36, build-tools 37.0.0 and NDK 28.2.13676358. Sign a development copy with apksigner. The APK checks 32 native matrix-vector products on ARM64 or x86-64. An ARM64 A202SH running Android API 34 passed the check with eight CPUs visible to the process.
+
 ## Native redesign build
 
 Use the standalone Rust and C build commands below for this branch. Sections about Gradle or the desktop installer describe earlier releases.

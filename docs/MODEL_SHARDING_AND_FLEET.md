@@ -298,3 +298,7 @@ Broaden prompts/models/contexts/load/hardware before claiming general qualificat
 
 [Storage repair and high-assurance control mapping](HIGH_ASSURANCE_BASELINE.md) ·
 [Earlier logical tensors and model storage](LOGICAL_DEVICES_AND_MODEL_STORAGE.md).
+
+### Partitioned scheduler deployment
+
+Run an independently enrolled service, database, audit key and set of cells for each partition. Set integer `partition_index` (zero based) and `partition_count` in each service configuration. Tenant commands also accept `hyperl-fleet-client/2` with a `tenant`, the existing certificate/key/CA fields, and an `origins` array in partition order. The client uses the existing SHA-256 partition function. The server checks the authenticated tenant for submit, status, paging and cancellation. Keep a tenant's batch, idempotency keys and receipts on one ledger. Workers still connect to their enrolled service. Each database pins its partition layout across restarts. Changing the partition count requires a planned migration. There is no cross-partition replay or automatic failover.

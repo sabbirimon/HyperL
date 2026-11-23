@@ -1,9 +1,9 @@
-HyperL Studio 0.2
-Extract the archive into one folder. Install Python 3.9 or later with Tk.
-Windows: py hyperl_studio.py
-macOS or Linux: python3 hyperl_studio.py
-For command-line help, run hyperl-engine --help from the extracted folder.
-On Unix use ./hyperl-engine and grant execute permission if your unzip tool stripped it.
+HyperL Studio
+Extract the complete archive into one directory. Launch HyperL-Studio.exe on
+Windows or ./HyperL-Studio on macOS and Linux. Choose Local generation for
+offline CPU inference with the bundled GGUF starter. Run the launcher with
+--local-check to perform a short generation check. The native command-line
+engine is alongside Studio. Source-only builds require Python with Tk.
 
 Choose a local immutable SafeTensors file, enter its trusted SHA-256 and the
 activation and weight tensor names. Keep the file unchanged during execution.

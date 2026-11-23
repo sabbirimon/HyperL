@@ -1,5 +1,4 @@
 """Assemble and verify the desktop archive from pinned local build inputs."""
-import hashlib
 import json
 import os
 from pathlib import Path

@@ -91,6 +91,21 @@ class FleetScheduler:
         except BaseException:
             self.db.close(); raise
 
+    def bind_partition(self, index=0, count=1):
+        """Persist the authority of this ledger before serving tenant requests."""
+        from .fleet import shard_for
+        if type(index) is not int or type(count) is not int or not 0 <= index < count <= 65536:
+            raise ValueError("invalid tenant partition")
+        with self.db:
+            initialized = self.db.execute("INSERT OR IGNORE INTO scheduler_meta VALUES('partition_count',?)", (count,)).rowcount
+            self.db.execute("INSERT OR IGNORE INTO scheduler_meta VALUES('partition_index',?)", (index,))
+            stored = dict(self.db.execute("SELECT key,value FROM scheduler_meta WHERE key IN ('partition_index','partition_count')"))
+            if (index,count) != (stored["partition_index"],stored["partition_count"]):
+                raise ValueError("ledger partition layout changed")
+            if initialized and count > 1 and any(shard_for(row[0],count) != index for row in
+                                 self.db.execute("SELECT DISTINCT tenant FROM jobs")):
+                raise ValueError("existing tenant jobs belong to another partition")
+
     def close(self):
         self.db.close()
 

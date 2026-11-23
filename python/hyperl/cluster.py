@@ -55,9 +55,17 @@ def profile(value):
 def control_client(value):
     from .connections import client_tls
     from .fleet_service import FleetClient
-    if value.get("format") != "hyperl-fleet-client/1":
+    if value.get("format") == "hyperl-fleet-client/2":
+        from .fleet import shard_for
+        origins = value["origins"]
+        if not isinstance(origins, list) or not 1 <= len(origins) <= 65536 or not all(isinstance(o,str) for o in origins) or len(set(origins)) != len(origins):
+            raise ValueError("expected distinct scheduler origins in fixed partition order")
+        origin = origins[shard_for(value["tenant"],len(origins))]
+    elif value.get("format") == "hyperl-fleet-client/1":
+        origin = value["origin"]
+    else:
         raise ValueError("unsupported fleet client configuration")
-    return FleetClient(value["origin"], client_tls(value["certificate"], value["key_file"], value["ca_file"]))
+    return FleetClient(origin, client_tls(value["certificate"], value["key_file"], value["ca_file"]))
 
 
 def execute_command(args):
@@ -146,6 +154,7 @@ def execute_command(args):
                 expected = read_json(args.checkpoint) if args.checkpoint else None
                 print(json.dumps(scheduler.audit.verify(expected), indent=2))
                 return
+            scheduler.bind_partition(value.get("partition_index", 0), value.get("partition_count", 1))
             registered = value.get("model_profiles", {})
             if len(registered) > 1000:
                 raise ValueError("bounded model-profile enrollment required")
@@ -161,7 +170,8 @@ def execute_command(args):
             else:
                 async def serve():
                     server = await FleetService(scheduler, server_tls(value["certificate"], value["key_file"], value["ca_file"]),
-                        host=value.get("host", "127.0.0.1"), port=value.get("port", 8443), max_connections=value.get("max_connections", 128)).start()
+                        host=value.get("host", "127.0.0.1"), port=value.get("port", 8443), max_connections=value.get("max_connections", 128),
+                        partition_index=value.get("partition_index", 0), partition_count=value.get("partition_count", 1)).start()
                     try:
                         print(json.dumps(dict(host=server.host, port=server.port, mutual_tls=True)), flush=True)
                         await asyncio.Event().wait()

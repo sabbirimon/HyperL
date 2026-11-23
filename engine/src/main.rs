@@ -55,6 +55,20 @@ fn run() -> Result<(), Box<dyn Error>> {
             "backend=cpu logical_processors={} worker_cap=64",
             thread::available_parallelism()?
         );
+        println!("architecture={} os={}", env::consts::ARCH, env::consts::OS);
+        #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+        println!(
+            "cpu_features avx2={} fma={} f16c={}",
+            std::is_x86_feature_detected!("avx2"),
+            std::is_x86_feature_detected!("fma"),
+            std::is_x86_feature_detected!("f16c")
+        );
+        #[cfg(target_arch = "aarch64")]
+        println!(
+            "cpu_features neon={} dotprod={}",
+            std::arch::is_aarch64_feature_detected!("neon"),
+            std::arch::is_aarch64_feature_detected!("dotprod")
+        );
         #[cfg(feature = "gpu")]
         for name in hyperl_engine::gpu::devices() {
             println!("gpu:{name}");

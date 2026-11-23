@@ -9,6 +9,7 @@ import ssl
 import threading
 import time
 from urllib.parse import urlsplit
+from .fleet import shard_for
 from .connections import peer_name
 from .scheduler import Cell, FleetScheduler, _name
 from .llm import LlamaSession, LlamaSettings
@@ -48,9 +49,12 @@ class FleetService:
     Each execution cell owns its bounded native workers/model profiles. No request
     can supply an executable path, raw RPC destination, certificate or model file.
     """
-    def __init__(self, scheduler, tls, *, host="127.0.0.1", port=0, max_connections=128):
+    def __init__(self, scheduler, tls, *, host="127.0.0.1", port=0, max_connections=128, partition_index=0, partition_count=1):
         if not isinstance(scheduler, FleetScheduler) or scheduler.audit.key is None or tls.verify_mode != ssl.CERT_REQUIRED or not 1 <= max_connections <= 1024:
             raise ValueError("durable scheduler and bounded mTLS service required")
+        scheduler.bind_partition(partition_index, partition_count)
+        self.partition_index = partition_index
+        self.partition_count = partition_count
         scheduler.require_profiles = True
         self.scheduler = scheduler; self.tls = tls; self.host = host; self.port = port
         self.maximum = max_connections; self.active = 0; self.tasks = set(); self.server = None
@@ -120,6 +124,8 @@ class FleetService:
     def _dispatch(self, identity, path, body):
         if identity.startswith("tenant:"):
             tenant = _name(identity[len("tenant:"):])
+            if shard_for(tenant, self.partition_count) != self.partition_index:
+                raise ValueError("tenant belongs to another scheduler partition")
             if path == "/v1/jobs/submit":
                 return self.scheduler.submit(tenant, body["jobs"])
             if path == "/v1/jobs/get":
