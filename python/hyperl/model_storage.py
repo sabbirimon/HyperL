@@ -332,8 +332,31 @@ def plan_model(layers, tiers, workload=Workload(), *, manual=None):
         take = min(left, remaining[tier.id]); state[tier.id] = take; remaining[tier.id] -= take; left -= take
     if left:
         raise ValueError("KV/activation/cache/training state does not fit execution memory; lower context/concurrency or add capacity")
-    placements = []
+    # On one execution tier, leave room to page weights before committing
+    # resident layers. A layer larger than the staging slot must be resident.
     staging = {t.id: 0 for t in execution}
+    if len(execution) == 1:
+        target = execution[0]
+        capacity = remaining[target.id]
+        external = [layer for layer in layers if manual.get(layer.name, target.id) != target.id]
+        if external or sum(layer.weight_bytes for layer in layers) > capacity:
+            pinned = sum(layer.weight_bytes for layer in layers if manual.get(layer.name) == target.id)
+            movable = sorted(layer.weight_bytes for layer in layers if layer.name not in manual)
+            largest_external = max((layer.weight_bytes for layer in external), default=0)
+            must_reside = pinned + sum(movable)
+            # Test candidate slot sizes in ascending order. A smaller slot leaves
+            # more room for resident weights and avoids unnecessary transfers.
+            slot_sizes = sorted(set(movable) | {largest_external})
+            index = 0
+            for slot in slot_sizes:
+                while index < len(movable) and movable[index] <= slot:
+                    must_reside -= movable[index]
+                    index += 1
+                if slot >= largest_external and must_reside + slot <= capacity:
+                    staging[target.id] = slot
+                    remaining[target.id] -= slot
+                    break
+    placements = []
     transfer_seconds = 0.0
     # Place large/pinned layers first to reduce fragmentation; report execution order below.
     for layer in sorted(layers, key=lambda l: (l.name not in manual, -l.weight_bytes, l.name)):

@@ -117,6 +117,22 @@ class ModelPlannerTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             plan_model(layers, self.tiers(), Workload(), manual={"a": "disk"})
 
+    def test_automatic_offload_preserves_staging_under_pressure(self):
+        layers = [ModelLayer("a", 600, 30), ModelLayer("b", 600, 30)]
+        plan = plan_model(layers, self.tiers(), Workload(reserve_fraction=0))
+        self.assertEqual([p["storage_tier"] for p in plan["placements"]], ["ram", "ram"])
+        self.assertEqual(plan["used_bytes"]["gpu"], 660)
+        self.assertEqual(plan["staging_bytes"]["gpu"], 600)
+        self.assertEqual(plan["state_breakdown"]["kv_bytes"], 60)
+        disk = plan_model(layers, self.tiers(), Workload(reserve_fraction=0, allow_host_offload=False,
+                          allow_storage_offload=True, max_transfer_seconds=120))
+        self.assertEqual([p["storage_tier"] for p in disk["placements"]], ["disk", "disk"])
+        with self.assertRaises(ValueError):
+            plan_model(layers, self.tiers(), Workload(reserve_fraction=0), manual={"b": "gpu"})
+        fits = plan_model([ModelLayer("a", 600), ModelLayer("b", 400)], self.tiers(),
+                          Workload(reserve_fraction=0))
+        self.assertEqual(fits["staging_bytes"]["gpu"], 0)
+
     def test_capacity_aliases_incompatible_backends_and_state_fail_closed(self):
         tiers = self.tiers()
         with self.assertRaises(ValueError):

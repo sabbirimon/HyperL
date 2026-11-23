@@ -200,7 +200,7 @@ workspaces require exact checkpoint/backend measurements.
 The residency heuristic places large/manual layers first, prefers execution memory,
 and permits configured RAM or disk offload. KV, activations and estimated training
 state consume execution memory; each offload target reserves the largest assigned
-layer's staging buffer. Plans report tier use and weight-transfer bytes/time per
+layer's staging buffer. For one execution tier under pressure, the planner reserves staging before placing resident weights. It accounts for pinned layers, KV and work buffers. Two 600-byte layers can therefore stream through a 1,000-byte GPU budget when both fit in backing RAM and the transfer limit permits. Plans report tier use and weight-transfer bytes/time per
 pass. Decoding can repeat those transfers for every token, so disk offload can be
 very slow even when a model fits the storage quota. Inter-layer activation movement,
 collectives, contention and end-to-end inference latency are **not** estimated.
