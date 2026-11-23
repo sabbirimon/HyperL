@@ -752,3 +752,5 @@ UHD 630 execution, full models, ROCm/HIP or cluster capacity. Phone tests stay p
 ## Model format support — 2026-11-06 development
 
 Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.
+
+On 2026-11-24 the protected store repaired a corrupted Flax checkpoint fragment, exported the original digest and decoded the original four tokens. In a separate SafeTensors trial, a human chose an edit that restored one known reply from a damaged GPT-2 fixture. The Python suite ran 131 cases with two skips. All six CTest cases passed. The GPU-feature Rust suite passed with the physical GPU projection case ignored. [Experiment and limits](PROCESSOR_AND_RESEARCH_PLAN.md#checkpoint-repair-versus-behavioral-recovery)

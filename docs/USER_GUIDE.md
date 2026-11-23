@@ -613,3 +613,15 @@ Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new boun
 See [Mesh-LLM setup and commands](MESH_LLM.md) for `mesh-models` and `mesh-chat`.
 The configured service owns routing and any native stage splitting; this API
 client does not certify those properties or control the HyperL native scheduler.
+
+## Experimental checkpoint edit
+
+With NumPy installed, the following command writes a new SafeTensors file. Choose the source digest from a trusted record and set the output budget in bytes. Supply a tensor name from the checkpoint and a positive clipping limit appropriate to that tensor. The command supports F16 and F32.
+
+```sh
+python -m hyperl.cluster model-edit-candidate source/model.safetensors candidate/model.safetensors \
+  --tensor transformer.wte.weight --clip 2.0 \
+  --source-sha256 "$SOURCE_SHA256" --max-bytes 104857600
+```
+
+Create the candidate directory first. To test generation, include the original model configuration, tokenizer and any required companion files in that directory. The command reports how many values changed and both file digests. Evaluate the candidate on separate examples before selecting it for inference. See the [experiment and its limitations](PROCESSOR_AND_RESEARCH_PLAN.md#checkpoint-repair-versus-behavioral-recovery).

@@ -211,6 +211,13 @@ def main():
     export.add_argument("root"); export.add_argument("artifact"); export.add_argument("destination"); export.add_argument("max_bytes", type=int)
     inspect = commands.add_parser("model-inspect")
     inspect.add_argument("source")
+    edit = commands.add_parser("model-edit-candidate", help="Clip one floating-point tensor into a new research checkpoint")
+    edit.add_argument("source")
+    edit.add_argument("destination")
+    edit.add_argument("--tensor", required=True)
+    edit.add_argument("--clip", type=float, required=True)
+    edit.add_argument("--source-sha256", required=True)
+    edit.add_argument("--max-bytes", type=int, required=True)
     adapters = commands.add_parser("model-adapter", help="Inspect model packages or invoke an installed local Studio runtime")
     modes = adapters.add_subparsers(dest="adapter_mode", required=True)
     modes.add_parser("list")
@@ -273,6 +280,10 @@ def main():
                 print(json.dumps(dict(exported=args.artifact)))
         finally:
             store.close()
+    elif args.command == "model-edit-candidate":
+        from .weight_candidate import clip_candidate
+        print(json.dumps(clip_candidate(args.source, args.destination, args.tensor, args.clip,
+                                        args.source_sha256, args.max_bytes)))
     elif args.command == "model-adapter":
         import shutil
         import subprocess
