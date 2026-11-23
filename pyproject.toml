@@ -31,3 +31,6 @@ Repository = "https://github.com/sabbirimon/HyperL"
 [tool.setuptools]
 package-dir = {"" = "python"}
 packages = ["hyperl"]
+
+[tool.setuptools.package-data]
+hyperl = ["studio_adapters/*.cjs", "studio_adapters/*.py", "studio_adapters/LICENSE"]

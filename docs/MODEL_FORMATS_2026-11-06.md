@@ -131,3 +131,16 @@ The installed Qwen3 GGUF inspector observed version 3, 398 tensors and 28 metada
 entries. It correctly reports header-only validation and does not claim execution
 or sharding readiness. ONNX/TFLite/Core ML/PyTorch entries remain unverified
 candidates requiring adapters; ambiguous `.bin` and unknown files remain unknown.
+
+## Shared Studio adapters
+
+Run from the repository root with Node.js 20+ on PATH. The format catalog and inspection use the same module as the Studio model picker. Choose a trusted complete model package and a Python environment containing the corresponding runtime for generation.
+
+```sh
+PYTHONPATH=python python3 -m hyperl.cluster model-adapter list
+PYTHONPATH=python python3 -m hyperl.cluster model-adapter inspect /models/checkpoint
+PYTHONPATH=python python3 -m hyperl.cluster model-adapter probe /models/checkpoint transformers --python /opt/llm/bin/python
+PYTHONPATH=python python3 -m hyperl.cluster model-adapter generate /models/checkpoint transformers "Hello" --tokens 16 --python /opt/llm/bin/python
+```
+
+Local adapter IDs are `transformers`, `mlx-lm`, `onnx-genai` and `openvino-genai`. They use an explicitly installed runtime and reload the model for each request. MLX-LM targets Apple Silicon. OpenVINO currently requests CPU. ONNX needs a GenAI decoder directory. The inspection result records the evidence used to identify the file and candidate adapters. A successful probe checks installed package versions. End-to-end qualification requires actual generation with the target model and device. Opaque binary hints do not enable local execution. Use the existing `llm-run` command for supported GGUF deployments and `model-inspect` for HyperL structural inspection.

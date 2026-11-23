@@ -3,6 +3,10 @@
 [CUDA migration and accelerator support](CUDA_MIGRATION.md)
 
 
+## Shared model format adapters — 2026-11-24
+
+Meshlit Studio is the primary model library. HyperL exposes the same versioned artifact descriptions and optional local generation workers through `model-adapter`. The Apache-2.0 adapter files originate in Meshlit and retain their licence under `python/hyperl/studio_adapters/`. The existing HyperL structural inspector and native execution contracts remain available. Next gates are real decoder outputs per backend and device, warm-runtime performance and evidence for unsupported vendor packages. [CLI usage and qualification](MODEL_FORMATS_2026-11-06.md#shared-studio-adapters)
+
 ## Optional Mesh-LLM backend — 2026-11-14
 
 [Mesh-LLM integration](MESH_LLM.md) adds an explicit external model-catalog and

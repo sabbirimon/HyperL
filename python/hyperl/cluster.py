@@ -211,6 +211,20 @@ def main():
     export.add_argument("root"); export.add_argument("artifact"); export.add_argument("destination"); export.add_argument("max_bytes", type=int)
     inspect = commands.add_parser("model-inspect")
     inspect.add_argument("source")
+    adapters = commands.add_parser("model-adapter", help="Inspect model packages or invoke an installed local Studio runtime")
+    modes = adapters.add_subparsers(dest="adapter_mode", required=True)
+    modes.add_parser("list")
+    identify = modes.add_parser("inspect")
+    identify.add_argument("source")
+    identify.add_argument("--as-format", choices=["pytorch", "rwkv", "qnn", "mlc"], help="Declare the exporter of an ambiguous binary")
+    for operation in ("probe", "generate"):
+        mode = modes.add_parser(operation)
+        mode.add_argument("source")
+        mode.add_argument("adapter", choices=["transformers", "onnx-genai", "openvino-genai", "mlx-lm"])
+        mode.add_argument("--python", help="Python executable from the installed adapter environment")
+        if operation == "generate":
+            mode.add_argument("prompt")
+            mode.add_argument("--tokens", type=int, choices=range(1, 129), metavar="1..128", default=32)
     mesh_models = commands.add_parser("mesh-models", help="List an explicitly configured external Mesh-LLM endpoint")
     mesh_models.add_argument("config")
     mesh_chat = commands.add_parser("mesh-chat", help="Send bounded text chat to an explicitly configured Mesh-LLM endpoint")
@@ -259,6 +273,25 @@ def main():
                 print(json.dumps(dict(exported=args.artifact)))
         finally:
             store.close()
+    elif args.command == "model-adapter":
+        import shutil
+        import subprocess
+        import sys
+        node = shutil.which("node")
+        if not node:
+            parser.error("model-adapter requires Node.js 20 or later")
+        entry = Path(__file__).with_name("studio_adapters") / "model-adapters.cjs"
+        command = [node, str(entry), args.adapter_mode]
+        if args.adapter_mode != "list":
+            command.append(args.source)
+        if args.adapter_mode == "inspect" and args.as_format:
+            command.append(args.as_format)
+        payload = None
+        if args.adapter_mode in {"probe", "generate"}:
+            command.extend([args.adapter, args.python or sys.executable])
+        if args.adapter_mode == "generate":
+            payload = json.dumps({"messages": [{"role": "user", "content": args.prompt}], "max_tokens": args.tokens})
+        raise SystemExit(subprocess.run(command, input=payload, text=True).returncode)
     elif args.command == "model-inspect":
         from .model_formats import inspect_model
         print(json.dumps(inspect_model(args.source), indent=2, allow_nan=False))
