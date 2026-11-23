@@ -1,0 +1,59 @@
+{
+  "jobs": 4000000,
+  "checksum": 38134856341,
+  "platform": "Darwin",
+  "machine": "x86_64",
+  "scope": "single-process offline DAG earliest-finish pass including startup and teardown",
+  "measurements": {
+    "goose": {
+      "samples_ms": [
+        85.063007,
+        88.550113,
+        88.416926,
+        89.188148,
+        88.439868,
+        88.969514,
+        89.413313,
+        89.056582,
+        89.628025
+      ],
+      "median_ms": 88.969514,
+      "median_peak_rss_bytes": 16580608
+    },
+    "cpp": {
+      "samples_ms": [
+        69.423188,
+        71.594211,
+        72.199957,
+        71.476313,
+        71.719131,
+        72.153525,
+        71.421885,
+        73.372917,
+        73.928989
+      ],
+      "median_ms": 71.719131,
+      "median_peak_rss_bytes": 16605184
+    },
+    "rust": {
+      "samples_ms": [
+        101.926473,
+        105.063479,
+        105.081944,
+        105.020148,
+        105.64473,
+        105.078722,
+        105.841073,
+        106.758077,
+        106.215814
+      ],
+      "median_ms": 105.081944,
+      "median_peak_rss_bytes": 16695296
+    }
+  },
+  "host": "8-core Intel Core i9, 2.3 GHz, 16 GB",
+  "goose_revision": "2239b92eb2ae0e8f390f98640b09ff57a17698fc",
+  "clang": "Apple clang 17.0.0",
+  "rustc": "1.100.0",
+  "build": "Goose standalone C and C++ built with -O3; Rust with -C opt-level=3; baseline CPU target"
+}

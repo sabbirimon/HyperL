@@ -29,3 +29,7 @@ Give Rust ownership of admission, buffer lifetimes, cancellation, and publicatio
 | OpenAI/AMD RTL | Revisit only for an identified hardware block, licensed RTL, simulation oracle and synthesis timing, power and area constraints. AMD's reported 14% concerns specific IP. [Hardware study](https://openai.com/index/advancing-chip-design-with-our-models/) |
 
 The [offline index](research/manuscripts.csv) contains one pinned PDF link per manuscript. It covers 721 manuscripts in 373 families. The index records publication metadata. Individual proof validity, practical crossover, rights to redistribute code and deployment readiness require separate review. To revisit a family, filter the CSV by family ID and read the linked manuscript and corrections. Rebuild the index with `python3 scripts/index_math_catalog.py overview.tex index.csv` using the pinned [source catalog](https://github.com/openai/math/blob/4eaee87548250b2682affda7d05d947c05554bae/overview.tex).
+
+## Goose language trial
+
+The [matched scheduling experiment](../benchmarks/goose/README.md) found C++ fastest on the flat dependency table, followed by Goose and Rust. Goose compiles to C and can call native C functions, making an isolated metadata pass a viable future experiment. Keep the shipped Rust engine and C ABI while evaluating variable-size record workloads. [Goose compiler and native interface](https://github.com/aardappel/goose/tree/2239b92eb2ae0e8f390f98640b09ff57a17698fc)
