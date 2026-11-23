@@ -1,5 +1,8 @@
 # IDE helpers included in the alpha
 
+[CUDA migration and accelerator support](../CUDA_MIGRATION.md)
+
+
 Open `hyperl.code-workspace` in an independently installed VS Code. This local
 workspace maps `*.hyperl.json` documents to the bundled draft-7 schema for JSON
 suggestions, structure checks, formatting and folding. Create a workspace with

@@ -1,5 +1,8 @@
 # HyperL enterprise, datacenter and AI-cluster plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner requirements recorded 2026-10-08 (Asia/Dhaka): keep HyperL useful on a single
 phone or workstation, and design a path to large datacenters, enterprise AI clusters
 and heterogeneous compute. This is a proposed architecture and delivery plan. It

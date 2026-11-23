@@ -1,5 +1,8 @@
 # Alpha.6 foundation improvements
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 This unreleased development increment addresses reproducible review findings.
 Earlier alpha.4/alpha.5 reviews describe an older snapshot: bounded Radeon Metal
 and Samsung Vulkan execution already have separate hardware evidence. They still

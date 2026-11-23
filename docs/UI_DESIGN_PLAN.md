@@ -1,5 +1,8 @@
 # HyperL developer workbench design plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner request: polished UI that attracts developers, with the engineering clarity
 of mature accelerator tools. HyperL keeps its own name, colors, assets and visual
 language. This plan is not a claim about adoption or current GPU capabilities.

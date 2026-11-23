@@ -1,5 +1,8 @@
 # Mixed CPU, GPU, NPU and TPU execution plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner request, 2026-10-23: one HyperL program should eventually use different
 processor architectures at the same time, including local phones, workstations
 and approved remote nodes. This document defines the path and acceptance checks.

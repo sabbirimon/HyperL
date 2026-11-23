@@ -1,5 +1,8 @@
 # HyperL developer instructions
 
+[CUDA migration and accelerator support](docs/CUDA_MIGRATION.md)
+
+
 Standalone HyperL project; Meshlit is separate. The owner requested HyperL
 Community and Enterprise License 1.0 for newly covered material. Read LICENSE
 and docs/LICENSE_HISTORY.md; preserve previous Apache and third-party grants.
@@ -42,4 +45,4 @@ TROUBLESHOOTING.md are the user-facing programming/debug entry points under docs
 Quantum simulator tests and provider SDK doubles do not qualify QPU execution.
 SHA-384/512 hashing does not change HLASv1 or deliver post-quantum cryptography.
 Preserve exact wire/numeric formats; new algorithm suites need explicit versions.
-Meshlit remains a separate repository and checkpoint, with its builds paused.
+Meshlit remains a separate repository and checkpoint, with its own native Studio build workflow.

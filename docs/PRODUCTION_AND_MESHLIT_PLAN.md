@@ -1,5 +1,8 @@
 # Production hardening, libraries and Meshlit delivery
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 ## HyperL-owned model engine — 2026-11-06
 
 The owner requests the engine primarily under HyperL, with Meshlit Studio as a client.

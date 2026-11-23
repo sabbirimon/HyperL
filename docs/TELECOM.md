@@ -1,5 +1,8 @@
 # Full telecom network-stack research plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The owner selected full network-stack research, beyond AI traffic over cellular
 links. Current code is a typed plan validator only; no carrier/RAN/core stack,
 transmitter, SIM/subscriber credential service or standards certification exists.

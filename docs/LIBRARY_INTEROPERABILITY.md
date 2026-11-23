@@ -1,5 +1,8 @@
 # Library interoperability, migration and reusable AI helpers
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner scope, 2026-10-08 (Asia/Dhaka): make standard Python use approachable, reuse
 CUDA/tensor/framework libraries where possible, offer ready-made AI building blocks
 and enable migration in both directions. Keep Intel/AMD, Chinese AI frameworks and

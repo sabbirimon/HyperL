@@ -1,5 +1,8 @@
 # Built-in developer and IDE tooling
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner intent: HyperL should be easy to code with, attractive to developers and
 useful as standalone CLI/GUI software, with a full SDK later. Prioritize a reliable
 first correct result and usable local tools before introducing entire IDE services.

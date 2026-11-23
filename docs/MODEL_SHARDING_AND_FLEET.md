@@ -1,5 +1,8 @@
 # Native LLM sharding, JAX execution and fleet scheduling
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 2026-11-02 development increment. This extends the earlier bounded tensor and
 artifact work. The original `hyperl/1`, native CPU ABI and vector numerics remain
 unchanged. These model adapters have separate execution and numerical contracts.

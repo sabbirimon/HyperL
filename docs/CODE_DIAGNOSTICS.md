@@ -1,5 +1,8 @@
 # Code suggestions, error detection and reviewed fixes
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The workbench **Analyze** action and CLI `diagnose` analyze `hyperl/1` programs
 locally. No LLM account, network request or downloaded compiler is required.
 

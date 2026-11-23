@@ -1,5 +1,8 @@
 # HyperL: Curated "Good First Issue" Tasks
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Welcome to the HyperL contributor community! We have structured several well-scoped tasks designed for contributors looking to make high-impact additions to the native core, compiler IR, kernels, or Python bindings.
 
 ---

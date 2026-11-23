@@ -1,5 +1,8 @@
 # Artifact signatures and encrypted datasets
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Updated 2026-10-24. This guide describes the implemented JVM API and local dataset
 CLI. Cryptography is separate from HyperL's f32 program language and sharding
 planner. No CUDA/tensor backend, distributed trust service, crypto accelerator or

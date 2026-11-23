@@ -1,5 +1,8 @@
 # HyperL 3-Milestone Engineering Roadmap
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 This document records an earlier proposal. The current implementation and evidence are in the [native engine guide](NATIVE_ENGINE.md) and [processor research plan](PROCESSOR_AND_RESEARCH_PLAN.md).
 
 

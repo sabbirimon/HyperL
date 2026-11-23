@@ -1,5 +1,8 @@
 # Sharding and mixed-device execution contract
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Proposed implementation contract, 2026-10-24 (Asia/Dhaka). The owner requires genuine
 sharding, mixed processor architectures, load balancing, measured network lanes,
 memory tiers and future adapter support. This document defines delivery gates beyond

@@ -1,5 +1,8 @@
 # macOS Metal preview and A1990 Radeon qualification
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Metal supports compatible Intel-based Macs as well as Apple silicon. Intel Mac
 hosts may expose Intel and AMD GPUs. See Apple's
 [Intel multi-GPU guide](https://developer.apple.com/documentation/metal/finding-multiple-gpus-on-an-intel-based-mac).

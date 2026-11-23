@@ -1,5 +1,8 @@
 # Conservative MoE residency accounting
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Standalone HyperL enhancement under its existing Community and Enterprise licence;
 no implementation was copied into Meshlit. Meshlit can consume the existing CLI.
 

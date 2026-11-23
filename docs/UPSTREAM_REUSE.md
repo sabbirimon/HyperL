@@ -1,5 +1,8 @@
 # Reuse reviewed upstream components
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The owner authorizes using existing web code/methods. Prefer maintained upstream
 libraries and supported interfaces over copying implementations. Pin a release or
 commit, preserve licenses/notices and source provenance, review transitive/native

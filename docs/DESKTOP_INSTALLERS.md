@@ -1,5 +1,8 @@
 # macOS, Windows and Linux desktop installers
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Published release history: alpha.4 contains portable ZIP/TAR archives and
 requires Java 17+; alpha.5 added native **unsigned preview** installers with a
 bundled Java 21 runtime. The current alpha.6 development source is not a new

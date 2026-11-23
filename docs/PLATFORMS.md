@@ -1,5 +1,8 @@
 # Platform and accelerator matrix
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
 | Platform | Available source/tooling | Qualification still needed |
 |---|---|---|
 | macOS x86-64 | Tested JVM CLI/GUI panel, C CPU library/C99 execution; Metal passes four bounded Radeon Pro 560X cases in the owner's Terminal | Native window/GPU interaction, wider Metal conformance; OpenCL execution and other exact GPUs |

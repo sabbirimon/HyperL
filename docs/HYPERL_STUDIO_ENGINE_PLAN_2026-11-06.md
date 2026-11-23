@@ -1,5 +1,8 @@
 # HyperL model execution engine and Meshlit Studio integration
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 ## Optional Mesh-LLM backend — 2026-11-14
 
 [Mesh-LLM integration](MESH_LLM.md) adds an explicit external model-catalog and

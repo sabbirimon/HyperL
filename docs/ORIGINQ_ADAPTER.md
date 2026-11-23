@@ -1,5 +1,8 @@
 # Origin Quantum adapter
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Verified 2026-10-24. `hyperl.quantum_originq` implements a narrow optional adapter
 for OriginQ's official `pyqpanda3` interface. Contract fixtures do not establish
 cloud access, QPU execution, fidelity, provider availability or quantum speedup.

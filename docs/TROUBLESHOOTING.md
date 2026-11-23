@@ -1,5 +1,8 @@
 # Troubleshooting and debugging HyperL
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Updated 2026-10-24. Match diagnostics to your exact commit/release. Alpha.5 binaries
 do not include all alpha.6 commands. [Programming guide](PROGRAMMING_GUIDE.md) ·
 [build runbook](BUILD_AND_TEST.md) · [validation evidence](VALIDATION.md).

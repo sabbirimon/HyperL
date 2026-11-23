@@ -1,5 +1,8 @@
 # HyperL documentation index
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
 Start with the [native CLI and graph compiler](NATIVE_ENGINE.md) and [processor management plan](PROCESSOR_AND_RESEARCH_PLAN.md). JVM and desktop installer guides below describe older releases.
 
 

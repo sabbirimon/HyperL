@@ -1,5 +1,8 @@
 # HyperL use cases and ready-made library
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 HyperL currently supplies bounded finite **f32 vector preprocessing**, local
 developer tools, a native C ABI preview, encrypted local dataset streaming and
 bounded authenticated vector split/map/gather.

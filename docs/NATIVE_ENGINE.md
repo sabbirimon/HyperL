@@ -1,5 +1,8 @@
 # Native engine contracts
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 ## Projection and admission
 
 The CLI accepts a local immutable regular file, expected SHA-256, input and weight names, a tensor-byte budget, and either `auto`, an explicit number of CPU workers, or a GPU selector. Prevent writes and truncation for the entire lifetime of the mapping. Rust views borrow bytes directly from the mapping and accommodate unaligned tensor offsets. Header parsing is capped at 4 MiB. Full digest verification touches all file pages. Native byte views support inspection of upstream SafeTensors dtypes, while execution accepts the encodings listed in the README.

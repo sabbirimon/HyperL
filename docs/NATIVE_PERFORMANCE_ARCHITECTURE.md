@@ -1,5 +1,8 @@
 # Native performance architecture decision
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner-approved direction, 2026-10-08 (Asia/Dhaka): **C/C++ for kernels and accelerator
 adapters; Rust for cluster services.** Use a stable C ABI between layers. This is
 an architectural decision and ordered plan, not a shipped Rust control plane or a

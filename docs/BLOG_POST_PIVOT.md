@@ -1,5 +1,8 @@
 # Re-architecting HyperL: Engineering a Lean, Memory-Aware Edge Inference Runtime
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 *By Sabbir Imon and the HyperL Contributors · November 2026*
 
 ---

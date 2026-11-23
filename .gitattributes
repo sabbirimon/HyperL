@@ -1,3 +1,6 @@
 
 # Unified diff context lines require their leading space, including blank lines.
 docs/evidence/*.patch -whitespace
+
+# HIPIFY integrity verification uses upstream bytes on Windows as well as Unix.
+studio/vendor/hipify/hipify-perl -text

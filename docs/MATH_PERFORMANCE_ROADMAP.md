@@ -1,5 +1,8 @@
 # Mathematics-informed performance expansion
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner-requested future expansion, 2026-10-26. The aim is a faster, more capable
 HyperL with measured evidence. This roadmap is not an implementation claim.
 See [research assessment](MATH_RESEARCH_2026_10_26.md) for the pinned OpenAI source,

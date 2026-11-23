@@ -1,5 +1,8 @@
 # Goose scheduler experiment
 
+[CUDA migration and accelerator support](../../docs/CUDA_MIGRATION.md)
+
+
 This benchmark computes earliest finish times for four million tasks in topological order. Each task depends on two prior tasks with deterministic indices and has a known duration. All three executables use one flat array of 32-bit finish times and accumulate a 64-bit checksum. Rust and C++ reserve their full capacity up front. The harness compares every result with an independent Python implementation, rotates execution order, discards one warmup per language and measures nine fresh processes per language. Peak RSS is physical memory, distinct from Goose's reserved virtual address space.
 
 Build the upstream Goose compiler at revision `2239b92eb2ae0e8f390f98640b09ff57a17698fc` in Release mode. The experiment needs no optional Goose packages. From the HyperL checkout, using an independently installed compiler:

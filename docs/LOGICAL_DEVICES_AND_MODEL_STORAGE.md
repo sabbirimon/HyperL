@@ -1,5 +1,8 @@
 # Logical devices, model storage and fleet cells
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Follow-up: [native LLM sharding and live bounded fleet operation](MODEL_SHARDING_AND_FLEET.md)
 and [storage correction / high-assurance mapping](HIGH_ASSURANCE_BASELINE.md) now
 extend this first increment. The small tensor API described here remains separate

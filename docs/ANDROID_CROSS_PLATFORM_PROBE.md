@@ -1,5 +1,8 @@
 # Android and desktop CPU qualification probe
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Prepared 2026-10-24 (Asia/Dhaka). This guide describes the standalone foreground
 probe and its reproducible physical-device test. Qualification results are recorded
 separately below; building or installing the APK is not an execution result.

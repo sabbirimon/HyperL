@@ -55,6 +55,41 @@ def sources(source):
     return sorted(paths)
 
 
+def hip_batch(tool, jobs, work, stage, run):
+    """One Perl initialization for the project. Only numbered private copies are writable."""
+    logs = {alias: [] for alias, _, _ in jobs}
+    warning_counts = {alias: 0 for alias in logs}
+    warnings = []
+    summary = None
+    for line in run([tool, str(HIPIFY), "-print-stats", "-inplace", *logs], work).splitlines():
+        # Warnings precede each file's stats and may follow the previous file's table.
+        warning = re.match(r"\s*warning: ([0-9]+\.cu):(.+)", line)
+        if warning and warning[1] in logs:
+            logs[warning[1]].append("warning: " + warning[2])
+            continue
+        section = re.fullmatch(r"\[HIPIFY\] info: file '([^']+)' statistics:", line)
+        if section:
+            summary = section[1] if section[1] in logs else None
+        elif summary:
+            match = re.fullmatch(r"  WARNINGS: (\d+)", line)
+            if match:
+                warning_counts[summary] = int(match[1])
+            if line.strip():
+                logs[summary].append(line)
+        elif line.strip() and not section and not line.startswith("[HIPIFY]") and not line.startswith("  "):
+            warnings.append(line)
+    for alias, relative, record in jobs:
+        converted = work / alias
+        if not converted.stat().st_size and (work / (alias + ".prehip")).read_bytes().strip():
+            raise ValueError(f"HIPIFY produced empty output for {relative}")
+        dest = stage / relative
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        converted.rename(dest)
+        record["upstreamWarnings"] = warning_counts[alias]
+        record["diagnostics"] = "\n".join(logs[alias])[:8000]
+    return "\n".join(warnings)[:8000]
+
+
 def migrate(source, output, target, engine=None):
     source, output = Path(source).absolute(), Path(output).absolute()
     if target not in TARGETS or source.is_symlink() or output.is_symlink() or output.exists():
@@ -95,26 +130,24 @@ def migrate(source, output, target, engine=None):
         stage = work / "translated"
         stage.mkdir()
         inputs = work / "source"
+        jobs = []
         for p in paths:
             relative = p.relative_to(root)
             raw = p.read_bytes()
             if len(raw) > 1048576 or b"\0" in raw:
                 raise ValueError("Expected bounded text input")
             copy = inputs / relative
-            copy.parent.mkdir(parents=True, exist_ok=True)
-            copy.write_bytes(raw)
             record = {"path": relative.as_posix(), "sha256": hashlib.sha256(raw).hexdigest()}
             report["sources"].append(record)
             if target == "hip":
-                dest = stage / relative
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                with dest.open("xb") as stream:
-                    diag = run([tool, str(HIPIFY), "-print-stats", str(copy)], work, stream)
-                warnings = re.search(r"WARNINGS:\s*(\d+)", diag)
-                record["upstreamWarnings"] = int(warnings[1]) if warnings else None
-                record["diagnostics"] = diag[:8000].replace(str(inputs), ".")
-                if not dest.stat().st_size and raw.strip():
-                    raise ValueError("HIPIFY produced empty output")
+                alias = f"{len(jobs)}.cu"
+                # The pinned tool reads .prehip when it exists, avoiding its shell-copy path.
+                (work / (alias + ".prehip")).write_bytes(raw)
+                (work / alias).touch()
+                jobs.append((alias, relative, record))
+            elif target == "sycl":
+                copy.parent.mkdir(parents=True, exist_ok=True)
+                copy.write_bytes(raw)
             elif target in INTERCHANGE:
                 _, bindings = lower(raw.decode("utf-8"))
                 bindings["entry"] = {"stablehlo": "main", "opencl": "hyperl_kernel", "onnx-text": "hyperl_pointwise"}[target]
@@ -134,6 +167,8 @@ def migrate(source, output, target, engine=None):
                 if target == "metal":
                     bindings["bufferSizesSlot"] = 30
                 report["interface"] = bindings
+        if jobs:
+            report["diagnostics"] = hip_batch(tool, jobs, work, stage, run)
         if target == "sycl":
             units = [inputs / p.relative_to(root) for p in paths if p.suffix.lower() in {".cu", ".cpp", ".c", ".cc"}]
             if not units:

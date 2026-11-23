@@ -1,5 +1,8 @@
 # Optional Mesh-LLM backend
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Added 14 November 2026. HyperL can query an operator-configured Mesh-LLM API for
 models and send a bounded text-chat request through its Python API or CLI.
 This is an external inference adapter, separate from HyperL's native/JAX model

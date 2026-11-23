@@ -1,5 +1,8 @@
 # HyperL
 
+[CUDA migration and accelerator support](docs/CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
 HyperL runs bounded tensor workloads on native processors. The standalone Rust engine reads immutable SafeTensors weights through a read-only mapping, plans local work against a byte budget, and executes a dense projection on CPU or a selected wgpu adapter. An optional graph frontend lowers typed operations to StableHLO MLIR for compilation with XLA or IREE.
 
 Desktop Studio bundles a native CPU inference server and a Qwen2.5 starter. Hosted builds execute a prompt after extraction on Linux, macOS and Windows. Android has a separate NativeActivity CPU diagnostic. [Packaging and device checks](docs/BUILD_AND_TEST.md)

@@ -1,5 +1,8 @@
 # Model formats, adapters and future compatibility
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner request, 2026-11-06: support broader and future model formats as part of
 HyperL's model engine. Meshlit Studio consumes this capability through the planned
 versioned client interface. This does not change existing mobile defaults.

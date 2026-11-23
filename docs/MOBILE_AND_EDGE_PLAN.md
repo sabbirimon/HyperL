@@ -1,5 +1,8 @@
 # Single-phone and edge-device plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner clarification, 2026-10-08 (Asia/Dhaka): HyperL must remain useful on a single
 phone as well as enterprise clusters. Standalone desktop Java CLI/GUI is implemented;
 Production Android/iOS native packages remain future work. An ARM64 native Vulkan

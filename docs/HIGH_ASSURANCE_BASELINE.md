@@ -1,5 +1,8 @@
 # Integrity, recovery and high-assurance engineering baseline
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 2026-11-02. Owner-selected scope: a general NIST control mapping for HyperL,
 including possible defence-oriented deployments. This is an engineering mapping
 and gap record, **not a certification, authorization to operate, classified-system

@@ -1,5 +1,8 @@
 # HyperL and the NVIDIA ecosystem
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Vendor research snapshot: 2026-10-08; implementation audit: 2026-10-24.
 Current HyperL evidence:
 **zero NVIDIA GPU architecture families qualified on hardware**. CUDA source

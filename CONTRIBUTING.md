@@ -1,5 +1,8 @@
 # Contributions and licensing
 
+[CUDA migration and accelerator support](docs/CUDA_MIGRATION.md)
+
+
 Preserve numerical, ownership, memory, cancellation and capability contracts.
 Record actual validation and unrun devices. Keep secrets, models, private data,
 binary artifacts and signing keys out of commits.

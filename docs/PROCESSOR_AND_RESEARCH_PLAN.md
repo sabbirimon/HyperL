@@ -1,5 +1,8 @@
 # Processor management and research intake
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 ## Architecture decision
 
 Give Rust ownership of admission, buffer lifetimes, cancellation, and publication. Keep a narrow C ABI for existing native kernels. Use standard StableHLO operations as the graph interchange so a new backend can consume typed graphs without its own source emitter. Keep a separately testable direct projection for devices running without a compiler. An optional wgpu backend can reuse one tiled kernel across operating systems. Hardware support requires a completed dispatch and a checked result.

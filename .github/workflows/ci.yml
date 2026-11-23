@@ -26,6 +26,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: cargo build --release --locked --manifest-path engine/Cargo.toml --features gpu
+      - run: python scripts/test_cuda_migrate.py
       - name: Exercise desktop controls on Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a python studio/test_studio.py
@@ -51,6 +52,8 @@ jobs:
           import os, pathlib, zipfile
           binary = 'hyperl-engine.exe' if os.name == 'nt' else 'hyperl-engine'
           with zipfile.ZipFile('hyperl-desktop.zip', 'w', zipfile.ZIP_DEFLATED) as bundle:
+              for name in ["cuda_migrate.py", "cuda_kernel.py", "accelerators.py", "vendor/hipify/hipify-perl", "vendor/hipify/LICENSE.txt"]:
+                  bundle.write("studio/" + name, name)
               for name in [f'engine/target/release/{binary}', 'studio/hyperl_studio.py', 'studio/START.txt', 'LICENSE', 'NOTICE']:
                   bundle.write(name, pathlib.Path(name).name)
       - name: Attest build provenance

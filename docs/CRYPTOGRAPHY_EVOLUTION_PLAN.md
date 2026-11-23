@@ -1,4 +1,7 @@
 <!-- SPDX-License-Identifier: LicenseRef-HyperL-Community-1.0 -->
+
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
 <!-- Copyright 2026 Sabbir Hassan Imon and respective contributors. -->
 # Cryptography evolution and post-quantum migration
 

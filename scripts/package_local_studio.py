@@ -50,6 +50,8 @@ def main():
         (stage / "local-runtime.json").write_text(json.dumps({"revision": LLAMA_REVISION, "server_sha256": file_digest(server)}))
         archive = ROOT / "hyperl-desktop.zip"
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=1) as out:
+            for name in ["accelerators.py", "cuda_migrate.py", "cuda_kernel.py", "vendor/hipify/hipify-perl", "vendor/hipify/LICENSE.txt"]:
+                out.write(ROOT / "studio" / name, name)
             for file in stage.iterdir():
                 out.write(file, file.name)
         with tempfile.TemporaryDirectory() as target, zipfile.ZipFile(archive) as package:
@@ -58,7 +60,7 @@ def main():
                 item = Path(target) / (name + suffix)
                 item.chmod(item.stat().st_mode | stat.S_IXUSR)
             app = str(Path(target) / ("HyperL-Studio" + suffix))
-            for backend in ("hip", "wgsl", "metal", "hlsl", "spirv"):
+            for backend in ("hip", "wgsl", "metal", "hlsl", "spirv", "opencl", "onnx-text", "stablehlo"):
                 dest = Path(target) / ("migration-" + backend)
                 subprocess.run([app, "--migrate-cuda", str(ROOT / "examples/cuda/add.cu"), str(dest), "--target", backend], check=True, timeout=90)
                 assert json.loads((dest / "migration.json").read_text())["target"] == backend

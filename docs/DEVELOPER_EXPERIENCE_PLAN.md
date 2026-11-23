@@ -1,5 +1,8 @@
 # Developer experience: Python-style ease, native execution
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner requirement, 2026-10-08 (Asia/Dhaka): easy to start and program, comparable to
 Python's approachable workflow. This is a language/API and onboarding plan, not a
 complete SDK or text-language compiler. The alpha.3 increment adds a small explicit

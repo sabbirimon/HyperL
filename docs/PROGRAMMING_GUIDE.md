@@ -1,5 +1,8 @@
 # Programming with HyperL
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
 Updated 2026-10-24 for **alpha.6 development source**, `hyperl/1` and C ABI 1.
 Published alpha.5 packages do not include all examples below. Start with the
 [installation guide](USER_GUIDE.md); use the [documentation index](README.md) to

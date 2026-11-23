@@ -1,5 +1,8 @@
 # HyperL agent handoff and pending features
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) tracks outstanding vendor SDK ports. Next qualify SYCLomatic on an installed oneAPI toolchain and run the emitted HLSL and SPIR-V on physical Windows and Vulkan devices.
+
+
 For the redesign, prioritize persistent GPU buffers, native distributed-worker parity, physical Vulkan/DX12 runs and an independently measured CUDA baseline. [Acceptance criteria](PROCESSOR_AND_RESEARCH_PLAN.md).
 
 

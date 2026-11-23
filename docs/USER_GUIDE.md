@@ -1,5 +1,8 @@
 # HyperL installation, usage and programming guide
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
 For the current Rust executable, use the [native CLI and mapped tensor guide](NATIVE_ENGINE.md). JVM installation and workbench commands below describe historical releases.
 
 

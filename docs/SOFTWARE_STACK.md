@@ -1,5 +1,8 @@
 # HyperL software platform and architecture
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Status reviewed 2026-10-24. HyperL is an independent AI compute project. Newly covered
 development rights follow [community/enterprise terms](LICENSING.md); earlier
 Apache releases and third-party components retain their grants.

@@ -1,5 +1,8 @@
 # Standalone alpha validation
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) records the translated pointwise add test on physical Intel and AMD GPUs, and the independently profiled ONNX CPU run.
+
+
 ## Desktop projection benchmark
 
 On an Intel Core i9 MacBook Pro, the 0.1 baseline took 76.17 ms and the 0.2 candidate took 44.59 ms for an F32 projection of 64 × 512 inputs by 256 × 512 weights. Both release executables used one CPU worker. These medians cover 11 alternating runs per binary after warm-up and include process startup, file verification, computation and output publication. Both produced the same output SHA-256. Reproduce with `python3 benchmarks/compare_projection.py BASELINE CANDIDATE`. Other shapes, machines and GPU workloads require their own measurements.

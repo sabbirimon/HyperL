@@ -1,5 +1,8 @@
 # Distributed execution — alpha.6 development
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The 2026-11-02 model follow-up is documented in [native LLM sharding and fleet](MODEL_SHARDING_AND_FLEET.md)
 and [integrity/recovery controls](HIGH_ASSURANCE_BASELINE.md). Earlier vector-only
 limits below describe their original APIs; native/JAX model execution is separate.

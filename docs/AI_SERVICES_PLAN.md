@@ -1,5 +1,8 @@
 # HyperL AI Services — model serving and deployment plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Status: **planned**, as of 2026-10-08. This responds to the owner's NVIDIA NIM/AMD
 serving references. The current HyperL release executes small f32 preprocessing
 programs; it does not load an LLM, start an inference server or package model weights.

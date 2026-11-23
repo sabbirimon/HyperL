@@ -1,5 +1,8 @@
 # Mathematical research qualification — 2026-10-26
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The reviewed OpenAI math snapshot is
 `1581d4cbdd69a0faf34b2089614fe2a814316a6a`. Its
 [README](https://github.com/openai/math/blob/1581d4cbdd69a0faf34b2089614fe2a814316a6a/README.md)

@@ -1,5 +1,8 @@
 # Precision and high performance computing plan
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner requirement, 2026-10-24. Enterprise, supercomputer and hyperscale workloads
 are primary HyperL targets. Phones and desktops provide useful compatibility tests;
 they do not define the eventual workload size or numerical limits. This is a
