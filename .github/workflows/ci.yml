@@ -5,6 +5,10 @@ permissions:
 
 jobs:
   native:
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     strategy:
       fail-fast: false
       matrix:
@@ -36,6 +40,20 @@ jobs:
           with zipfile.ZipFile('hyperl-desktop.zip', 'w', zipfile.ZIP_DEFLATED) as bundle:
               for name in [f'engine/target/release/{binary}', 'studio/hyperl_studio.py', 'studio/START.txt', 'LICENSE', 'NOTICE']:
                   bundle.write(name, pathlib.Path(name).name)
+      - name: Attest build provenance
+        if: github.event_name != 'pull_request'
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: 'hyperl-desktop.zip'
+      - name: Verify published provenance against this build
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for item in hyperl-desktop.zip; do
+            gh attestation verify "$item" --repo "$GITHUB_REPOSITORY" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/ci.yml" --source-digest "$GITHUB_SHA"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: hyperl-desktop-${{ runner.os }}-${{ runner.arch }}
