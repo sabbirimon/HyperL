@@ -220,7 +220,7 @@ def main():
     for operation in ("probe", "generate"):
         mode = modes.add_parser(operation)
         mode.add_argument("source")
-        mode.add_argument("adapter", choices=["transformers", "onnx-genai", "openvino-genai", "mlx-lm"])
+        mode.add_argument("adapter", choices=["transformers", "flax-transformers", "onnx-genai", "openvino-genai", "mlx-lm"])
         mode.add_argument("--python", help="Python executable from the installed adapter environment")
         if operation == "generate":
             mode.add_argument("prompt")

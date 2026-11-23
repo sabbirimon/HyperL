@@ -150,3 +150,5 @@ GGUF, starting with bounded format inspection and a narrow SafeTensors import
 into the existing JAX decoder. Container recognition, architecture compatibility,
 execution readiness and sharding qualification remain separate. Upcoming formats
 require reviewed parsers/adapters; arbitrary downloaded model code is not loaded.
+
+The Flax MessagePack adapter has an Intel macOS CPU decoder qualification. Next test supported Flax architectures and accelerator placement on the target hardware. The [model format matrix](MODEL_FORMATS_2026-11-06.md) distinguishes file identification, worker eligibility and tested inference.

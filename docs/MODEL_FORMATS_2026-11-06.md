@@ -144,3 +144,14 @@ PYTHONPATH=python python3 -m hyperl.cluster model-adapter generate /models/check
 ```
 
 Local adapter IDs are `transformers`, `mlx-lm`, `onnx-genai` and `openvino-genai`. They use an explicitly installed runtime and reload the model for each request. MLX-LM targets Apple Silicon. OpenVINO currently requests CPU. ONNX needs a GenAI decoder directory. The inspection result records the evidence used to identify the file and candidate adapters. A successful probe checks installed package versions. End-to-end qualification requires actual generation with the target model and device. Opaque binary hints do not enable local execution. Use the existing `llm-run` command for supported GGUF deployments and `model-inspect` for HyperL structural inspection.
+
+### Flax MessagePack decoder packages
+
+Register the local directory containing `flax_model.msgpack`, `config.json` and the tokenizer. Choose a Python environment with Flax-enabled Transformers, JAX and Flax. Inspection alone reads package metadata. Generation uses the architecture registered with Transformers, local files and greedy decoding.
+
+```sh
+python3 -m hyperl.cluster model-adapter probe ./model flax-transformers --python /absolute/path/to/python
+python3 -m hyperl.cluster model-adapter generate ./model flax-transformers "Hello" --tokens 4 --python /absolute/path/to/python
+```
+
+Intel macOS CPU qualification used Transformers 4.46.3, Flax 0.8.5 and JAX 0.4.30 with a deterministic tiny GPT-2 checkpoint. Studio and the HyperL CLI both produced four matching tokens. GPU and TPU execution of this adapter still require hardware qualification.
