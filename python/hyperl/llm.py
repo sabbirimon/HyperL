@@ -49,8 +49,8 @@ def file_digest(path, *, max_bytes=16 * 1024**4, cancelled=lambda: False):
     return digest.hexdigest()
 
 
-def _verify(path, digest, maximum):
-    if not isinstance(digest, str) or not _DIGEST.fullmatch(digest) or file_digest(path, max_bytes=maximum) != digest:
+def _verify(path, digest, maximum, cancelled=lambda: False):
+    if not isinstance(digest, str) or not _DIGEST.fullmatch(digest) or file_digest(path, max_bytes=maximum, cancelled=cancelled) != digest:
         raise ValueError("artifact identity/digest mismatch")
 
 
@@ -228,8 +228,8 @@ class LlamaSession:
     def __init__(self, settings, *, cancelled=lambda: False):
         settings.validate()
         self.settings = settings
-        _verify(settings.executable, settings.executable_sha256, 512 * 1024 * 1024)
-        _verify(settings.model, settings.model_sha256, settings.max_model_bytes)
+        _verify(settings.executable, settings.executable_sha256, 512 * 1024 * 1024, cancelled)
+        _verify(settings.model, settings.model_sha256, settings.max_model_bytes, cancelled)
         self.id = str(uuid.uuid4())
         self.port = _port()
         self._gate = threading.Lock()

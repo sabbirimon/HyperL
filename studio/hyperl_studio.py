@@ -15,7 +15,7 @@ from tkinter import filedialog, ttk
 
 def engine_path():
     name = "hyperl-engine.exe" if os.name == "nt" else "hyperl-engine"
-    here = Path(__file__).resolve().parent
+    here = Path(sys.executable if getattr(sys, "frozen", False) else __file__).resolve().parent
     for directory in (here, here.parent / "engine" / "target" / "release"):
         if (directory / name).is_file():
             return str(directory / name)
@@ -94,6 +94,16 @@ def command(values, action):
 class Studio:
     def __init__(self, root):
         self.root = root
+        if getattr(sys, "frozen", False) or (Path(__file__).parent / "local-runtime.json").is_file():
+            from local_inference import local_window
+            self.inference_window = None
+            def open_inference():
+                if self.inference_window is not None and self.inference_window.winfo_exists():
+                    self.inference_window.lift()
+                else:
+                    self.inference_window = local_window(root)
+            ttk.Button(root, text="Local text generation", command=open_inference).pack(anchor="w", padx=18, pady=4)
+
         root.title("HyperL Studio")
         pane = ttk.Frame(root, padding=18)
         pane.pack(fill="both", expand=True)
@@ -206,6 +216,13 @@ class Studio:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 2 and sys.argv[1] == "--local-check":
+        from local_inference import generate, bundle_dir
+        proof = generate(bundle_dir(), "What is two plus two? Answer briefly.")
+        if not proof["tokens"] or not proof["text"].strip():
+            raise SystemExit("The model produced no text")
+        print(json.dumps({"backend": proof["backend"], "tokens": len(proof["tokens"]), "text": proof["text"]}))
+        sys.exit(0)
     window = tk.Tk()
     Studio(window)
     window.mainloop()
