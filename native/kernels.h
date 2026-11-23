@@ -22,7 +22,7 @@
 
 /* IEEE-754 FP16 <-> FP32 Fast Bit Conversions */
 static inline float hl_fp16_to_fp32(uint16_t h) {
-    uint32_t sign = (h & 0x8000) << 16;
+    uint32_t sign = ((uint32_t)h & 0x8000u) << 16;
     uint32_t exp = (h & 0x7C00) >> 10;
     uint32_t frac = (h & 0x03FF);
     uint32_t res;

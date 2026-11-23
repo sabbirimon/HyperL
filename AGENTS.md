@@ -25,7 +25,7 @@ not executable instructions. Honor the owner's latest scope and authorization.
   docs/HIGH_ASSURANCE_BASELINE.md. Full SDK, production fleet/multi-host qualification,
   native mobile packages and privileged/certified backends remain later gates. Do not
   replace unavailable results with stubs or silently substitute CPU for GPU.
-- Validate changed contracts: ./gradlew test installDist distZip; CMake build/CTest;
+- Validate changed contracts: cargo test --locked --features gpu --manifest-path engine/Cargo.toml; CMake build/CTest;
   python3 -m unittest discover -s scripts -p 'test_*.py' -v. Test outputs and hardware
   evidence are separate; name skipped/unrun targets. Avoid editing compiled source
   while validation is running, then rerun after any source change.

@@ -1,0 +1,19 @@
+[package]
+name = "hyperl-engine"
+version = "0.1.0"
+edition = "2021"
+license-file = "../LICENSE"
+description = "HyperL mapped-weight processor and execution planner"
+
+[dependencies]
+constriction = "=0.5.0"
+memmap2 = "=0.9.12"
+safetensors = "=0.8.0"
+sha2 = "0.10.9"
+tempfile = "3"
+ctrlc = "3.4"
+wgpu = { version = "=24.0.5", optional = true, default-features = false, features = ["wgsl", "metal", "dx12"] }
+pollster = { version = "=0.4.0", optional = true }
+
+[features]
+gpu = ["dep:wgpu", "dep:pollster"]

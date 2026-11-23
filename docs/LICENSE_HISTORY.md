@@ -1,5 +1,8 @@
 # Licence scope and history
 
+The 2026-11-23 native redesign, HLZ1 framing, StableHLO integration, tests and research index tooling use the HyperL Community and Enterprise License for new material. Dependencies retain their own grants. The engine lockfile pins the Rust packages. Research links point to their original publishers.
+
+
 
 The 2026-11-14 Mesh-LLM API adapter is original HyperL Community/Enterprise
 material. Mesh-LLM remains an independently installed Apache-2.0 project; no

@@ -18,6 +18,9 @@ hl_status_t hl_kernel_rmsnorm(hl_context_t *ctx, const hl_tensor_t *x, const hl_
     if (x->desc.dtype != HL_DTYPE_F32 || out->desc.dtype != HL_DTYPE_F32) return HL_ERROR_UNSUPPORTED_DTYPE;
 
     size_t n = hl_tensor_numel(&x->desc);
+    if (hl_tensor_numel(&out->desc) != n || !n ||
+        (weight && (!weight->data || weight->desc.dtype != HL_DTYPE_F32 || hl_tensor_numel(&weight->desc) != n)))
+        return HL_ERROR_SHAPE_MISMATCH;
     const float *x_data = (const float *)x->data;
     const float *w_data = weight ? (const float *)weight->data : NULL;
     float *out_data = (float *)out->data;
@@ -136,6 +139,7 @@ hl_status_t hl_kernel_softmax(hl_context_t *ctx, const hl_tensor_t *x, hl_tensor
     if (x->desc.dtype != HL_DTYPE_F32 || out->desc.dtype != HL_DTYPE_F32) return HL_ERROR_UNSUPPORTED_DTYPE;
 
     size_t n = hl_tensor_numel(&x->desc);
+    if (!n || hl_tensor_numel(&out->desc) != n) return HL_ERROR_SHAPE_MISMATCH;
     const float *x_data = (const float *)x->data;
     float *out_data = (float *)out->data;
 
@@ -168,6 +172,10 @@ hl_status_t hl_kernel_gemv(hl_context_t *ctx, const hl_tensor_t *W, const hl_ten
     int64_t M = W->desc.shape[0];
     int64_t K = W->desc.shape[1];
 
+    if (W->desc.dtype != HL_DTYPE_F32 || x->desc.dtype != HL_DTYPE_F32 || y->desc.dtype != HL_DTYPE_F32 ||
+        (bias && bias->desc.dtype != HL_DTYPE_F32)) return HL_ERROR_UNSUPPORTED_DTYPE;
+    if (!hl_tensor_numel(&W->desc) || hl_tensor_numel(&x->desc) != (size_t)K || hl_tensor_numel(&y->desc) != (size_t)M ||
+        (bias && (!bias->data || hl_tensor_numel(&bias->desc) != (size_t)M))) return HL_ERROR_SHAPE_MISMATCH;
     const float *W_data = (const float *)W->data;
     const float *x_data = (const float *)x->data;
     const float *b_data = bias ? (const float *)bias->data : NULL;
@@ -226,6 +234,9 @@ hl_status_t hl_kernel_gemm(hl_context_t *ctx, const hl_tensor_t *A, const hl_ten
         return HL_ERROR_SHAPE_MISMATCH;
     }
 
+    if (!A->data || !B->data || !C->data) return HL_ERROR_INVALID_ARGUMENT;
+    if (A->desc.dtype != HL_DTYPE_F32 || B->desc.dtype != HL_DTYPE_F32 || C->desc.dtype != HL_DTYPE_F32)
+        return HL_ERROR_UNSUPPORTED_DTYPE;
     const float *a_ptr = (const float *)A->data;
     const float *b_ptr = (const float *)B->data;
     float *c_ptr = (float *)C->data;

@@ -1,5 +1,10 @@
 # Standalone alpha validation
 
+## Native redesign, 2026-11-23
+
+Six Rust integration tests passed across CPU projections and HLZ1 archives. Separate physical runs on the AMD Radeon Pro 560X and Intel UHD Graphics 630 each computed an [11,17] by [13,17] transposed projection via Metal. All 143 results matched an independently accumulated f64 oracle within 1e-5. Release and ASan/UBSan CTest each passed six cases. Existing Rust binding tests passed. The pinned JAX suite ran 124 Python tests with one IREE skip on Intel macOS. Verified StableHLO matmul/GEMV and attention executed on CPU through XLA. The Intel host could not execute the ARM-only IREE command embedded in the wheel. Linux CI runs the separate compiled IREE CPU test. No NVIDIA hardware was available for a matched CUDA comparison.
+
+
 
 ## Optional Mesh-LLM adapter — 2026-11-14
 

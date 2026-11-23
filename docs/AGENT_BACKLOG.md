@@ -1,5 +1,8 @@
 # HyperL agent handoff and pending features
 
+For the redesign, prioritize persistent GPU buffers, native distributed-worker parity, physical Vulkan/DX12 runs and an independently measured CUDA baseline. [Acceptance criteria](PROCESSOR_AND_RESEARCH_PLAN.md).
+
+
 ## Optional Mesh-LLM backend — 2026-11-14
 
 [Mesh-LLM integration](MESH_LLM.md) adds an explicit external model-catalog and

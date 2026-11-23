@@ -1,5 +1,8 @@
 # Architecture, language choices and future build gates
 
+The [native engine](NATIVE_ENGINE.md) and [processor-management and research plan](PROCESSOR_AND_RESEARCH_PLAN.md) describe the current branch. Earlier JVM milestones below are historical.
+
+
 ## Optional Mesh-LLM backend — 2026-11-14
 
 [Mesh-LLM integration](MESH_LLM.md) adds an explicit external model-catalog and

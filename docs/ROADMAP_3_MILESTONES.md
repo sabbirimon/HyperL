@@ -1,5 +1,8 @@
 # HyperL 3-Milestone Engineering Roadmap
 
+This document records an earlier proposal. The current implementation and evidence are in the [native engine guide](NATIVE_ENGINE.md) and [processor research plan](PROCESSOR_AND_RESEARCH_PLAN.md).
+
+
 **Mission:** Build the leanest, memory-aware, cross-platform inference runtime for small-to-mid models (0.5B – 7B) on consumer hardware.
 
 ---

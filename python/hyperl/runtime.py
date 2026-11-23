@@ -171,6 +171,8 @@ class Tensor:
         return t
 
     def to_numpy(self):
+        if self.dtype != DType.F32:
+            raise ValueError("to_numpy requires a float32 tensor")
         arr = np.empty(self.shape, dtype=np.float32)
         data_addr = self._ptr.contents.data
         c.memmove(arr.ctypes.data, data_addr, arr.nbytes)

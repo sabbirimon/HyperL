@@ -17,7 +17,9 @@
 extern "C" {
 #endif
 
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(HYPERL_STATIC)
+  #define HL_API
+#elif defined(_WIN32) || defined(__CYGWIN__)
   #if defined(HYPERL_BUILDING_DLL)
     #define HL_API __declspec(dllexport)
   #else

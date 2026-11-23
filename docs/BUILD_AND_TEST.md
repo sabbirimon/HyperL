@@ -1,5 +1,22 @@
 # Build, test and package HyperL
 
+## Native redesign build
+
+Use the standalone Rust and C build commands below for this branch. Sections about Gradle or the desktop installer describe earlier releases.
+
+```sh
+cargo test --locked --features gpu --manifest-path engine/Cargo.toml
+cargo test --manifest-path crates/hyperl/Cargo.toml
+cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
+cmake --build build/native --config Release
+ctest --test-dir build/native -C Release --output-on-failure
+python3 scripts/generate_contract.py --check
+XLA_FLAGS=--xla_force_host_platform_device_count=4 python3 -m unittest discover -s scripts -p 'test_*.py' -v
+```
+
+With the pinned compiler dependencies on Linux, set `HYPERL_TEST_IREE=1` for the IREE CPU execution test. Use an exact `HYPERL_GPU_ADAPTER` and filter the Rust tests with `physical_gpu_projection -- --ignored --nocapture` for actual GPU qualification.
+
+
 Updated 2026-10-24. Work from the standalone HyperL checkout. This runbook does not
 build Meshlit. Maintained JDK 17+ (locally 21), CMake 3.20+, C99 compiler and Python
 3.10+ are the base prerequisites. First dependency resolution needs network access.

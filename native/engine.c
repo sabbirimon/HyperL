@@ -7,6 +7,9 @@
 #include "include/hyperl_engine.h"
 #include "kernels.h"
 #include <stdio.h>
+#ifdef _WIN32
+#include <malloc.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,9 +18,6 @@
 struct hl_context {
     hl_device_type_t device;
     int num_threads;
-    void *scratch_arena;
-    size_t scratch_size;
-    size_t scratch_used;
 };
 
 const char *hl_engine_version(void) {
@@ -41,7 +41,7 @@ size_t hl_tensor_numel(const hl_tensor_desc_t *desc) {
     if (!desc || desc->ndim == 0 || desc->ndim > HL_MAX_DIMS) return 0;
     size_t n = 1;
     for (uint32_t i = 0; i < desc->ndim; ++i) {
-        if (desc->shape[i] <= 0) return 0;
+        if (desc->shape[i] <= 0 || (uint64_t)desc->shape[i] > SIZE_MAX / n) return 0;
         n *= (size_t)desc->shape[i];
     }
     return n;
@@ -50,34 +50,31 @@ size_t hl_tensor_numel(const hl_tensor_desc_t *desc) {
 size_t hl_tensor_bytes(const hl_tensor_desc_t *desc) {
     if (!desc) return 0;
     size_t n = hl_tensor_numel(desc);
+    if ((desc->dtype == HL_DTYPE_Q4_0 || desc->dtype == HL_DTYPE_Q8_0) && n % 32 != 0) return 0;
     if (desc->dtype == HL_DTYPE_Q4_0) {
         return (n / HL_Q4_BLOCK_SIZE) * sizeof(hl_block_q4_0_t);
     } else if (desc->dtype == HL_DTYPE_Q8_0) {
         return (n / 32) * sizeof(hl_block_q8_0_t);
     }
-    return n * hl_dtype_size(desc->dtype);
+    size_t width = hl_dtype_size(desc->dtype);
+    return width && n <= SIZE_MAX / width ? n * width : 0;
 }
 
 hl_status_t hl_context_create(hl_context_t **ctx, hl_device_type_t device, int num_threads) {
     if (!ctx) return HL_ERROR_INVALID_ARGUMENT;
+    *ctx = NULL;
+    if (device != HL_DEVICE_CPU) return HL_ERROR_DEVICE_UNAVAILABLE;
     hl_context_t *c = (hl_context_t *)calloc(1, sizeof(hl_context_t));
     if (!c) return HL_ERROR_OUT_OF_MEMORY;
 
     c->device = device;
     c->num_threads = num_threads > 0 ? num_threads : 4;
-    c->scratch_size = 64 * 1024 * 1024; /* 64 MB scratch arena */
-    c->scratch_arena = malloc(c->scratch_size);
-    c->scratch_used = 0;
-
     *ctx = c;
     return HL_SUCCESS;
 }
 
 hl_status_t hl_context_destroy(hl_context_t *ctx) {
     if (!ctx) return HL_SUCCESS;
-    if (ctx->scratch_arena) {
-        free(ctx->scratch_arena);
-    }
     free(ctx);
     return HL_SUCCESS;
 }

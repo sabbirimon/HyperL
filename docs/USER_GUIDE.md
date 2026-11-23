@@ -1,5 +1,8 @@
 # HyperL installation, usage and programming guide
 
+For the current Rust executable, use the [native CLI and mapped tensor guide](NATIVE_ENGINE.md). JVM installation and workbench commands below describe historical releases.
+
+
 The 2026-11-02 model follow-up is documented in [native LLM sharding and fleet](MODEL_SHARDING_AND_FLEET.md)
 and [integrity/recovery controls](HIGH_ASSURANCE_BASELINE.md). Earlier vector-only
 limits below describe their original APIs; native/JAX model execution is separate.

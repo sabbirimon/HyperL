@@ -5,17 +5,12 @@ fn main() {
     let mut build = cc::Build::new();
     build.file("../../native/engine.c")
          .file("../../native/kernels.c")
+         .define("HYPERL_STATIC", None)
          .include("../../native")
          .include("../../native/include")
          .flag_if_supported("-O3")
          .flag_if_supported("-Wall")
          .flag_if_supported("-Wextra");
-
-    #[cfg(target_arch = "x86_64")]
-    {
-        build.flag_if_supported("-mavx2");
-        build.flag_if_supported("-mfma");
-    }
 
     build.compile("hyperl_engine");
 

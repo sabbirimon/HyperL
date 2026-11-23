@@ -186,6 +186,13 @@ unsafe impl<'a> Sync for Tensor<'a> {}
 
 impl<'a> Tensor<'a> {
     pub fn new(ctx: &'a Context, shape: &[i64], dtype: DType) -> Result<Self> {
+        if dtype != DType::F32 { return Err(Error::UnsupportedDtype); }
+        if shape.is_empty() || shape.len() > MAX_DIMS { return Err(Error::ShapeMismatch); }
+        let elements = shape.iter().try_fold(1usize, |acc, &d| {
+            let n = usize::try_from(d).ok().filter(|&n| n > 0)?;
+            acc.checked_mul(n)
+        }).ok_or(Error::ShapeMismatch)?;
+        if elements > isize::MAX as usize / 4 { return Err(Error::ShapeMismatch); }
         let mut desc = TensorDesc {
             dtype,
             ndim: shape.len() as u32,
@@ -203,6 +210,7 @@ impl<'a> Tensor<'a> {
             return Err(Error::from(ret));
         }
 
+        unsafe { std::ptr::write_bytes((*raw).data.cast::<f32>(), 0, numel); }
         Ok(Tensor { ctx, raw, numel })
     }
 
@@ -261,6 +269,7 @@ impl<'a> Drop for Tensor<'a> {
 
 /// Compute Kernels
 pub fn rmsnorm<'a>(ctx: &'a Context, x: &Tensor<'a>, weight: Option<&Tensor<'a>>, eps: f32) -> Result<Tensor<'a>> {
+    if weight.is_some_and(|w| w.numel != x.numel) { return Err(Error::ShapeMismatch); }
     let out = Tensor::new(ctx, &x.shape(), DType::F32)?;
     let w_ptr = weight.map_or(std::ptr::null(), |w| w.raw as *const RawTensor);
     let ret = unsafe {
@@ -281,6 +290,9 @@ pub fn gemv<'a>(ctx: &'a Context, w: &Tensor<'a>, x: &Tensor<'a>, bias: Option<&
     let shape_w = w.shape();
     if shape_w.len() != 2 {
         return Err(Error::InvalidArgument);
+    }
+    if x.numel != shape_w[1] as usize || bias.is_some_and(|b| b.numel != shape_w[0] as usize) {
+        return Err(Error::ShapeMismatch);
     }
     let m = shape_w[0];
     let y = Tensor::new(ctx, &[m], DType::F32)?;

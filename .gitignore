@@ -30,3 +30,9 @@ swift/.build/
 *.dylib
 *.so
 *.dll
+
+# The standalone engine ships a reproducible executable.
+!engine/Cargo.lock
+
+# Retired Android probe local SDK settings (old checkouts).
+android/probe/local.properties

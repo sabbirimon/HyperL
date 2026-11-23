@@ -1,5 +1,8 @@
 # HyperL documentation index
 
+Start with the [native CLI and graph compiler](NATIVE_ENGINE.md) and [processor management plan](PROCESSOR_AND_RESEARCH_PLAN.md). JVM and desktop installer guides below describe older releases.
+
+
 
 [Native model sharding and fleet](MODEL_SHARDING_AND_FLEET.md) · [Error correction and assurance mapping](HIGH_ASSURANCE_BASELINE.md)
 
