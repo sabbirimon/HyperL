@@ -41,6 +41,14 @@ An experimental HyperL backend would need named weights, a verified architecture
 
 Meshlit can present evaluation results for any compatible text endpoint. Editing the served weights additionally requires control of the checkpoint and inference backend. An API-only provider can propose an edit to a different local checkpoint. That would be cross-model editing. Neither path has been qualified in this project.
 
+### Checkpoint repair versus behavioral recovery
+
+The authors report that on six image benchmarks a damaged copy recovered from about 7% to 70% accuracy, roughly 83% of the intact model's accuracy. This measures recovered behavior. The trusted original bytes were never read by the editor. The experiment begins with a trained checkpoint and a runnable model that can diagnose a damaged copy of itself. A missing checkpoint cannot be regenerated from its manifest or tokenizer. [Authors' experiment](https://www.jiajunfan.com/projects/self-rewriting/)
+
+HyperL already protects checkpoint bytes through a trusted protection manifest and parity fragments. On 2026-11-24 a test corrupted a stored fragment of a tiny Flax GPT-2 checkpoint, repaired it, exported identical SHA-256 bytes and decoded the original four tokens through the public Flax adapter. This qualifies storage repair only.
+
+For a behavioral-recovery trial, start with a writable local floating-point SafeTensors model, a deliberately damaged disposable copy and disjoint practice and held-out examples. Compare intact, damaged and edited variants under identical decoding settings. Record the damaged tensor, proposed numerical edit, original and candidate digests, evaluation cost, and scores on target and unrelated tasks. Accept only bounded tensor operations in the experiment. Keep the original available for rollback. A claim of self-rewriting requires the same model family and checkpoint to propose its own edit and an independent evaluation of that edit. The 27B result is still unreplicated here.
+
 ## Goose language trial
 
 The [matched scheduling experiment](../benchmarks/goose/README.md) found C++ fastest on the flat dependency table, followed by Goose and Rust. Goose compiles to C and can call native C functions, making an isolated metadata pass a viable future experiment. Keep the shipped Rust engine and C ABI while evaluating variable-size record workloads. [Goose compiler and native interface](https://github.com/aardappel/goose/tree/2239b92eb2ae0e8f390f98640b09ff57a17698fc)
