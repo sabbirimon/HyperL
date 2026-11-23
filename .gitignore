@@ -12,3 +12,21 @@ __pycache__/
 
 python/build/
 python/*.egg-info/
+*.egg-info/
+
+# Rust build artifacts
+target/
+crates/**/target/
+crates/hyperl/target/
+Cargo.lock
+
+# Swift build artifacts
+swift/.build/
+.build/
+
+# Compiled native libraries
+*.o
+*.a
+*.dylib
+*.so
+*.dll
