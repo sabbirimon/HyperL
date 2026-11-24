@@ -1,10 +1,36 @@
 // SPDX-License-Identifier: LicenseRef-HyperL-Community-1.0
 #include <android/native_activity.h>
 #include <android/log.h>
+#include <android/input.h>
+#include <android/looper.h>
 #include <sched.h>
 #include <stdio.h>
 #include <time.h>
 #include "hyperl_engine.h"
+
+// NativeActivity dispatches keys to this queue even when the report is a TextView.
+static int drain_input(int fd, int events, void *data) {
+    (void)fd;
+    (void)events;
+    AInputQueue *queue = data;
+    AInputEvent *event;
+    while (AInputQueue_getEvent(queue, &event) >= 0) {
+        if (!AInputQueue_preDispatchEvent(queue, event)) {
+            AInputQueue_finishEvent(queue, event, 0);
+        }
+    }
+    return 1;
+}
+
+static void attach_input(ANativeActivity *activity, AInputQueue *queue) {
+    (void)activity;
+    AInputQueue_attachLooper(queue, ALooper_forThread(), ALOOPER_POLL_CALLBACK, drain_input, queue);
+}
+
+static void detach_input(ANativeActivity *activity, AInputQueue *queue) {
+    (void)activity;
+    AInputQueue_detachLooper(queue);
+}
 
 static void report(ANativeActivity *activity) {
     enum { rows = 64, cols = 128, repeats = 32 };
@@ -39,11 +65,19 @@ static void report(ANativeActivity *activity) {
     (*env)->CallVoidMethod(env,view,(*env)->GetMethodID(env,cls,"setPadding","(IIII)V"),32,48,32,32);
     (*env)->CallVoidMethod(env,view,(*env)->GetMethodID(env,cls,"setText","(Ljava/lang/CharSequence;)V"),(*env)->NewStringUTF(env,message));
     jclass activity_class=(*env)->GetObjectClass(env,activity->clazz);
-    (*env)->CallVoidMethod(env,activity->clazz,(*env)->GetMethodID(env,activity_class,"setContentView","(Landroid/view/View;)V"),view);
+    // Preserve the framework's native content view and its input connection.
+    jclass params_class=(*env)->FindClass(env,"android/view/ViewGroup$LayoutParams");
+    jobject params=(*env)->NewObject(env,params_class,(*env)->GetMethodID(env,params_class,"<init>","(II)V"),-1,-1);
+    (*env)->CallVoidMethod(env,view,(*env)->GetMethodID(env,cls,"setBackgroundColor","(I)V"),(jint)0xfffafafa);
+    (*env)->CallVoidMethod(env,view,(*env)->GetMethodID(env,cls,"setTextColor","(I)V"),(jint)0xff191919);
+    (*env)->CallVoidMethod(env,activity->clazz,(*env)->GetMethodID(env,activity_class,"addContentView","(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V"),view,params);
+    activity->callbacks->onResume = NULL;
     (*env)->PopLocalFrame(env,NULL);
 }
 
 void ANativeActivity_onCreate(ANativeActivity *activity, void *state, size_t length) {
     (void)state; (void)length;
+    activity->callbacks->onInputQueueCreated = attach_input;
+    activity->callbacks->onInputQueueDestroyed = detach_input;
     activity->callbacks->onResume = report;
 }
