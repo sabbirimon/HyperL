@@ -1,6 +1,6 @@
-# HyperL
+# HyperL™
 
-![HyperL — Bounded CPU and GPU compute experiments](docs/assets/hyperl-cover.png)
+![HyperL™ — Bounded CPU and GPU compute experiments](docs/assets/hyperl-cover.png)
 
 HyperL runs bounded tensor workloads on native processors. The standalone Rust engine reads immutable SafeTensors weights through a read-only mapping, plans local work against a byte budget, and executes a dense projection on CPU or a selected wgpu adapter. An optional graph frontend lowers typed operations to StableHLO MLIR for compilation with XLA or IREE.
 
@@ -59,4 +59,8 @@ Two GPUs in an Intel Mac and one GPU in an Android phone computed different rows
 
 The former JVM workbench, Kotlin shard worker and Android JVM probe are available in project history. Existing users of those applications can use the [previous source tree](https://github.com/sabbirimon/HyperL/tree/5a784b8). The native CLI has its own commands and execution contract.
 
+## Commercial licensing
+
 New material uses the [HyperL Community and Enterprise License](LICENSE). Earlier grants and third-party licenses are recorded in the [license history](docs/LICENSE_HISTORY.md) and [notices](NOTICE).
+
+For commercial licensing inquiries, including proposed royalty arrangements, contact the maintainer. Any payment terms require a separate written agreement. [Commercial terms and contact](docs/LICENSING.md)
