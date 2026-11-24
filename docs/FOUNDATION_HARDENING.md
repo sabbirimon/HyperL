@@ -58,7 +58,7 @@ Those milestones are independent projects and qualification gates. No unavailabl
 backend is represented as a successful stub or silent CPU replacement. Licence
 scope, prior Apache rights and third-party notices remain in [LICENSING.md](LICENSING.md).
 Use the [programming guide](PROGRAMMING_GUIDE.md) for current runnable examples,
-the [precision plan](PRECISION_AND_HPC_PLAN.md) for future numerical types and the
-[quantum scope](QUANTUM_EXTENSION_PLAN.md) for separate Python simulation/provider
+the precision plan (archived) for future numerical types and the
+quantum scope (archived) for separate Python simulation/provider
 contracts. Quantum provider tests use SDK doubles; installed SDK and QPU execution
 are not established by the foundation or contract-test suite.

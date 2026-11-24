@@ -21,11 +21,11 @@ plugin is shipped. Actual IDE UI sessions/tasks are unrun acceptance checks.
 The built-in HyperL workbench already supports syntax/folding/undo, literal search,
 semantic/shape validation, JSON formatting, example selection, workspace open/save,
 source emission/export, memory policy, explicit GPU probes and cancellable CPU work.
-See [UI plan](../UI_DESIGN_PLAN.md) and [user guide](../USER_GUIDE.md).
+See UI plan (archived) and [user guide](../USER_GUIDE.md).
 The [programming guide](../PROGRAMMING_GUIDE.md) includes Python interfaces as well.
 This workspace's `hyperl/1` JSON schema does not validate the separate quantum
 circuit API, provider permissions or future precision types; those require their
-own validators and qualification. See [quantum scope](../QUANTUM_EXTENSION_PLAN.md).
+own validators and qualification. See quantum scope (archived).
 
 The later complete SDK/IDE stages include a language server, semantic completion,
 navigation/refactoring, versioned project/binding generators, real compiler/model

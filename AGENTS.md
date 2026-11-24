@@ -46,3 +46,5 @@ Quantum simulator tests and provider SDK doubles do not qualify QPU execution.
 SHA-384/512 hashing does not change HLASv1 or deliver post-quantum cryptography.
 Preserve exact wire/numeric formats; new algorithm suites need explicit versions.
 Meshlit remains a separate repository and checkpoint, with its own native Studio build workflow.
+
+Archived development notes are available to maintainers in the [private project archive](https://github.com/sabbirimon/meshlit-hyperl-internal-docs/blob/main/HyperL/development).

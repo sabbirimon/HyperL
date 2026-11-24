@@ -18,7 +18,7 @@ LLM execution, persistent VRAM residency or a million live devices.
 For the detailed alpha.6 tutorial, Python/C examples and diagrams, read
 [Programming with HyperL](PROGRAMMING_GUIDE.md). See also
 [build/test](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md),
-[progress](PROGRESS_2026_10_24.md) and [all documentation](README.md).
+progress (archived) and [all documentation](README.md).
 
 Download/install examples target the published Apache-licensed alpha.5 release.
 Sections explicitly marked alpha.6 describe unreleased development additions,
@@ -33,7 +33,7 @@ For `0.1.0-alpha.5`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what
 is tested. This alpha is a developer experiment, not a CUDA-compatible SDK or a
-complete AI/telecom runtime. [Architecture/roadmap](ARCHITECTURE_AND_ROADMAP.md)
+complete AI/telecom runtime. Architecture/roadmap (archived)
 describes the expansion and performance gates.
 
 ## 1. Choose an installation
@@ -564,7 +564,7 @@ bin/hyperl workspace-validate my-example.hyperl.json
 [IDE helpers](ide/README.md) include a local JSON schema and optional VS Code
 workspace/process task. They require your independently installed IDE/CLI and
 manual task invocation; no plugin or language server is silently installed.
-[UI design plan](UI_DESIGN_PLAN.md) records the visual system, performance and
+UI design plan (archived) records the visual system, performance and
 accessibility gates, native profiler/cluster workspace and full SDK/IDE roadmap.
 
 ## Advanced diagnostics and suggested fixes
@@ -592,9 +592,9 @@ static cross-platform painting; they do not use Apple's native Liquid Glass or b
 the desktop. Code and output remain opaque in either mode.
 
 [Native performance architecture](NATIVE_PERFORMANCE_ARCHITECTURE.md),
-[enterprise services](ENTERPRISE_AND_CLUSTER_PLAN.md),
-[single-phone mode](MOBILE_AND_EDGE_PLAN.md) and
-[Python-style developer experience](DEVELOPER_EXPERIENCE_PLAN.md) record later
+enterprise services (archived),
+single-phone mode (archived) and
+Python-style developer experience (archived) record later
 implementation plans. They do not change the current execution/platform contracts.
 
 The alpha.4 [Python/native library preview](LIBRARY_INTEROPERABILITY.md) contains
@@ -624,4 +624,4 @@ python -m hyperl.cluster model-edit-candidate source/model.safetensors candidate
   --source-sha256 "$SOURCE_SHA256" --max-bytes 104857600
 ```
 
-Create the candidate directory first. To test generation, include the original model configuration, tokenizer and any required companion files in that directory. The command reports how many values changed and both file digests. Evaluate the candidate on separate examples before selecting it for inference. See the [experiment and its limitations](PROCESSOR_AND_RESEARCH_PLAN.md#checkpoint-repair-versus-behavioral-recovery).
+Create the candidate directory first. To test generation, include the original model configuration, tokenizer and any required companion files in that directory. The command reports how many values changed and both file digests. Evaluate the candidate on separate examples before selecting it for inference. See the experiment and its limitations (archived).

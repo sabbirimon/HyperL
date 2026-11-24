@@ -157,5 +157,5 @@ FPGA, ASIC, RDMA, NVLink, CXL or production cluster operation.
 Quantum providers use a separate circuit/job/result boundary and explicit account
 approval; pairing or fabric negotiation never enables a QPU. The current Python
 SDK bridges have contract-double tests, not installed SDK or hardware qualification.
-See [quantum scope](QUANTUM_EXTENSION_PLAN.md), [precision/HPC](PRECISION_AND_HPC_PLAN.md)
+See quantum scope (archived), precision/HPC (archived)
 and the [programming guide](PROGRAMMING_GUIDE.md).

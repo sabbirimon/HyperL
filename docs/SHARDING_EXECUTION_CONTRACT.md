@@ -8,7 +8,7 @@ sharding, mixed processor architectures, load balancing, measured network lanes,
 memory tiers and future adapter support. This document defines delivery gates beyond
 the existing bounded vector executor and the narrowly qualified physical CPU probe;
 it does not establish a full model engine or production distributed runtime.
-The [heterogeneous plan](HETEROGENEOUS_EXECUTION_PLAN_2026-10-23.md) records vendor
+The heterogeneous plan (archived) records vendor
 tracks and [validation](VALIDATION.md) records actual evidence.
 
 ## 1. Baseline and success criteria
@@ -330,7 +330,7 @@ bounds. An adapter must report the contract it actually implements. Relaxed math
 mixed precision and parallel reduction require explicit opt-in semantics and cannot
 silently change results of an existing program.
 
-The [precision/HPC plan](PRECISION_AND_HPC_PLAN.md) adds dependency gates for typed
+The precision/HPC plan (archived) adds dependency gates for typed
 f64, BF16, binary128 and bounded arbitrary binary/decimal providers. These remain
 future vector/tensor engines; two binary64 components in the separate Python
 quantum simulator do not constitute a binary128 arithmetic backend.
@@ -350,7 +350,7 @@ address calculations for overflow before native allocation. Performance comparis
 must use equivalent precision and error constraints; a less accurate result is not
 an unqualified speed improvement.
 
-[Quantum/hybrid work](QUANTUM_EXTENSION_PLAN.md) uses a separate circuit and
+Quantum/hybrid work (archived) uses a separate circuit and
 asynchronous provider contract, including the [OriginQ bridge](ORIGINQ_ADAPTER.md).
 Independent circuits may be scheduled separately when valid. Splitting an arbitrary
 entangled circuit across unrelated QPUs is not implemented by classical sharding,

@@ -43,7 +43,7 @@ The Rust projection is one transformer primitive. For token generation, use the 
 
 ## Development
 
-- [Processor management and research decisions](docs/PROCESSOR_AND_RESEARCH_PLAN.md)
+
 - [Research index covering 721 manuscripts](docs/research/manuscripts.csv)
 - [Build and validation](docs/BUILD_AND_TEST.md)
 - [Matched numerical performance harness](benchmarks/run_benchmarks.py)
@@ -52,3 +52,5 @@ The Rust projection is one transformer primitive. For token generation, use the 
 The former JVM workbench, Kotlin shard worker and Android JVM probe are available in project history. Existing users of those applications can use the [previous source tree](https://github.com/sabbirimon/HyperL/tree/5a784b8). The native CLI has its own commands and execution contract.
 
 New material uses the [HyperL Community and Enterprise License](LICENSE). Earlier grants and third-party licenses are recorded in the [license history](docs/LICENSE_HISTORY.md) and [notices](NOTICE).
+
+[Intel, AMD and Adreno multi-GPU projection measurements](docs/evidence/intel-amd-adreno-projection-2026-11-24.json)
