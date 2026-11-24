@@ -158,8 +158,8 @@ clients, expiring provider/target permission and no wrapper-level submission ret
 SDK-double contract tests do not qualify installed SDKs or physical QPUs. Quantum
 programs/results are separate from native f32 arrays and `TorchBackend`; there is
 no automatic tensor-to-circuit conversion or generic QIR importer. See the
-[programming guide](PROGRAMMING_GUIDE.md) and [quantum scope](QUANTUM_EXTENSION_PLAN.md).
-The [precision plan](PRECISION_AND_HPC_PLAN.md) records future f64/BF16/binary128 and
+[programming guide](PROGRAMMING_GUIDE.md) and quantum scope (archived).
+The precision plan (archived) records future f64/BF16/binary128 and
 typed complex numerical work; the simulator's binary64 complex state does not
 establish those vector-runtime types or native 128-bit arithmetic.
 

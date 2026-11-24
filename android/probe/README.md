@@ -20,7 +20,7 @@ owner-controlled testing, not a production store release.
 The 2026-10-24 APK evidence below is a preserved build snapshot. Later HyperL
 capability negotiation, cryptography and quantum Python APIs are not automatically
 included in this six-source CPU probe. See the [current validation record](../../docs/VALIDATION.md)
-for broader source tests and the [quantum prototype](../../docs/QUANTUM_EXTENSION_PLAN.md)
+for broader source tests and the quantum prototype (archived)
 for its separate simulator/provider boundaries.
 
 ## Start and evidence

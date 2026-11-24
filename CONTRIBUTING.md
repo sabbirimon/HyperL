@@ -40,7 +40,7 @@ datasets and organizational identifiers. Existing reports in
 
 Start with the [programming guide](docs/PROGRAMMING_GUIDE.md),
 [build/test runbook](docs/BUILD_AND_TEST.md), and
-[pending-feature handoff](docs/AGENT_BACKLOG.md). Record each fix's symptom, cause,
+pending-feature handoff (archived). Record each fix's symptom, cause,
 regression check and remaining target limits in the progress/validation documents.
 Keep historical measurements and licensing records intact. For debugging, use
 [the troubleshooting guide](docs/TROUBLESHOOTING.md) and submit redacted minimal

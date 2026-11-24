@@ -68,10 +68,10 @@ boundaries. HyperL currently provides no universal CUDA ABI replacement, complet
 tensor engine, Tensor Core lowering, MIG isolation or distributed collectives.
 
 Enterprise, supercomputer and hyperscale workloads are primary targets in the
-[precision/HPC plan](PRECISION_AND_HPC_PLAN.md). Current vector graphs remain f32;
+precision/HPC plan (archived). Current vector graphs remain f32;
 the separate compensated binary64 sum returns f32. F64/BF16/binary128 and arbitrary
 binary/decimal graph engines are future work. The separate
-[quantum simulator](QUANTUM_EXTENSION_PLAN.md) uses classical binary64 complex
+quantum simulator (archived) uses classical binary64 complex
 arithmetic, which is not binary128 or physical QPU execution. Optional
 [OriginQ submission](ORIGINQ_ADAPTER.md) requires owner scope and an explicit HTTPS
 endpoint; SDK fixtures do not establish provider acceptance.
@@ -89,7 +89,7 @@ Security/vision/AI application goals do not turn f32 arithmetic into a cryptogra
 primitive, model engine or autonomous-agent system. Use qualified providers through
 versioned interfaces rather than reimplementing mature SDKs without evidence.
 
-See the [AI Services design](AI_SERVICES_PLAN.md) for model/runtime packaging,
+See the AI Services design (archived) for model/runtime packaging,
 serving API, batching, profiles, registry and an ordered real-model pilot.
 
 ## Infrastructure management layer
@@ -149,6 +149,6 @@ count eligible source bytes, not runtime compute time or performance. Language
 share changes as real native implementations grow; no statistics masking is needed.
 
 Further reading: [native architecture](NATIVE_PERFORMANCE_ARCHITECTURE.md),
-[library interop](LIBRARY_INTEROPERABILITY.md), [enterprise services](ENTERPRISE_AND_CLUSTER_PLAN.md),
-[mobile](MOBILE_AND_EDGE_PLAN.md), [AMD ecosystem](AMD_COMPATIBILITY.md), [AMD Mac/Metal](MACOS_METAL.md),
+[library interop](LIBRARY_INTEROPERABILITY.md), enterprise services (archived),
+mobile (archived), [AMD ecosystem](AMD_COMPATIBILITY.md), [AMD Mac/Metal](MACOS_METAL.md),
 [memory](MEMORY.md), [telecom research](TELECOM.md).

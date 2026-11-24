@@ -25,9 +25,9 @@ not license/redistribution grants or inference qualification.
 
 The [Android CPU probe](ANDROID_CROSS_PLATFORM_PROBE.md) qualifies Samsung ARM64
 with a Mac x86-64 worker over wired/Wi-Fi TLS; it is not general mixed-accelerator
-or mobile production support. [Higher precision/HPC](PRECISION_AND_HPC_PLAN.md)
+or mobile production support. Higher precision/HPC (archived)
 requires per-dtype/operator/backend evidence. The separate
-[quantum prototype](QUANTUM_EXTENSION_PLAN.md) includes classical Python simulation
+quantum prototype (archived) includes classical Python simulation
 and optional SDK routes; no physical QPU or all-platform provider SDK support is
 qualified. [OriginQ](ORIGINQ_ADAPTER.md) additionally requires its pinned SDK and an
 explicit approved HTTPS endpoint.

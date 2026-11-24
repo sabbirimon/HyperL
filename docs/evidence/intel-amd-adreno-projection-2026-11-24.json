@@ -1,0 +1,49 @@
+{
+  "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "tensor": "blk.0.attn_k.weight",
+  "originalQuantization": "Q4_K",
+  "executionPrecision": "FP32",
+  "rows": 256,
+  "inputWidth": 1536,
+  "activation": "fixed seeded test vector",
+  "maxAbsoluteError": 1.8957198726354818e-06,
+  "dispatchWallOverlapMs": 148.67,
+  "workers": [
+    {
+      "processor": "Metal/Intel(R) UHD Graphics 630",
+      "rows": 86,
+      "dispatchStart": 390009.704498488,
+      "dispatchEnd": 390010.093821185,
+      "wallMs": 389.32,
+      "evidence": "backend=Metal/Intel(R) UHD Graphics 630 output_bytes=344"
+    },
+    {
+      "processor": "Metal/AMD Radeon Pro 560X",
+      "rows": 85,
+      "dispatchStart": 390009.704763092,
+      "dispatchEnd": 390010.130362487,
+      "wallMs": 425.6,
+      "evidence": "backend=Metal/AMD Radeon Pro 560X output_bytes=340"
+    },
+    {
+      "processor": "Vulkan/Adreno (TM) 730",
+      "rows": 85,
+      "dispatchStart": 390009.704257519,
+      "dispatchEnd": 390009.853428527,
+      "wallMs": 149.17,
+      "evidence": {
+        "format": "hyperl-vulkan-result/1",
+        "backend": "VULKAN_GPU",
+        "device": "Adreno (TM) 730",
+        "gpuCompletionConfirmed": true,
+        "elements": 130560,
+        "allocatedBytes": 1566720,
+        "storageMode": "host-visible-coherent",
+        "compileMs": 13.8779,
+        "submitAndWaitMs": 2.91292
+      }
+    }
+  ],
+  "transport": "USB ADB for phone staging and result retrieval",
+  "scope": "One real weight projection, test coordinator. No end-to-end token generation."
+}

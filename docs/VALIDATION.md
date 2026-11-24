@@ -29,8 +29,8 @@ The preceding `07b8d51` source passed all five
 four [installer build/smoke jobs](https://github.com/sabbirimon/HyperL/actions/runs/40046536114).
 Publication was skipped. Those remote runs do not qualify the later quantum/hash
 commit; consult CI for its exact head. No alpha.6 release or QPU/hyperscale performance
-claim is made. See [progress and fixes](PROGRESS_2026_10_24.md) and
-[remaining feature gates](AGENT_BACKLOG.md).
+claim is made. See progress and fixes (archived) and
+remaining feature gates (archived).
 
 ## Enterprise capability negotiation — 2026-10-24
 
@@ -329,7 +329,7 @@ GPU qualification is inferred from the app image. Historical alpha.4 Radeon
 Terminal results remain exactly scoped in [their hardware report](A1990_METAL_VALIDATION.md).
 
 See [native installers](DESKTOP_INSTALLERS.md), [twelve-library use cases](USE_CASES.md)
-and [production/Meshlit gates](PRODUCTION_AND_MESHLIT_PLAN.md). The Meshlit source
+and production/Meshlit gates (archived). The Meshlit source
 port is reviewed and tested separately in its own repository; phones remain paused.
 
 Alpha.5 native installers are now published. The immutable tag source is
@@ -401,7 +401,7 @@ qualified GPU/NPU/FPGA runtimes, distributed scheduler, automatic spill, large-n
 capacity, kernel/fabric performance, telecom stack and certification remain later.
 
 See [memory boundaries](MEMORY.md), [platform matrix](PLATFORMS.md),
-[programming/install guide](USER_GUIDE.md) and [ordered roadmap](ARCHITECTURE_AND_ROADMAP.md).
+[programming/install guide](USER_GUIDE.md) and ordered roadmap (archived).
 
 ## Developer workbench increment — alpha.2
 
@@ -507,7 +507,7 @@ The actual Swing CPU panel renders correctly at 1280x820 and 1000x700 with thin
 header/status strips, retaining approximately 75 additional pixels of editor
 height versus alpha.3. Headless rendering does not qualify native GUI interaction.
 The [platform overview](SOFTWARE_STACK.md), [AMD matrix](AMD_COMPATIBILITY.md),
-[NVIDIA matrix](NVIDIA_COMPATIBILITY.md) and [AI Services plan](AI_SERVICES_PLAN.md)
+[NVIDIA matrix](NVIDIA_COMPATIBILITY.md) and AI Services plan (archived)
 record implementation status separately from proposed enterprise/model services.
 
 ## Post-alpha.4 Metal JSON contract fix — 2026-10-08

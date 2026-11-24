@@ -56,7 +56,7 @@ certification, support contracts or a license to redistribute proprietary softwa
 Alpha.6 adds [exact capability negotiation](ENTERPRISE_FABRICS.md) and
 [authenticated CPU shard execution](DISTRIBUTED_EXECUTION.md). These do not
 qualify NVIDIA hardware, load CUDA/NCCL or activate a fabric from its name. The
-separate [quantum Python prototype](QUANTUM_EXTENSION_PLAN.md) is also not a
+separate quantum Python prototype (archived) is also not a
 CUDA or GPU backend. Architecture/vendor references above retain their dated
 research scope; deployment must check the selected current vendor matrix.
 

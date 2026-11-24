@@ -81,8 +81,8 @@ See [validation](VALIDATION.md) for the actual run outcome.
 Quantum state-vector simulation has a separate Python qubit/amplitude-work budget;
 it does not use this JVM admission report or add qubits to cluster RAM capacity.
 Provider job shots, result bounds and simulation costs remain distinct from f32
-buffer bytes. See [quantum scope](QUANTUM_EXTENSION_PLAN.md) and the
-[precision/HPC plan](PRECISION_AND_HPC_PLAN.md) for future typed allocation contracts.
+buffer bytes. See quantum scope (archived) and the
+precision/HPC plan (archived) for future typed allocation contracts.
 
 Primary interfaces: [JDK Runtime heap methods](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runtime.html),
 [JDK OperatingSystemMXBean environment observations](https://docs.oracle.com/en/java/javase/21/docs/api/jdk.management/com/sun/management/OperatingSystemMXBean.html),
