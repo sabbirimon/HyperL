@@ -10,6 +10,8 @@ Full desktop CPU inference is exercised on three host systems. Two mutually auth
 Two-host CPU sharding and a small authenticated fleet stage passed on November 24. Next qualification needs additional independent clients, cross-site restore and larger real models. [Host and fleet evidence](MODEL_SHARDING_AND_FLEET.md#physical-mac-and-windows-qualification-2026-11-24).
 
 
+The Android CPU package now builds ARM64, ARMv7, x86, x86-64 and RISC-V 64 libraries. Physical ARM64 and ARMv7 kernel tests passed. RISC-V and both x86 Android variants still need execution on matching devices. See [Android build requirements](BUILD_AND_TEST.md).
+
 ## Optional Mesh-LLM backend — 2026-11-14
 
 [Mesh-LLM integration](MESH_LLM.md) adds an explicit external model-catalog and

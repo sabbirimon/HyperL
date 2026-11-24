@@ -11,6 +11,18 @@
   #include <omp.h>
 #endif
 
+#if defined(__ARM_NEON)
+static inline float hl_sum_lanes(float32x4_t value) {
+#if defined(__aarch64__)
+    return vaddvq_f32(value);
+#else
+    /* Adjacent-pair reduction also works on 32-bit NEON. */
+    float32x2_t pairs = vpadd_f32(vget_low_f32(value), vget_high_f32(value));
+    return vget_lane_f32(vpadd_f32(pairs, pairs), 0);
+#endif
+}
+#endif
+
 /* RMSNorm: y_i = (x_i / sqrt(mean(x^2) + eps)) * weight_i */
 hl_status_t hl_kernel_rmsnorm(hl_context_t *ctx, const hl_tensor_t *x, const hl_tensor_t *weight, float eps, hl_tensor_t *out) {
     (void)ctx;
@@ -43,7 +55,7 @@ hl_status_t hl_kernel_rmsnorm(hl_context_t *ctx, const hl_tensor_t *x, const hl_
         float32x4_t vx = vld1q_f32(x_data + i);
         vsum = vmlaq_f32(vsum, vx, vx);
     }
-    sum_sq = vaddvq_f32(vsum);
+    sum_sq = hl_sum_lanes(vsum);
 #endif
 
     for (; i < n; ++i) {
@@ -206,7 +218,7 @@ hl_status_t hl_kernel_gemv(hl_context_t *ctx, const hl_tensor_t *W, const hl_ten
             float32x4_t vx = vld1q_f32(x_data + k);
             vdot = vmlaq_f32(vdot, vw, vx);
         }
-        dot = vaddvq_f32(vdot);
+        dot = hl_sum_lanes(vdot);
 #endif
 
         for (; k < K; ++k) {

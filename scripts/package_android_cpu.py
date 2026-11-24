@@ -9,6 +9,17 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
+# RISC-V uses the experimental Android 35 sysroot in the pinned NDK.
+# Keep the API 26 deployment target for the four established Android ABIs.
+ANDROID_TARGETS = {
+    "arm64-v8a": "aarch64-linux-android26",
+    "armeabi-v7a": "armv7a-linux-androideabi26",
+    "x86_64": "x86_64-linux-android26",
+    "x86": "i686-linux-android26",
+    "riscv64": "riscv64-linux-android35",
+}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("sdk", type=Path)
@@ -29,9 +40,9 @@ def main():
         subprocess.run([tools/"aapt2","link","-I",sdk/"platforms/android-36/android.jar",
                         "--manifest",app/"AndroidManifest.xml","-o",apk],check=True)
         with zipfile.ZipFile(apk,"a") as archive:
-            for abi, prefix in [("arm64-v8a","aarch64"),("x86_64","x86_64")]:
+            for abi, target in ANDROID_TARGETS.items():
                 lib = work / "libhyperl-mobile.so"
-                cc = ndk/f"toolchains/llvm/prebuilt/{host}/bin/{prefix}-linux-android26-clang"
+                cc = ndk/f"toolchains/llvm/prebuilt/{host}/bin/{target}-clang"
                 subprocess.run([cc,"-std=c11","-D_GNU_SOURCE","-O2","-ffp-contract=off","-fPIC","-shared",
                     "-I",ROOT/"native/include",app/"activity.c",ROOT/"native/engine.c",ROOT/"native/kernels.c",
                     "-Wl,-z,max-page-size=16384","-landroid","-llog","-lm","-o",lib],check=True)
