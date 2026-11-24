@@ -1,5 +1,8 @@
 # Contributions and licensing
 
+[CUDA migration and accelerator support](docs/CUDA_MIGRATION.md)
+
+
 Preserve numerical, ownership, memory, cancellation and capability contracts.
 Record actual validation and unrun devices. Keep secrets, models, private data,
 binary artifacts and signing keys out of commits.
@@ -40,7 +43,7 @@ datasets and organizational identifiers. Existing reports in
 
 Start with the [programming guide](docs/PROGRAMMING_GUIDE.md),
 [build/test runbook](docs/BUILD_AND_TEST.md), and
-[pending-feature handoff](docs/AGENT_BACKLOG.md). Record each fix's symptom, cause,
+pending-feature handoff (archived). Record each fix's symptom, cause,
 regression check and remaining target limits in the progress/validation documents.
 Keep historical measurements and licensing records intact. For debugging, use
 [the troubleshooting guide](docs/TROUBLESHOOTING.md) and submit redacted minimal

@@ -15,7 +15,7 @@ import threading
 import urllib.request
 
 
-def qualify(cli, output, bundled=False):
+def qualify(cli, output, bundled=False, tensor=False):
     processes = []
     with tempfile.TemporaryDirectory(prefix="hyperl-distributed-") as temporary:
         root = Path(temporary)
@@ -77,6 +77,12 @@ def qualify(cli, output, bundled=False):
             assert all(observe(node)["completedShards"] > 0 for node in [a,b])
             plan = json.loads(run(["distributed-plan", settings, program, inputs]).stdout)
             assert len(plan["shards"]) == 8
+            tensor_result = None
+            if tensor:
+                tensor_result = json.loads(run(["tensor-run", settings, program, inputs]).stdout)
+                assert tensor_result["result"] == local
+                assert tensor_result["output"]["shape"] == [4096]
+                assert tensor_result["transfers"]["uploadedPayloadBytes"] == 4096 * 2 * 4
             # TLS fixture: private key stays in the worker's temporary PKCS12, outside JSON/CLI literals.
             keytool = Path(os.environ["JAVA_HOME"]) / "bin" / ("keytool.exe" if os.name == "nt" else "keytool")
             key_password = secrets.token_urlsafe(24)
@@ -107,6 +113,10 @@ def qualify(cli, output, bundled=False):
                            + " -Djavax.net.ssl.trustStoreType=PKCS12 -Djavax.net.ssl.trustStorePassword=fixture-public-trust"}
             tls_result = json.loads(run(["distributed-run", tls_config, program, inputs], env=trusted_env).stdout)
             assert tls_result["result"] == local and tls_result["cpuVerified"]
+            if tensor:
+                assert run(["tensor-run", tls_config, program, inputs], expect=False).returncode != 0
+                tls_tensor = json.loads(run(["tensor-run", tls_config, program, inputs], env=trusted_env).stdout)
+                assert tls_tensor["result"] == local
             wrong_host = config("wrong-host", {"workers":[{**tls, "origin":tls["origin"].replace("127.0.0.1", "localhost")}], "maxParallelism":1})
             assert run(["distributed-plan", wrong_host, program, inputs], env=trusted_env, expect=False).returncode != 0, "TLS hostname mismatch was accepted"
             evidence = {"format":"hyperl-distributed-qualification/1", "status":"passed",
@@ -117,6 +127,12 @@ def qualify(cli, output, bundled=False):
                         "trustedTlsPassed":True, "untrustedCertificateRejected":True, "hostnameMismatchRejected":True,
                         "remoteHostsTested":False, "mixedGpuNpuTested":False,
                         "speedupClaimed":False}
+            if tensor:
+                assert run(["tensor-run", wrong_host, program, inputs], env=trusted_env, expect=False).returncode != 0
+                evidence["tensorResidentExecutionPassed"] = True
+                evidence["tensorTrustedTlsPassed"] = True
+                evidence["tensorUntrustedAndWrongHostnameRejected"] = True
+                evidence["tensorPayloadUploadedBytes"] = tensor_result["transfers"]["uploadedPayloadBytes"]
             evidence["bundledRuntimeWithoutExternalJava"] = bundled
             if output:
                 output.parent.mkdir(parents=True, exist_ok=True)
@@ -149,5 +165,6 @@ if __name__ == "__main__":
     parser.add_argument("--cli", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--bundled-runtime", action="store_true")
+    parser.add_argument("--tensor", action="store_true", help="also qualify resident tensor execution")
     args = parser.parse_args()
-    qualify(args.cli.resolve(), args.output, args.bundled_runtime)
+    qualify(args.cli.resolve(), args.output, args.bundled_runtime, args.tensor)

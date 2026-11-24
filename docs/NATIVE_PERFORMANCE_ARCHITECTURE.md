@@ -1,5 +1,8 @@
 # Native performance architecture decision
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Owner-approved direction, 2026-10-08 (Asia/Dhaka): **C/C++ for kernels and accelerator
 adapters; Rust for cluster services.** Use a stable C ABI between layers. This is
 an architectural decision and ordered plan, not a shipped Rust control plane or a
@@ -21,10 +24,10 @@ parsing, avoid copies, reuse bounded buffers, fuse supported operators and compi
 against exact target/driver identity. Keep UI, scheduling, JSON and telemetry out of
 timed native kernels. Preserve finite intermediate rejection and ordered f32 sums;
 parallel reductions/fast-math need an explicit precision contract, not silent drift.
-The [precision/HPC plan](PRECISION_AND_HPC_PLAN.md) makes f64, BF16, binary128 and
+The precision/HPC plan (archived) makes f64, BF16, binary128 and
 arbitrary-precision providers separate implementation tracks. Wider accumulation
 in today's f32-output sum does not qualify those graph types. The separate Python
-[quantum simulator/SDK prototype](QUANTUM_EXTENSION_PLAN.md) does not change the
+quantum simulator/SDK prototype (archived) does not change the
 C/C++ kernel and Rust service direction or establish physical QPU performance.
 
 The ABI must specify caller ownership, capacities/strides, supported operators,

@@ -1,0 +1,18 @@
+{
+  "format": "hyperl-model-profile/1",
+  "profile": {
+    "adapter": "jax-llama-f32",
+    "settings": {
+      "directory": "/owner/models/f32-llama",
+      "manifest_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "backend": "tpu",
+      "device_ids": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "budget_bytes": 4294967296
+    }
+  }
+}

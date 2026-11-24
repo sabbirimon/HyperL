@@ -1,5 +1,8 @@
 # HyperL and the AMD ecosystem
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Vendor research snapshot: 2026-10-08; implementation audit: 2026-10-24.
 HyperL currently has HIP
 source emission and an original macOS Metal host preview; it has **no qualified
@@ -30,7 +33,7 @@ source does not prove that every AMD GPU, NPU or FPGA can run it.
 | Component | Purpose | HyperL delivery / plan |
 | --- | --- | --- |
 | ROCm driver/runtime | AMD GPU execution environment | No installer/driver control; later explicit provider detection and native dispatch |
-| HIP / HIPIFY | C++ portability and selected CUDA-source migration | Small generated HIP kernels only; future reviewed compile/load path and migration examples |
+| HIP / HIPIFY | C++ portability and selected CUDA-source migration | Bundled pinned HIPIFY produces HIP source. ROCm device dispatch needs qualification |
 | rocBLAS / hipBLAS / hipBLASLt | Matrix/math libraries | Planned operator/layout/dtype adapters; no matrix API in current f32 DAG |
 | MIOpen | Deep-learning primitives | Planned selected operator adapters and real reference-model tests |
 | RCCL | GPU collective communication | No RCCL GPU collective; bounded CPU split/map/gather exists separately |
@@ -49,7 +52,7 @@ entire AMD ecosystem is not one uniform permissive redistribution grant.
   versions/operators/models on an AMD target. HyperL's existing CPU tensor-copying
   preview does not qualify ROCm tensors, autograd or complete models.
 - **vLLM / SGLang:** reuse selected reviewed inference services in the later
-  [AI Services plan](AI_SERVICES_PLAN.md); no such service starts in this alpha.
+  AI Services plan (archived); no such service starts in this alpha.
 - **Triton Inference Server:** select a ROCm-enabled distribution and backend;
   do not assume any NVIDIA container runs unchanged on AMD. AMD documents its
   [ROCm server](https://rocm.docs.amd.com/projects/triton-inference-server/en/latest/)

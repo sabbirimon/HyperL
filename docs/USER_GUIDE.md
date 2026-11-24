@@ -1,9 +1,24 @@
 # HyperL installation, usage and programming guide
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
+For the current Rust executable, use the [native CLI and mapped tensor guide](NATIVE_ENGINE.md). JVM installation and workbench commands below describe historical releases.
+
+
+The 2026-11-02 model follow-up is documented in [native LLM sharding and fleet](MODEL_SHARDING_AND_FLEET.md)
+and [integrity/recovery controls](HIGH_ASSURANCE_BASELINE.md). Earlier vector-only
+limits below describe their original APIs; native/JAX model execution is separate.
+
+2026-11-02: see [logical devices and model storage](LOGICAL_DEVICES_AND_MODEL_STORAGE.md)
+for the new bounded resident tensor engine, named pools, scenario-aware model
+residency estimates and disk-backed fleet inventory. These additions do not qualify
+LLM execution, persistent VRAM residency or a million live devices.
+
 For the detailed alpha.6 tutorial, Python/C examples and diagrams, read
 [Programming with HyperL](PROGRAMMING_GUIDE.md). See also
 [build/test](BUILD_AND_TEST.md), [troubleshooting](TROUBLESHOOTING.md),
-[progress](PROGRESS_2026_10_24.md) and [all documentation](README.md).
+progress (archived) and [all documentation](README.md).
 
 Download/install examples target the published Apache-licensed alpha.5 release.
 Sections explicitly marked alpha.6 describe unreleased development additions,
@@ -18,7 +33,7 @@ For `0.1.0-alpha.5`, language `hyperl/1`, native CPU ABI 1. HyperL is standalone
 you do not need Meshlit, Android Studio, a phone or a cloud account to use its
 desktop CLI/GUI and portable C SDK. [Platform matrix](PLATFORMS.md) records what
 is tested. This alpha is a developer experiment, not a CUDA-compatible SDK or a
-complete AI/telecom runtime. [Architecture/roadmap](ARCHITECTURE_AND_ROADMAP.md)
+complete AI/telecom runtime. Architecture/roadmap (archived)
 describes the expansion and performance gates.
 
 ## 1. Choose an installation
@@ -549,7 +564,7 @@ bin/hyperl workspace-validate my-example.hyperl.json
 [IDE helpers](ide/README.md) include a local JSON schema and optional VS Code
 workspace/process task. They require your independently installed IDE/CLI and
 manual task invocation; no plugin or language server is silently installed.
-[UI design plan](UI_DESIGN_PLAN.md) records the visual system, performance and
+UI design plan (archived) records the visual system, performance and
 accessibility gates, native profiler/cluster workspace and full SDK/IDE roadmap.
 
 ## Advanced diagnostics and suggested fixes
@@ -577,9 +592,9 @@ static cross-platform painting; they do not use Apple's native Liquid Glass or b
 the desktop. Code and output remain opaque in either mode.
 
 [Native performance architecture](NATIVE_PERFORMANCE_ARCHITECTURE.md),
-[enterprise services](ENTERPRISE_AND_CLUSTER_PLAN.md),
-[single-phone mode](MOBILE_AND_EDGE_PLAN.md) and
-[Python-style developer experience](DEVELOPER_EXPERIENCE_PLAN.md) record later
+enterprise services (archived),
+single-phone mode (archived) and
+Python-style developer experience (archived) record later
 implementation plans. They do not change the current execution/platform contracts.
 
 The alpha.4 [Python/native library preview](LIBRARY_INTEROPERABILITY.md) contains
@@ -588,3 +603,25 @@ reviewed shared C library and selected Python environment; the full SDK remains 
 
 See the [software stack overview](SOFTWARE_STACK.md) for layers and deployment profiles,
 and [NVIDIA coverage](NVIDIA_COMPATIBILITY.md) for architecture/library qualification.
+
+## Model format support — 2026-11-06 development
+
+Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.
+
+## Optional Mesh-LLM endpoint — 2026-11-14
+
+See [Mesh-LLM setup and commands](MESH_LLM.md) for `mesh-models` and `mesh-chat`.
+The configured service owns routing and any native stage splitting; this API
+client does not certify those properties or control the HyperL native scheduler.
+
+## Experimental checkpoint edit
+
+With NumPy installed, the following command writes a new SafeTensors file. Choose the source digest from a trusted record and set the output budget in bytes. Supply a tensor name from the checkpoint and a positive clipping limit appropriate to that tensor. The command supports F16 and F32.
+
+```sh
+python -m hyperl.cluster model-edit-candidate source/model.safetensors candidate/model.safetensors \
+  --tensor transformer.wte.weight --clip 2.0 \
+  --source-sha256 "$SOURCE_SHA256" --max-bytes 104857600
+```
+
+Create the candidate directory first. To test generation, include the original model configuration, tokenizer and any required companion files in that directory. The command reports how many values changed and both file digests. Evaluate the candidate on separate examples before selecting it for inference. See the experiment and its limitations (archived).

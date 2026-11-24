@@ -1,0 +1,7 @@
+{
+  "format": "hyperl-fleet-client/1",
+  "origin": "https://scheduler.example.invalid:8443",
+  "certificate": "/owner/pki/tenant-a.pem",
+  "key_file": "/owner/pki/tenant-a.key",
+  "ca_file": "/owner/pki/ca.pem"
+}

@@ -1,5 +1,8 @@
 # Android GPU build and qualification
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Historical GPU qualification: 2026-10-08; documentation audit: 2026-10-24.
 The owner resumed single-phone GPU testing for the recorded run. A connected Samsung
 Galaxy A20s **SM-A207F**, Android 11/API 30, executes generated HyperL kernels

@@ -26,13 +26,6 @@ def outputs():
     assert [operations[n]['opcode'] for n in operations] == [1, 2, 3, 4]
     assert all(operations[n]['operands'] in (1, 2) for n in operations)
     banner = 'Generated from contracts/hyperl-1.json by scripts/generate_contract.py.'
-    kotlin = ['package org.hyperl', '', '// ' + banner, 'object HyperLContract {']
-    kotlin += [f'    const val {name} = {spec[key]}' for key, name in FIELDS.items()]
-    kotlin += [f'    const val LANGUAGE_FORMAT = {json.dumps(spec["languageFormat"])}',
-               f'    const val RUNTIME_REVISION = {json.dumps(spec["runtimeRevision"])}',
-               f'    const val IDENTIFIER_PATTERN = {json.dumps(spec["identifierPattern"])}']
-    pairs = ', '.join(f'"{n}" to {v["operands"]}' for n, v in operations.items())
-    kotlin += [f'    val operandCounts = mapOf({pairs})', '}', '']
     python = ['"""' + banner + '"""']
     python += [f'{name} = {spec[key]}' for key, name in FIELDS.items()]
     python += [f'LANGUAGE_FORMAT = {spec["languageFormat"]!r}',
@@ -65,7 +58,6 @@ def outputs():
     schema['properties']['inputs']['maxProperties'] = spec['maxInputs']
     schema['properties']['inputs']['additionalProperties']['maxItems'] = spec['maxVectorElements']
     return {
-        ROOT / 'src/main/kotlin/org/hyperl/HyperLContract.kt': '\n'.join(kotlin),
         ROOT / 'python/hyperl/contract.py': '\n'.join(python),
         ROOT / 'native/include/hyperl_contract.h': '\n'.join(header),
         schema_path: json.dumps(schema, indent=2) + '\n',

@@ -1,0 +1,15 @@
+HyperL Studio
+Extract the complete archive into one directory. Launch HyperL-Studio.exe on
+Windows or ./HyperL-Studio on macOS and Linux. Choose Local generation for
+offline CPU inference with the bundled GGUF starter. Run the launcher with
+--local-check to perform a short generation check. The native command-line
+engine is alongside Studio. Source-only builds require Python with Tk.
+
+Choose a local immutable SafeTensors file, enter its trusted SHA-256 and the
+activation and weight tensor names. Keep the file unchanged during execution.
+CPU plan previews report the native allocation budget. For GPU projection,
+find processors and select an adapter. Write each result to a new file.
+
+CUDA migration: choose a file or source folder and a target in Studio. The
+destination is a new folder. HyperL-Studio --accelerators lists routes and
+vendor SDK requirements. See docs/CUDA_MIGRATION.md in the source repository.

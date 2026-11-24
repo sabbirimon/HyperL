@@ -1,5 +1,8 @@
 # Local encrypted dataset formats
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Alpha.6 writes **HLM2** and reads authenticated **HLM1**. Both use AES-256-GCM
 with 12-byte random nonces and 128-bit tags, plus SHA-256 integrity checks.
 Keys are 32 bytes from `SecureRandom`, not passwords. A password KDF is therefore

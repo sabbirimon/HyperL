@@ -1,5 +1,8 @@
 # Troubleshooting and debugging HyperL
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Updated 2026-10-24. Match diagnostics to your exact commit/release. Alpha.5 binaries
 do not include all alpha.6 commands. [Programming guide](PROGRAMMING_GUIDE.md) ·
 [build runbook](BUILD_AND_TEST.md) · [validation evidence](VALIDATION.md).
@@ -63,7 +66,7 @@ there is no general HyperL `--debug` switch or source-level debugger yet.
 | CPU architecture detected but backend fails | Process architecture, ABI and compiled library must agree; detection alone is not execution qualification |
 
 FP64/BF16/binary128/arbitrary-precision arrays are not silently available. See the
-[precision roadmap](PRECISION_AND_HPC_PLAN.md); splitting a job does not improve
+precision roadmap (archived); splitting a job does not improve
 its arithmetic precision. A memory estimate is not a hard RSS or VRAM reservation.
 
 ## GPU, TPU, NPU, FPGA and ASIC
@@ -136,5 +139,5 @@ Include a minimal non-sensitive program/input, exact revision, platform, relevan
 runtime/driver versions, expected versus observed behavior and reproducible steps.
 Add a focused regression reproducing the defect, fix the owning layer, rerun that
 test plus affected contract checks, and record the result in
-[progress](PROGRESS_2026_10_24.md). Keep unrun targets explicit. General profiling,
+progress (archived). Keep unrun targets explicit. General profiling,
 semantic IDE debugging and production distributed tracing remain backlog items.

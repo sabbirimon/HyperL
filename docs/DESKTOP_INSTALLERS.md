@@ -1,5 +1,8 @@
 # macOS, Windows and Linux desktop installers
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Published release history: alpha.4 contains portable ZIP/TAR archives and
 requires Java 17+; alpha.5 added native **unsigned preview** installers with a
 bundled Java 21 runtime. The current alpha.6 development source is not a new
@@ -24,7 +27,7 @@ included; macOS includes the optional Metal bridge. GPU use still requires the
 explicit bridge path, exact device selection and correctness checks. The standalone
 [Android CPU probe](ANDROID_CROSS_PLATFORM_PROBE.md) is separate: these desktop
 packages cannot install on Android or iOS. Optional quantum provider SDKs are not
-bundled or configured by these installers; see [the Python prototype](QUANTUM_EXTENSION_PLAN.md).
+bundled or configured by these installers; see the Python prototype (archived).
 
 ## Verify, launch and remove
 
@@ -101,4 +104,4 @@ entries and runs weighted ReLU `[0,6,12]` **without JAVA_HOME or a PATH Java**.
 `packaging-report.json` records host, architecture, JDK, hashes, smoke results and
 unrun install/GPU gates. Review this alongside CI. A production release also needs
 signed provenance, supported OS baselines, dependency review and real lifecycle
-tests described in [the production plan](PRODUCTION_AND_MESHLIT_PLAN.md).
+tests described in the production plan (archived).

@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-06",
+  "scope": "standalone HyperL source/CLI; Studio integration pending",
+  "pythonEnvironment": "requirements/jax-test.txt; Python3.12",
+  "tests": {
+    "pythonPassed": 106,
+    "pythonSkipped": 0,
+    "nativePassed": 5,
+    "gradle": "test installDist distZip successful; JVM tests up to date"
+  },
+  "numericalEvidence": "Synthetic standard Llama F32/F16/BF16 converted logits and greedy tokens match independent NumPy reference; four logical CPU devices for existing JAX tests",
+  "notQualified": [
+    "arbitrary HuggingFace architectures",
+    "pretrained SafeTensors generation",
+    "ONNX/LiteRT/CoreML execution adapters",
+    "GPU/TPU execution",
+    "physical mixed-device sharding for imported models",
+    "Studio GUI import"
+  ],
+  "sourceSha256": {
+    "python/hyperl/model_formats.py": "9a18ca3851a22a49489e9bcdb45734da11dc7a40a321223fb125aafb75bb51a0",
+    "python/hyperl/safetensors_import.py": "8983373624062f4274071e044cecbcae44d8c19275432a3eb9bec323bff7ae33",
+    "python/hyperl/cluster.py": "39dc8dab8ba7f4decb24c26ed2a3a43eb613c068a971330ae360d379d7f084c9",
+    "scripts/test_model_formats.py": "6a4654c83ea181334230b8612df9ba2532690714f6ec382cf628e733e774585b",
+    "scripts/test_safetensors_import.py": "e7c5b7553faf3fd0b5e12cbcb64770bda20dd4ab3d827146f92d9ec1a619546b"
+  },
+  "packageCheck": {
+    "installedAndZipMatchFinalSource": [
+      "python/hyperl/model_formats.py",
+      "python/hyperl/safetensors_import.py",
+      "python/hyperl/cluster.py",
+      "docs/MODEL_FORMATS_2026-11-06.md"
+    ],
+    "installedCliObservation": {
+      "format": "hyperl-model-inspection/1",
+      "registry": "hyperl-model-formats/1",
+      "detected_format": "gguf",
+      "validation": "header-only",
+      "details": {
+        "version": 3,
+        "tensor_count": 398,
+        "metadata_count": 28
+      },
+      "execution_ready": false,
+      "sharding_qualified": false,
+      "adapter": "explicit llama.cpp adapter",
+      "opaque_storage_eligible": true,
+      "payload_values_checked": false,
+      "payload_integrity_verified": false,
+      "limits": "Inspection does not execute models, verify publisher provenance, qualify numerical behavior or reserve memory. Opaque storage retains its separate quotas and integrity checks. Inspection is not an immutable file identity guarantee; paths can change concurrently."
+    }
+  }
+}

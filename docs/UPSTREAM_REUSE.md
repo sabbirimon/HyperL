@@ -1,5 +1,8 @@
 # Reuse reviewed upstream components
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The owner authorizes using existing web code/methods. Prefer maintained upstream
 libraries and supported interfaces over copying implementations. Pin a release or
 commit, preserve licenses/notices and source provenance, review transitive/native
@@ -31,7 +34,7 @@ it is not intended to replace optimized math/compiler libraries.
 | OAI/srsRAN/Open5GS | Proven telecom lab stacks/interfaces | Separate licensed components/services; not copied into Apache tree or certified by HyperL |
 | Odysseus | Optional operator workspace and design reference | AGPL project, separately reviewed in Meshlit; no source/assets bundled |
 
-The 2026-10-24 [quantum prototype](QUANTUM_EXTENSION_PLAN.md) adds original bounded
+The 2026-10-24 quantum prototype (archived) adds original bounded
 stdlib state-vector simulation and thin optional IBM, Cirq/Google, Azure IonQ and
 OriginQ SDK interfaces. It does not copy provider implementations or install their
 SDKs automatically. Provider fixture tests are not SDK acceptance or physical QPU

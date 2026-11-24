@@ -1,0 +1,21 @@
+[package]
+name = "hyperl"
+version = "0.2.0"
+edition = "2021"
+authors = ["Sabbir Hassan Imon <sabbirimon@gmail.com>"]
+description = "Memory-aware, cross-platform native inference runtime for small-to-mid models on consumer hardware"
+license = "Apache-2.0"
+repository = "https://github.com/sabbirimon/HyperL"
+keywords = ["llm", "inference", "simd", "quantization", "edge-ai"]
+categories = ["science", "hardware-support", "embedded"]
+
+[dependencies]
+memmap2 = "0.9"
+
+[build-dependencies]
+cc = "1.0"
+
+[lib]
+name = "hyperl"
+path = "src/lib.rs"
+crate-type = ["lib", "cdylib"]

@@ -1,5 +1,8 @@
 # Artifact signatures and encrypted datasets
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Updated 2026-10-24. This guide describes the implemented JVM API and local dataset
 CLI. Cryptography is separate from HyperL's f32 program language and sharding
 planner. No CUDA/tensor backend, distributed trust service, crypto accelerator or
@@ -40,7 +43,7 @@ returning; blocking filesystem/JCA calls need not stop immediately. Trusted pare
 directories and control of the file after hashing remain the caller's responsibility.
 This API does not change HLAS v1, HLM2, worker digests or their wire contracts.
 Longer hashes are not encryption, trusted signatures or post-quantum key exchange.
-See [the cryptography evolution plan](CRYPTOGRAPHY_EVOLUTION_PLAN.md) for the
+See the cryptography evolution plan (archived) for the
 ML-KEM/ML-DSA/SLH-DSA provider gates and explicit versioned migration rules.
 
 ## Ed25519 artifact API
@@ -201,7 +204,7 @@ typed complex vector operators, full model sharding and production fleet identit
 management remain separate milestones. Existing bounded TLS worker transport
 has its own tests and independent-host/hardware acceptance gates.
 
-The separate [quantum simulator/provider interfaces](QUANTUM_EXTENSION_PLAN.md)
+The separate quantum simulator/provider interfaces (archived)
 do not replace these cryptographic algorithms or add a post-quantum cryptography
 implementation. Simulator complex values are computational state, not secret-key
 storage or a general-purpose crypto primitive. See the

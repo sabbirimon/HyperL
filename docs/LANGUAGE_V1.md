@@ -1,20 +1,23 @@
 # HyperL v1 implementation and compatibility
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Historical foundation record from Meshlit. For the standalone build/current status,
-see [USER_GUIDE.md](USER_GUIDE.md), [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_AND_ROADMAP.md)
+see [USER_GUIDE.md](USER_GUIDE.md), ARCHITECTURE_AND_ROADMAP.md (archived)
 and [VALIDATION.md](VALIDATION.md). Android/base-branch references below are provenance,
 not standalone installation instructions.
 
 ## Current standalone contract boundary
 
-The current standalone build packages the JVM tools and a separate native C/Python
+The historical standalone build packaged the JVM tools and a separate native C/Python
 path; explicit OpenCL/Metal adapters and bounded distributed vector execution have
 their own qualification records. See the [programming guide](PROGRAMMING_GUIDE.md),
-[distributed contract](DISTRIBUTED_EXECUTION.md) and [precision plan](PRECISION_AND_HPC_PLAN.md).
+[distributed contract](DISTRIBUTED_EXECUTION.md) and precision plan (archived).
 The separate Python quantum circuit/simulator contract and optional provider bridges
 do not add quantum instructions, complex types or new dtypes to `hyperl/1`.
 Provider bridges have SDK-double contract tests; installed SDK and QPU qualification
-remain separate. See the [quantum boundary and roadmap](QUANTUM_EXTENSION_PLAN.md).
+remain separate. See the quantum boundary and roadmap (archived).
 
 ## Historical Meshlit foundation snapshot
 

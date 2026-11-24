@@ -1,5 +1,32 @@
 # Licence scope and history
 
+The 2026-11-23 native redesign, HLZ1 framing, StableHLO integration, tests and research index tooling use the HyperL Community and Enterprise License for new material. Dependencies retain their own grants. The engine lockfile pins the Rust packages. Research links point to their original publishers.
+
+
+
+The 2026-11-14 Mesh-LLM API adapter is original HyperL Community/Enterprise
+material. Mesh-LLM remains an independently installed Apache-2.0 project; no
+upstream engine source, model or native executable is incorporated. Its earlier
+and dependency grants are unchanged. Meshlit's separate original API preset does
+not copy this adapter implementation.
+
+The 2026-11-02 native-model adapter, original JAX decoder, authenticated fleet
+scheduler/audit and original Cauchy erasure codec are newly covered Community/
+Enterprise additions. External llama.cpp remains MIT; JAX and its dependencies
+retain their own grants. No upstream engine source or models are copied into
+HyperL, and earlier HyperL Apache grants remain unchanged.
+
+The 2026-11-02 logical tensor runtime/protocol, Python model storage/residency and
+fleet directory additions use the existing Community/Enterprise terms for new
+material. Existing vector/native/wire contracts and earlier Apache grants remain
+unchanged. No restricted changes are ported to Meshlit.
+
+The 2026-10-29 native CPU buffer-liveness additions, allocator regression test and
+before/after comparison harness use the existing Community/Enterprise terms for
+newly covered material. Earlier Apache grants for the original native runtime
+remain unchanged. These changes are not automatically copied into Meshlit's
+separate Apache port.
+
 New October 24 quantum modules, SHA-384/512 hashing API and documentation additions
 follow the existing Community/Enterprise terms for newly covered material. Optional
 provider SDKs remain separately installed and licensed; their source is not copied.

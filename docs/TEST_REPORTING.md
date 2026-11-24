@@ -1,5 +1,8 @@
 # Share HyperL test results
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 HyperL welcomes reproducible test results, failed runs and design feedback from
 individual developers, research labs, hardware vendors and large organizations.
 Open a [GitHub issue](https://github.com/sabbirimon/HyperL/issues/new/choose) with
@@ -67,7 +70,7 @@ For large testbeds, add tenant/policy scope, concurrent users/jobs, scheduler,
 identity method, storage locality, fault-injection procedure and data residency
 only if those services were actually deployed. Current HyperL source does not
 supply a production enterprise control plane; see the
-[enterprise delivery plan](ENTERPRISE_AND_CLUSTER_PLAN.md).
+enterprise delivery plan (archived).
 
 Remove tokens, private keys, internal hostnames/IPs, customer data, proprietary
 model weights and personal prompts. Use synthetic or approved public inputs when

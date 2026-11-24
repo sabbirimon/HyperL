@@ -1,5 +1,8 @@
 # Code suggestions, error detection and reviewed fixes
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The workbench **Analyze** action and CLI `diagnose` analyze `hyperl/1` programs
 locally. No LLM account, network request or downloaded compiler is required.
 
@@ -57,9 +60,9 @@ versioned language server to the built-in editor, VS Code and JetBrains. Qualifi
 compiler/provider adapters add their own diagnostics, debugger/profiler and tensor/
 model conformance. Optional AI suggestions will need owner-configured providers,
 secret isolation, explicit context sharing and reviewed diffs/tests. The full SDK
-remains a later milestone. See [developer tools](DEVELOPER_TOOLS_PLAN.md).
+remains a later milestone. See developer tools (archived).
 
 The separate quantum circuit validator and provider permissions are Python APIs;
 `diagnose` does not compile quantum circuits, check provider access or approve paid
 submissions. [Programming examples](PROGRAMMING_GUIDE.md) and
-[quantum scope](QUANTUM_EXTENSION_PLAN.md) document those independent boundaries.
+quantum scope (archived) document those independent boundaries.

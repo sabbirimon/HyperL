@@ -1,0 +1,33 @@
+{
+  "format": "hyperl-fleet-service/1",
+  "database": "/owner/fleet/jobs.sqlite",
+  "audit_key_file": "/owner/keys/audit.key",
+  "host": "127.0.0.1",
+  "port": 8443,
+  "certificate": "/owner/pki/scheduler.pem",
+  "key_file": "/owner/pki/scheduler.key",
+  "ca_file": "/owner/pki/ca.pem",
+  "max_connections": 128,
+  "max_jobs": 10000000,
+  "tenant_queue_quota": 1000000,
+  "cells": [
+    {
+      "id": "cell-a",
+      "instance": "owner-selected-instance",
+      "epoch": 1,
+      "pools": [
+        "combined"
+      ],
+      "profiles": [
+        "model-a"
+      ],
+      "slots": 1
+    }
+  ],
+  "model_profiles": {
+    "model-a": {
+      "adapter": "llama.cpp",
+      "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  }
+}

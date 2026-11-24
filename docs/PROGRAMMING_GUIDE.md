@@ -1,5 +1,8 @@
 # Programming with HyperL
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
+
+
 Updated 2026-10-24 for **alpha.6 development source**, `hyperl/1` and C ABI 1.
 Published alpha.5 packages do not include all examples below. Start with the
 [installation guide](USER_GUIDE.md); use the [documentation index](README.md) to
@@ -92,7 +95,7 @@ flowchart LR
 - Graph `sum` preserves ordered f32 addition. `sum-precise` is a separate primitive
   using compensated binary64 accumulation followed by one finite-f32 rounding.
 
-See [the language contract](LANGUAGE_V1.md) and [precision plan](PRECISION_AND_HPC_PLAN.md).
+See [the language contract](LANGUAGE_V1.md) and precision plan (archived).
 FP64 arrays, BF16, IEEE binary128 and arbitrary precision are future typed execution
 contracts. Python quantum complex amplitudes do not add these types to `hyperl/1`.
 
@@ -302,7 +305,7 @@ flowchart LR
     J --> X[Caller requests provider cancellation]
 ```
 
-See [quantum APIs and provider examples](QUANTUM_EXTENSION_PLAN.md) and
+See quantum APIs and provider examples (archived) and
 [OriginQ HTTPS and version requirements](ORIGINQ_ADAPTER.md). UUIDs correlate jobs;
 they do not prevent duplicate billing. Reconcile uncertain submissions before retrying.
 
@@ -320,7 +323,7 @@ signatures are described in [cryptography](CRYPTOGRAPHY.md). Hashing detects cha
 relative to a trusted digest; signatures additionally bind to an independently
 trusted publisher key. Neither alone authorizes code execution.
 
-[Post-quantum migration](CRYPTOGRAPHY_EVOLUTION_PLAN.md) is a provider qualification
+Post-quantum migration (archived) is a provider qualification
 plan. Quantum simulation does not implement post-quantum encryption/signatures.
 
 ## 10. General-purpose and special-purpose applications
@@ -339,8 +342,8 @@ Keep latency, throughput, capacity, energy and precision goals explicit.
 
 Start with [troubleshooting](TROUBLESHOOTING.md), then the
 [build and validation runbook](BUILD_AND_TEST.md). The
-[progress record](PROGRESS_2026_10_24.md) explains fixes and evidence; the
-[agent backlog](AGENT_BACKLOG.md) records pending work and acceptance gates.
+progress record (archived) explains fixes and evidence; the
+agent backlog (archived) records pending work and acceptance gates.
 New operations require a versioned contract, shape/numeric/memory rules, CPU oracle,
 backend-specific tests and honest unsupported results. New hardware requires an
 actual adapter and measurement; adding an enum or source emitter is not sufficient.

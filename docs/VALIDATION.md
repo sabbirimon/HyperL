@@ -1,5 +1,196 @@
 # Standalone alpha validation
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) records the translated pointwise add test on physical Intel and AMD GPUs, and the independently profiled ONNX CPU run.
+
+
+## Desktop projection benchmark
+
+On an Intel Core i9 MacBook Pro, the 0.1 baseline took 76.17 ms and the 0.2 candidate took 44.59 ms for an F32 projection of 64 × 512 inputs by 256 × 512 weights. Both release executables used one CPU worker. These medians cover 11 alternating runs per binary after warm-up and include process startup, file verification, computation and output publication. Both produced the same output SHA-256. Reproduce with `python3 benchmarks/compare_projection.py BASELINE CANDIDATE`. Other shapes, machines and GPU workloads require their own measurements.
+
+## Native redesign, 2026-11-23
+
+Six Rust integration tests passed across CPU projections and HLZ1 archives. Separate physical runs on the AMD Radeon Pro 560X and Intel UHD Graphics 630 each computed an [11,17] by [13,17] transposed projection via Metal. All 143 results matched an independently accumulated f64 oracle within 1e-5. Release and ASan/UBSan CTest each passed six cases. Existing Rust binding tests passed. The pinned JAX suite ran 124 Python tests with one IREE skip on Intel macOS. Verified StableHLO matmul/GEMV and attention executed on CPU through XLA. The Intel host could not execute the ARM-only IREE command embedded in the wheel. Linux CI compiled and executed an F32 matmul through IREE local-task and compiled a BF16-input variant. All five native, sanitizer and compiler jobs passed on the [implementation commit](https://github.com/sabbirimon/HyperL/actions/runs/45163599185). No NVIDIA hardware was available for a matched CUDA comparison.
+
+
+
+## Optional Mesh-LLM adapter — 2026-11-14
+
+15 new HTTP/TLS/CLI contract checks pass, including bounded input and response,
+redirect/proxy rejection, authenticated TLS, timeout, cancellation and malformed
+provider envelopes. The complete Python suite passes **121/121**, zero skips,
+with pinned JAX and four logical CPU devices. Gradle test/installDist/distZip
+succeeded; unchanged JVM tests were up-to-date. No native kernel changed, so
+native hardware qualification was not rerun. These fixtures are not a running
+Mesh/Skippy model or physical peer deployment. See [adapter guide](MESH_LLM.md).
+
+Intel Mac live qualification on 14 November: the reviewed release contains no
+x86_64 macOS host/runtime asset, and the required native build toolchain was not
+available at the probe. The real local catalog request failed explicitly because
+no Mesh daemon was running. No fake catalog or alternate engine was substituted.
+No Samsung was connected for a new host test. [Recorded host/probe evidence](evidence/mesh-llm-intel-host-20261114.json).
+Next live gate: an independently configured supported remote host or a qualified
+Intel native source build, followed by actual generation and placement checks.
+
+## Native model sharding, fleet and resilience follow-up — 2026-11-02
+
+The optional native model builder passes with clean independently installed
+llama.cpp revision `4df29be4f4c3673f428170fda944a5b19f743bb8`, recording executable/
+library hashes. It builds the selected CPU/RPC backends without a UI/network model
+download. Local GGUF weights were already present; no model or engine binary is
+redistributed. [Provenance](LLM_BACKEND_PROVENANCE.json).
+
+**Actual pretrained model:** SmolLM2 135M Q4_K_M, 105,454,432 bytes, SHA-256
+`2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d`.
+The final native fixture produces the same **16 greedy tokens and text** on the
+single local CPU reference, two independent native CPU workers, two mTLS-wrapped
+worker routes, and two actual jobs submitted through the authenticated pull service.
+Observed assignments give both workers distinct model layers and nonzero KV buffers
+(12.0 and 10.5 MiB). Both workers execute native graphs/recomputations. Killing one
+worker after generation dispatch rejects the result. Profiles and result publication
+bind an owner-registered model digest/adapter. No uncertain generation is replayed.
+[Sanitized evidence](evidence/model-sharding-2026-11-02.json).
+
+An initial automatic-kernel 135M comparison diverged at token 16. The adapter now
+fixes f32 KV, flash attention off and repacking off; the final comparisons above
+pass. RPC route inventory names/log punctuation and strict Python 3.15 certificate
+extensions were also corrected before the passing fixture. These tests cover one
+prompt/seed and a short output, not every model/context, all numerical outputs,
+physical mixed-host/GPU execution or a speedup. Reported 3.557 s startup and 0.333 s
+request time are diagnostic single-run scopes, not a comparative benchmark.
+
+**JAX:** six actual tests pass in the isolated pinned JAX/JAXlib 0.4.38 environment,
+using four **logical CPU devices on one physical host**. They compare generated
+tokens/logits to an independent full-prefix NumPy reference; compare one/four-device
+weights/KV; execute the trusted on-disk model loader; save/restore token-boundary
+KV/logits and continue generation; reject tamper, invalid shapes/budgets, context
+exhaustion, cancellation and unavailable TPU selection. Dot products request
+`Precision.HIGHEST`; dtype is f32. No physical TPU is available. The owner explicitly
+selected adapter/tests without hardware; GPU/TPU/multi-controller qualification is
+unrun. Checkpoint recovery is same-backend and single-controller only.
+
+**General checks:** 101 JVM cases retain 99 passes and two unavailable-GPU skips.
+The standard Python script suite has **85 methods: 80 pass and five optional JAX
+execution cases skip** in the default interpreter; all six JAX methods separately
+pass in the pinned interpreter (the basic contract case overlaps). No failed/error
+case remains. Strict Release native CTest passes five cases, including the new
+Cauchy erasure contract and a Metal discovery case. Debug ASan/UBSan also passes
+five cases: four C cases are instrumented; Metal discovery is not. Local leak
+detection is disabled because this macOS sanitizer runtime does not support it;
+Ubuntu CI retains its own leak checks. Discovery is not GPU execution.
+
+Erasure tests use an independent polynomial-arithmetic parity oracle, exhaustive
+small two-fragment loss sets, larger seeded loss patterns, alias/bounds/cancel checks,
+actual corrupted/missing model blobs, trusted-manifest rejection and full-artifact
+recovery. HMAC audit tests cover key/algorithm downgrade, tampering, external heads,
+quota exhaustion and transaction rollback. Fleet tests exercise real mTLS role
+separation, cancellation/result fencing, duplicate keys, restart/epoch/profile
+revocation, concurrent claims and bounded pagination. Original independent JVM
+vector/tensor/TLS qualification also passes again with two CPU processes/eight
+shards/4,096 elements, trusted TLS and rejection of wrong-host/untrusted certificates.
+
+**Scale:** the final authenticated synthetic queue run stores 1,000,000 jobs in
+1,000-record batches, with 1,000 claim/start/finish cycles and 4,001 verified HMAC
+records. Insert time is 256.48 s; the transitions take 2.38 s. Database size is
+534,609,920 bytes and peak process RSS is 24,461,312 bytes. No live devices are
+connected by this benchmark. Earlier inventory/storage diagnostics remain below.
+[Sanitized queue evidence](evidence/fleet-queue-2026-11-02.json).
+
+Remaining gates: physical multi-host/architecture and GPU/TPU tests, broader model
+numerics/load, PKI/revocation/ingress operations, database replication, coordinated
+multi-controller checkpoint recovery and million-device live deployment. No formal
+NIST/FIPS/defence certification or hardware ECC is implied by software integrity,
+erasure repair or the [control mapping](HIGH_ASSURANCE_BASELINE.md). Rust is not
+installed on this host; native C/C++/XLA and native SQLite handle the new compute/
+storage work. No Meshlit tracked source, cloud resource, driver, release or installer
+publication was changed. Current-head remote CI is separate from these local results.
+
+
+## Logical devices, model storage and fleet directory — 2026-11-02
+
+The current local `test installDist distZip distTar` run passes in 41 seconds:
+**101 JVM cases: 99 passed, two unavailable-GPU skips, zero failures/errors**.
+Ten new tensor tests use actual loopback HTTP workers for resident chained compute,
+no repeated input uploads, named pools and cross-pool replication, exact outputs,
+immutable/CAS versions, ownership snapshots, shapes, bounded no-cache execution,
+incorrect-output rejection, cancellation/dependencies, directory-instance fences,
+worker loss, lease/credit cleanup and frame/digest rejection. GPU adapters are the
+existing checked paths; no new hardware execution is inferred from CPU fixtures.
+
+**65 Python script tests pass**. Twelve new cases cover streamed/deduplicated
+artifact import/export, reopen, quota/cancellation/tamper/order checks, bounded RAM
+cache, automatic/manual residency, state/staging/transfer accounting, GQA/quantized
+size estimates, incompatible backends/physical aliases, persistent fleet pages,
+pools, expiry, revocation, restart epochs and remote-origin rejection. Generated
+contract files match. Strict Release CMake/CTest passes **four cases**: three CPU
+checks and Metal discovery. The discovery check is not GPU execution.
+
+A synthetic **one-million-device inventory** inserts bounded 1,000-record batches
+in 46.24 s and pages all records in 16.16 s. Database size is 199,344,128 bytes;
+peak process RSS is 23,355,392 bytes. A 16-node cell and lease expiry are checked.
+There are **zero live device connections**. Separately, a **256 MiB synthetic
+artifact** streams through 64 checked chunks, importing in 6.94 s and exporting in
+9.62 s, with 30,044,160-byte peak process RSS and an independently checked complete
+SHA-256. These single-host diagnostics are not throughput comparisons or model
+inference evidence. [Sanitized measurements](evidence/logical-device-scale-2026-11-02.json).
+
+The installed CLI qualification runs two independent JVM CPU workers, eight shards,
+4,096 elements, original distributed execution and resident tensor execution with
+exact local-reference agreement. The tensor path uploads exactly 32,768 input
+payload bytes. Trusted TLS passes; untrusted certificates and wrong hostnames are
+rejected for both paths. All fixture workers/credentials are temporary and cleaned
+up. This remains one-host loopback HTTP/TLS evidence, not physical mixed-device
+qualification. The CI workflow now requests the tensor fixture; remote current-head
+CI has not been run from this workspace.
+
+Review found that caller-mutated returned shape lists could alter internal tensor
+metadata. The allocator now stores independent shape snapshots, job observations
+copy descriptors, and a regression case proves directory isolation. The final code
+suite and CLI qualification include this fix.
+
+Current implementation limits: the coordinator ledger is in-memory; worker chunks
+are in host RAM with expiring leases; model residency is advisory and cannot run
+LLMs. TPU/CUDA/NPU model backends, persistent VRAM buffers, collectives, hierarchical
+live fleet scheduling and durable cross-cell recovery remain open. Rust was not
+installed, so no Rust service is claimed. No physical phone/GPU, model checkpoint,
+live Internet fleet, installer publication or new release was exercised.
+[Usage and contracts](LOGICAL_DEVICES_AND_MODEL_STORAGE.md).
+
+
+## Native buffer lifetime improvement — 2026-10-29
+
+The C99 executor now frees a private snapshot/intermediate after its last use.
+The selected output survives until every instruction has completed validation.
+No dead instruction is skipped; unused nonfinite values/overflow still reject the
+request. The ordered f32/precise-sum contracts, ABI and conservative total-retention
+admission cap are unchanged. This is a native implementation improvement; the
+Kotlin reference and distributed workers do not automatically become this C path.
+
+Validation: four Release CTest cases pass (three CPU cases plus Metal discovery);
+all three CPU cases also pass ASan/UBSan. The new allocator fixture covers fanout,
+input-as-output, duplicate operands, allocation failures, cancellation and output
+aliasing. Its 12-step, 4096-element chain peaks at 32,768 live native payload bytes,
+versus 212,992 bytes required when all 13 buffers are retained (84.6% lower). Stack,
+allocator metadata, caller buffers and process RSS are outside that count.
+
+The explicit two-library comparison passes 500 generated DAG/error/cancellation
+cases with matching status codes and bitwise outputs. Nine 65,536-element timing
+samples had median 36.21 ms before and 36.43 ms after, including Python/ctypes
+setup/copies. A separate native build was active on the host; these are diagnostic
+timings, not a speedup claim. See `scripts/compare_cpu_liveness.py`.
+
+JVM `test installDist distZip` passes: 91 cases, 89 passed and two unavailable-GPU
+skips. All 53 Python script tests pass. Existing distributed qualification again
+passes two independent JVM workers/eight shards/4096 elements, trusted TLS and
+rejection of untrusted certificates/wrong hostnames on this Mac. That fixture uses
+the Kotlin CPU reference, not the optimized native library. No physical phone or
+new multi-host/GPU benchmark was run. No release or installer publication.
+
+
+
+## Exact reduction oracle — 2026-10-26
+
+[Research assessment](MATH_RESEARCH_2026_10_26.md) records 200 seeded exact-arithmetic comparison fixtures and three boundary cases. JVM 91 tests (two skipped), native 3 and Python 53 pass; installDist/distZip pass. No numerical/wire/backend change or new hardware proof.
+
 ## Quantum, hashing and documentation increment — 2026-10-24
 
 Final local `test installDist distZip distTar` passes in **25 seconds**:
@@ -29,8 +220,8 @@ The preceding `07b8d51` source passed all five
 four [installer build/smoke jobs](https://github.com/sabbirimon/HyperL/actions/runs/40046536114).
 Publication was skipped. Those remote runs do not qualify the later quantum/hash
 commit; consult CI for its exact head. No alpha.6 release or QPU/hyperscale performance
-claim is made. See [progress and fixes](PROGRESS_2026_10_24.md) and
-[remaining feature gates](AGENT_BACKLOG.md).
+claim is made. See progress and fixes (archived) and
+remaining feature gates (archived).
 
 ## Enterprise capability negotiation — 2026-10-24
 
@@ -329,7 +520,7 @@ GPU qualification is inferred from the app image. Historical alpha.4 Radeon
 Terminal results remain exactly scoped in [their hardware report](A1990_METAL_VALIDATION.md).
 
 See [native installers](DESKTOP_INSTALLERS.md), [twelve-library use cases](USE_CASES.md)
-and [production/Meshlit gates](PRODUCTION_AND_MESHLIT_PLAN.md). The Meshlit source
+and production/Meshlit gates (archived). The Meshlit source
 port is reviewed and tested separately in its own repository; phones remain paused.
 
 Alpha.5 native installers are now published. The immutable tag source is
@@ -401,7 +592,7 @@ qualified GPU/NPU/FPGA runtimes, distributed scheduler, automatic spill, large-n
 capacity, kernel/fabric performance, telecom stack and certification remain later.
 
 See [memory boundaries](MEMORY.md), [platform matrix](PLATFORMS.md),
-[programming/install guide](USER_GUIDE.md) and [ordered roadmap](ARCHITECTURE_AND_ROADMAP.md).
+[programming/install guide](USER_GUIDE.md) and ordered roadmap (archived).
 
 ## Developer workbench increment — alpha.2
 
@@ -507,7 +698,7 @@ The actual Swing CPU panel renders correctly at 1280x820 and 1000x700 with thin
 header/status strips, retaining approximately 75 additional pixels of editor
 height versus alpha.3. Headless rendering does not qualify native GUI interaction.
 The [platform overview](SOFTWARE_STACK.md), [AMD matrix](AMD_COMPATIBILITY.md),
-[NVIDIA matrix](NVIDIA_COMPATIBILITY.md) and [AI Services plan](AI_SERVICES_PLAN.md)
+[NVIDIA matrix](NVIDIA_COMPATIBILITY.md) and AI Services plan (archived)
 record implementation status separately from proposed enterprise/model services.
 
 ## Post-alpha.4 Metal JSON contract fix — 2026-10-08
@@ -557,3 +748,9 @@ one run does not establish throughput or a CPU speedup. The restricted agent/JVM
 test context's two GPU skips remain separate from this owner's hardware run.
 This qualifies these workloads on this exact Radeon, not all AMD devices, Intel
 UHD 630 execution, full models, ROCm/HIP or cluster capacity. Phone tests stay paused.
+
+## Model format support — 2026-11-06 development
+
+Read [format support and commands](MODEL_FORMATS_2026-11-06.md) for the new bounded inspector and standard-Llama SafeTensors importer into the existing JAX decoder. 106 Python tests passed with JAX enabled, including synthetic conversion/logit/token equivalence. Other format candidates remain adapter-required; this is not universal model or hardware qualification.
+
+On 2026-11-24 the protected store repaired a corrupted Flax checkpoint fragment, exported the original digest and decoded the original four tokens. In a separate SafeTensors trial, a human chose an edit that restored one known reply from a damaged GPT-2 fixture. The Python suite ran 131 cases with two skips. All six CTest cases passed. The GPU-feature Rust suite passed with the physical GPU projection case ignored. Experiment and limits (archived)

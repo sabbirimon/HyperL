@@ -1,5 +1,8 @@
 # Android and desktop CPU qualification probe
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Prepared 2026-10-24 (Asia/Dhaka). This guide describes the standalone foreground
 probe and its reproducible physical-device test. Qualification results are recorded
 separately below; building or installing the APK is not an execution result.
@@ -11,7 +14,7 @@ new `shard-plan` cost estimator. The test uses a fixed half-and-half split, not 
 estimator's placement algorithm.
 
 The dated APK hashes and measurements in this guide are preserved snapshots.
-Later negotiation, cryptography or [quantum Python](QUANTUM_EXTENSION_PLAN.md)
+Later negotiation, cryptography or quantum Python (archived)
 source additions do not retroactively become capabilities of that tested APK.
 
 ## 1. Exact scope

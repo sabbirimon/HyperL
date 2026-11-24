@@ -1,0 +1,21 @@
+{
+  "format": "hyperl-fleet-queue-qualification/1",
+  "date": "2026-11-02",
+  "synthetic": true,
+  "live_devices": 0,
+  "jobs": 1000000,
+  "claimed_started_finished": 1000,
+  "insert_seconds": 256.48150740901474,
+  "dispatch_seconds": 2.383052012999542,
+  "states": {
+    "READY": 999000,
+    "SUCCEEDED": 1000
+  },
+  "database_bytes": 534609920,
+  "peak_process_rss_bytes": 24461312,
+  "audit": {
+    "algorithm": "HMAC-SHA256/1",
+    "verified_events": 4001
+  },
+  "speedup_claimed": false
+}

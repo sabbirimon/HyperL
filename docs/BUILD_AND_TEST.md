@@ -1,5 +1,27 @@
 # Build, test and package HyperL
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md) includes target-specific qualification commands. Run `python scripts/test_cuda_migrate.py` for translator regression tests.
+
+
+For the full desktop preview, CI builds the pinned llama.cpp CPU server and packages Studio with its UI runtime and verified Qwen2.5 0.5B weights. Each host runs the extracted launcher with `--local-check`. For Android, run `python3 scripts/package_android_cpu.py "$ANDROID_HOME" HyperL-unsigned.apk` with Android 36, build-tools 37.0.0 and NDK 28.2.13676358. Sign a development copy with apksigner. The APK includes native CPU libraries for ARM64, ARMv7 with NEON, x86, x86-64 and experimental RISC-V 64. The first four target Android API 26 and RISC-V uses the NDK API 35 sysroot. The diagnostic checks 32 native matrix-vector products. The native engine test executable passed all 92 checks on ARM64 and ARMv7 on a Samsung phone and on ARM64 on the Sharp A202SH. The RISC-V library has been cross-compiled only. An ARM64 A202SH running Android API 34 passed the check with eight CPUs visible to the process.
+
+## Native redesign build
+
+Use the standalone Rust and C build commands below for this branch. Sections about Gradle or the desktop installer describe earlier releases.
+
+```sh
+cargo test --locked --features gpu --manifest-path engine/Cargo.toml
+cargo test --manifest-path crates/hyperl/Cargo.toml
+cmake -S . -B build/native -DCMAKE_BUILD_TYPE=Release
+cmake --build build/native --config Release
+ctest --test-dir build/native -C Release --output-on-failure
+python3 scripts/generate_contract.py --check
+XLA_FLAGS=--xla_force_host_platform_device_count=4 python3 -m unittest discover -s scripts -p 'test_*.py' -v
+```
+
+With the pinned compiler dependencies on Linux, set `HYPERL_TEST_IREE=1` for the IREE CPU execution test. Use an exact `HYPERL_GPU_ADAPTER` and filter the Rust tests with `physical_gpu_projection -- --ignored --nocapture` for actual GPU qualification.
+
+
 Updated 2026-10-24. Work from the standalone HyperL checkout. This runbook does not
 build Meshlit. Maintained JDK 17+ (locally 21), CMake 3.20+, C99 compiler and Python
 3.10+ are the base prerequisites. First dependency resolution needs network access.
@@ -59,5 +81,9 @@ assets; a GitHub push is not a release, installer signature or deployed service.
 6. Tag/publish only as an explicit release action after its gates. Do not claim alpha.6
    installers published while the release remains alpha.5.
 
-See [progress](PROGRESS_2026_10_24.md), [validation](VALIDATION.md) and
-[agent backlog](AGENT_BACKLOG.md) for current state.
+See progress (archived), [validation](VALIDATION.md) and
+agent backlog (archived) for current state.
+
+## November 24 native runtime and candidate editing
+
+For a sharded SafeTensors model, pass the model.safetensors.index.json file or the package directory to model-adapter inspect. Keep every referenced shard, the config and the tokenizer together. Native CPU execution uses the caller as one worker and retries a temporarily unavailable worker allocation with a single-thread pass.

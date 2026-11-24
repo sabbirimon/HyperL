@@ -1,0 +1,14 @@
+{
+  "jobs": [
+    {
+      "key": "owner-unique-request-1",
+      "pool": "combined",
+      "profile": "model-a",
+      "payload": {
+        "prompt": "Explain what a computer does in one sentence.",
+        "max_tokens": 32,
+        "seed": 0
+      }
+    }
+  ]
+}

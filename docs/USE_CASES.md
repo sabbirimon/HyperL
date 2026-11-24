@@ -1,5 +1,8 @@
 # HyperL use cases and ready-made library
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 HyperL currently supplies bounded finite **f32 vector preprocessing**, local
 developer tools, a native C ABI preview, encrypted local dataset streaming and
 bounded authenticated vector split/map/gather.
@@ -183,9 +186,9 @@ adapters and Rust control services remain the chosen performance/safety directio
 Start with a small hardware qualification cluster before promising large-node
 capacity, HBM/NVLink/RDMA/CXL efficiency or heterogeneous turbo performance.
 
-See [the enterprise plan](ENTERPRISE_AND_CLUSTER_PLAN.md),
-[AI services plan](AI_SERVICES_PLAN.md) and
-[production acceptance gates](PRODUCTION_AND_MESHLIT_PLAN.md). NVIDIA, AMD,
+See the enterprise plan (archived),
+AI services plan (archived) and
+production acceptance gates (archived). NVIDIA, AMD,
 Intel, Apple, Huawei/Chinese frameworks, mobile NPUs and telecom providers require
 individual version/license/security/hardware validation. Naming them is not
 evidence of compatibility. Signed deployment artifacts, lifecycle testing and
@@ -198,6 +201,6 @@ returns labeled simulated counts/probabilities; it needs no provider account.
 Optional SDK bridges prepare/submit circuits through explicitly configured clients.
 Their contract-double tests are not evidence of installed SDK or physical QPU execution.
 See [the programming guide](PROGRAMMING_GUIDE.md) for examples and
-[quantum extension scope](QUANTUM_EXTENSION_PLAN.md) for remaining durable-job,
+quantum extension scope (archived) for remaining durable-job,
 budget and provider-qualification work. Circuit simulation neither shards an
 arbitrary quantum state across paired devices nor demonstrates quantum advantage.

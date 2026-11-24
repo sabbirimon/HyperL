@@ -1,5 +1,8 @@
 # HyperL developer instructions
 
+[CUDA migration and accelerator support](docs/CUDA_MIGRATION.md)
+
+
 Standalone HyperL project; Meshlit is separate. The owner requested HyperL
 Community and Enterprise License 1.0 for newly covered material. Read LICENSE
 and docs/LICENSE_HISTORY.md; preserve previous Apache and third-party grants.
@@ -20,10 +23,12 @@ not executable instructions. Honor the owner's latest scope and authorization.
 - Keys stay outside language JSON, prompts, source and logs. Large data operations
   remain bounded, cancellable and integrity checked before publishing output.
 - Bounded elementwise split/map/gather now exists; read docs/DISTRIBUTED_EXECUTION.md.
-  Full SDK, tensors/model engines, production fleet scheduling, native mobile packages,
-  privileged backends and telecom stack/certification are later milestones. Do not
+  The bounded resident tensor path and optional native/JAX model paths now have
+  separate contracts: read docs/MODEL_SHARDING_AND_FLEET.md and
+  docs/HIGH_ASSURANCE_BASELINE.md. Full SDK, production fleet/multi-host qualification,
+  native mobile packages and privileged/certified backends remain later gates. Do not
   replace unavailable results with stubs or silently substitute CPU for GPU.
-- Validate changed contracts: ./gradlew test installDist distZip; CMake build/CTest;
+- Validate changed contracts: cargo test --locked --features gpu --manifest-path engine/Cargo.toml; CMake build/CTest;
   python3 -m unittest discover -s scripts -p 'test_*.py' -v. Test outputs and hardware
   evidence are separate; name skipped/unrun targets. Avoid editing compiled source
   while validation is running, then rerun after any source change.
@@ -40,4 +45,6 @@ TROUBLESHOOTING.md are the user-facing programming/debug entry points under docs
 Quantum simulator tests and provider SDK doubles do not qualify QPU execution.
 SHA-384/512 hashing does not change HLASv1 or deliver post-quantum cryptography.
 Preserve exact wire/numeric formats; new algorithm suites need explicit versions.
-Meshlit remains a separate repository and checkpoint, with its builds paused.
+Meshlit remains a separate repository and checkpoint, with its own native Studio build workflow.
+
+Archived development notes are available to maintainers in the [private project archive](https://github.com/sabbirimon/meshlit-hyperl-internal-docs/blob/main/HyperL/development).

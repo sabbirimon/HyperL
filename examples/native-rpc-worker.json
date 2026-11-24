@@ -1,0 +1,8 @@
+{
+  "format": "hyperl-native-worker/1",
+  "executable": "/owner/runtime/bin/ggml-rpc-server",
+  "executable_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "port": 50052,
+  "device": "CPU",
+  "threads": 2
+}

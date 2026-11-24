@@ -1,7 +1,10 @@
 # HyperL local validation — 2026-10-08
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Historical foundation record from Meshlit. For the standalone build/current status,
-see [USER_GUIDE.md](USER_GUIDE.md), [ARCHITECTURE_AND_ROADMAP.md](ARCHITECTURE_AND_ROADMAP.md)
+see [USER_GUIDE.md](USER_GUIDE.md), ARCHITECTURE_AND_ROADMAP.md (archived)
 and [VALIDATION.md](VALIDATION.md). Android/base-branch references below are provenance,
 not standalone installation instructions.
 

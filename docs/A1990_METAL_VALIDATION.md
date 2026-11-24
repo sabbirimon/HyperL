@@ -1,5 +1,8 @@
 # Radeon Pro 560X Metal workload validation — 2026-10-08
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 The owner ran the corrected HyperL qualification harness in a macOS terminal.
 The saved report was inspected and its case/device/completion metadata checked.
 Result: **`passed-listed-cases` — four GPU executions and one expected rejection**.

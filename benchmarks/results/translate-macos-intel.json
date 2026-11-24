@@ -1,0 +1,96 @@
+{
+  "host": "macOS-15.8.3-x86_64-i386-64bit-Mach-O",
+  "python": "3.15.0",
+  "warmups": 1,
+  "repeats": 5,
+  "results": [
+    {
+      "target": "hip",
+      "files": 1,
+      "sourceBytes": 315,
+      "baselineMs": [
+        214.59,
+        205.06,
+        193.14,
+        189.68,
+        199.11
+      ],
+      "candidateMs": [
+        220.41,
+        188.33,
+        189.89,
+        191.18,
+        197.75
+      ],
+      "medianBaselineMs": 199.11,
+      "medianCandidateMs": 191.18,
+      "speedup": 1.04
+    },
+    {
+      "target": "hip",
+      "files": 24,
+      "sourceBytes": 7735,
+      "baselineMs": [
+        2679.17,
+        2543.41,
+        2574.02,
+        2638.72,
+        2674.33
+      ],
+      "candidateMs": [
+        618.17,
+        755.44,
+        655.4,
+        634.35,
+        647.31
+      ],
+      "medianBaselineMs": 2638.72,
+      "medianCandidateMs": 647.31,
+      "speedup": 4.08
+    },
+    {
+      "target": "hip",
+      "files": 128,
+      "sourceBytes": 41396,
+      "baselineMs": [
+        162713.55,
+        44461.39,
+        87573.52,
+        37734.73,
+        30383.91
+      ],
+      "candidateMs": [
+        4824.57,
+        8731.11,
+        8821.07,
+        6221.23,
+        6290.6
+      ],
+      "medianBaselineMs": 44461.39,
+      "medianCandidateMs": 6290.6,
+      "speedup": 7.07
+    },
+    {
+      "target": "metal",
+      "files": 1,
+      "sourceBytes": 226,
+      "baselineMs": [
+        281.95,
+        304.77,
+        279.93,
+        276.68,
+        270.71
+      ],
+      "candidateMs": [
+        268.74,
+        290.89,
+        288.97,
+        265.81,
+        267.36
+      ],
+      "medianBaselineMs": 279.93,
+      "medianCandidateMs": 268.74,
+      "speedup": 1.04
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # Local CPU baseline — 2026-10-08
 
+[CUDA migration and accelerator support](CUDA_MIGRATION.md)
+
+
 Historical benchmark snapshot; reviewed 2026-10-24 without replacing measurements.
 Later [Samsung/Mac CPU split measurements](ANDROID_CROSS_PLATFORM_PROBE.md) use a
 different workload size, runtime and timing scope and must not be merged into
