@@ -6,7 +6,7 @@ transmitter, SIM/subscriber credential service or standards certification exists
 
 Implementation audit: 2026-10-24. The bounded [CPU worker protocol](DISTRIBUTED_EXECUTION.md)
 and [fabric capability negotiation](ENTERPRISE_FABRICS.md) are compute features,
-not a cellular network stack. The separate [quantum prototype](QUANTUM_EXTENSION_PLAN.md)
+not a cellular network stack. The separate quantum prototype (archived)
 does not add telecom authentication, radio capability or standards certification.
 The standards links below retain their research scope; pin a specific edition
 when an actual lab implementation is approved.

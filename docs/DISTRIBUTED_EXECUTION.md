@@ -42,8 +42,8 @@ attention, model layers and all-reduce are not delivered. Meshlit's separate
 llama.cpp model/RPC pipeline is not HyperL's vector runtime.
 The separate Python quantum circuit/provider interfaces also remain outside
 `hyperl-shard/1`: counts, quantum states and provider jobs are not f32 shard payloads.
-See [quantum scope](QUANTUM_EXTENSION_PLAN.md) and the
-[precision plan](PRECISION_AND_HPC_PLAN.md) before designing a new typed wire contract.
+See quantum scope (archived) and the
+precision plan (archived) before designing a new typed wire contract.
 
 The coordinator owns its input snapshot/output. Each worker owns temporary
 buffers under application credit leases. There is no cross-device pointer,

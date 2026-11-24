@@ -59,5 +59,5 @@ assets; a GitHub push is not a release, installer signature or deployed service.
 6. Tag/publish only as an explicit release action after its gates. Do not claim alpha.6
    installers published while the release remains alpha.5.
 
-See [progress](PROGRESS_2026_10_24.md), [validation](VALIDATION.md) and
-[agent backlog](AGENT_BACKLOG.md) for current state.
+See progress (archived), [validation](VALIDATION.md) and
+agent backlog (archived) for current state.

@@ -9,8 +9,8 @@ source. Guides separate working code, estimates, provider contracts and future p
 - [Installation and CLI/workbench reference](USER_GUIDE.md)
 - [Build, validation and packaging](BUILD_AND_TEST.md)
 - [Troubleshooting and debugging](TROUBLESHOOTING.md)
-- [Progress and bug-fix record](PROGRESS_2026_10_24.md)
-- [Agent backlog and upcoming features](AGENT_BACKLOG.md)
+- Progress and bug-fix record (archived)
+- Agent backlog and upcoming features (archived)
 - [Current and historical validation](VALIDATION.md)
 - [Share measured hardware results and feedback](TEST_REPORTING.md)
 
@@ -18,8 +18,8 @@ source. Guides separate working code, estimates, provider contracts and future p
 
 [Language](LANGUAGE_V1.md) · [Recipes](USE_CASES.md) · [Python/framework interoperability](LIBRARY_INTEROPERABILITY.md) ·
 [Memory](MEMORY.md) · [Dataset format](DATASET_FORMAT.md) · [Distributed execution](DISTRIBUTED_EXECUTION.md) ·
-[Cryptography](CRYPTOGRAPHY.md) · [Post-quantum migration](CRYPTOGRAPHY_EVOLUTION_PLAN.md) ·
-[Quantum APIs](QUANTUM_EXTENSION_PLAN.md) · [OriginQ](ORIGINQ_ADAPTER.md) ·
+[Cryptography](CRYPTOGRAPHY.md) · Post-quantum migration (archived) ·
+Quantum APIs (archived) · [OriginQ](ORIGINQ_ADAPTER.md) ·
 [Diagnostics](CODE_DIAGNOSTICS.md) · [Editor integration](ide/README.md).
 
 ## Hardware and deployments
@@ -28,18 +28,18 @@ source. Guides separate working code, estimates, provider contracts and future p
 [Metal](MACOS_METAL.md) · [Android Vulkan](ANDROID_VULKAN.md) ·
 [Android/Mac CPU qualification](ANDROID_CROSS_PLATFORM_PROBE.md) ·
 [Android probe project](../android/probe/README.md) · [Desktop installers](DESKTOP_INSTALLERS.md) ·
-[Enterprise fabrics](ENTERPRISE_FABRICS.md) · [Enterprise clusters](ENTERPRISE_AND_CLUSTER_PLAN.md) ·
-[Mobile/edge](MOBILE_AND_EDGE_PLAN.md) · [Precision/HPC](PRECISION_AND_HPC_PLAN.md).
+[Enterprise fabrics](ENTERPRISE_FABRICS.md) · Enterprise clusters (archived) ·
+Mobile/edge (archived) · Precision/HPC (archived).
 
 ## Architecture and plans
 
-[Architecture/roadmap](ARCHITECTURE_AND_ROADMAP.md) · [Software stack](SOFTWARE_STACK.md) ·
-[Sharding contract](SHARDING_EXECUTION_CONTRACT.md) · [Heterogeneous execution](HETEROGENEOUS_EXECUTION_PLAN_2026-10-23.md) ·
+Architecture/roadmap (archived) · [Software stack](SOFTWARE_STACK.md) ·
+[Sharding contract](SHARDING_EXECUTION_CONTRACT.md) · Heterogeneous execution (archived) ·
 [Native performance architecture](NATIVE_PERFORMANCE_ARCHITECTURE.md) ·
-[Foundation hardening](FOUNDATION_HARDENING.md) · [AI services](AI_SERVICES_PLAN.md) ·
-[Developer experience](DEVELOPER_EXPERIENCE_PLAN.md) · [Developer tools](DEVELOPER_TOOLS_PLAN.md) ·
-[UI design](UI_DESIGN_PLAN.md) · [Owner requests](REQUESTS_AND_PLAN.md) ·
-[Production and Meshlit boundary](PRODUCTION_AND_MESHLIT_PLAN.md) · [Telecom research](TELECOM.md).
+[Foundation hardening](FOUNDATION_HARDENING.md) · AI services (archived) ·
+Developer experience (archived) · Developer tools (archived) ·
+UI design (archived) · Owner requests (archived) ·
+Production and Meshlit boundary (archived) · [Telecom research](TELECOM.md).
 
 ## Provenance and historical records
 

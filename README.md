@@ -11,7 +11,7 @@
 [![Release: alpha.5](https://img.shields.io/badge/Release-0.1.0--alpha.5-c2ef87)](https://github.com/sabbirimon/HyperL/releases/tag/v0.1.0-alpha.5)
 [![Standalone checks](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml/badge.svg)](https://github.com/sabbirimon/HyperL/actions/workflows/ci.yml)
 
-[Documentation](docs/README.md) · [Programming & diagrams](docs/PROGRAMMING_GUIDE.md) · [Debugging](docs/TROUBLESHOOTING.md) · [Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · [Roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) · [Enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) · [Issues](https://github.com/sabbirimon/HyperL/issues)
+[Documentation](docs/README.md) · [Programming & diagrams](docs/PROGRAMMING_GUIDE.md) · [Debugging](docs/TROUBLESHOOTING.md) · [Download](https://github.com/sabbirimon/HyperL/releases) · [Desktop installers](docs/DESKTOP_INSTALLERS.md) · [Use cases & libraries](docs/USE_CASES.md) · [Install & program](docs/USER_GUIDE.md) · Roadmap (archived) · Enterprise plan (archived) · [Issues](https://github.com/sabbirimon/HyperL/issues)
 
 </div>
 
@@ -66,7 +66,7 @@ placement decisions can account for both useful work and resource cost.
   failure instead of relying on a hardware label alone.
 - **Governed large-scale compute:** tenant controls, schedulers, datasets,
   recovery and audit could support organization-owned clusters after the
-  [enterprise delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) pass.
+  enterprise delivery gates (archived) pass.
 
 These are development directions. [Validation](docs/VALIDATION.md) records the
 smaller CPU, native and cross-device paths that have actually run.
@@ -74,7 +74,7 @@ smaller CPU, native and cross-device paths that have actually run.
 Dedicated enterprise clusters, datacenters and hyperscalers are primary design
 targets, alongside standalone workstations and edge nodes. Tenant isolation,
 large-data streaming, high-precision backends, recovery and demonstrated scale
-have explicit [delivery gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md).
+have explicit delivery gates (archived).
 
 ## **Large organizations: help turn compute plans into measured evidence**
 
@@ -87,7 +87,7 @@ current contracts handle and where they fail. Share the exact hardware, driver,
 source revision, workload, correctness check, timings, resource use and failures
 through the [detailed test-report guide](docs/TEST_REPORTING.md). Redacted failed
 attempts are useful data too. Design and usability feedback is welcome even when
-you cannot run a benchmark. The [enterprise plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md)
+you cannot run a benchmark. The enterprise plan (archived)
 states which large-fleet services still need implementation and qualification.
 
 **Today, HyperL is an experimental standalone CLI and desktop workbench**, with a
@@ -117,16 +117,16 @@ Created by **Sabbir Hassan Imon (IMON)**. HyperL is independent;
 Start with the [detailed programming guide](docs/PROGRAMMING_GUIDE.md) for JSON,
 Python, C, workers and quantum circuits, including flow and sequence diagrams.
 [Build/test](docs/BUILD_AND_TEST.md) · [Troubleshoot](docs/TROUBLESHOOTING.md) ·
-[Progress and fixes](docs/PROGRESS_2026_10_24.md) · [Pending features](docs/AGENT_BACKLOG.md).
+Progress and fixes (archived) · Pending features (archived).
 
 The Python package now includes a bounded, dependency-free classical quantum
 simulator and optional IBM, Google Engine, Azure IonQ and OriginQ submission
 bridges. Simulator tests execute actual local math; provider tests use SDK doubles.
 No physical QPU or live cloud service is qualified. OriginQ requires explicit
-HTTPS configuration. [Quantum API and limits](docs/QUANTUM_EXTENSION_PLAN.md).
+HTTPS configuration. Quantum API and limits (archived).
 Explicit SHA-384/SHA-512 hashing joins default SHA-256; Ed25519 signatures and
 AES-GCM datasets retain their existing formats. [Crypto API](docs/CRYPTOGRAPHY.md) ·
-[Post-quantum migration plan](docs/CRYPTOGRAPHY_EVOLUTION_PLAN.md).
+Post-quantum migration plan (archived).
 
 ## Why build HyperL?
 
@@ -206,7 +206,7 @@ it does not establish a native GUI session or GPU execution.
 - CLI parity, local JSON schema and an optional VS Code process task. Full VS Code/
   JetBrains plugins, semantic language server, debugger and profiler remain later.
 
-[Workbench design](docs/UI_DESIGN_PLAN.md) · [Developer tools](docs/DEVELOPER_TOOLS_PLAN.md) · [Diagnostics](docs/CODE_DIAGNOSTICS.md) · [Font provenance](docs/FONT_PROVENANCE.md)
+Workbench design (archived) · Developer tools (archived) · [Diagnostics](docs/CODE_DIAGNOSTICS.md) · [Font provenance](docs/FONT_PROVENANCE.md)
 
 ## Hardware and expansion
 
@@ -218,7 +218,7 @@ and Rust fleet services have explicit [implementation gates](docs/FOUNDATION_HAR
 host previews and one Android Vulkan qualification runner. Exact workload evidence
 exists for Radeon Pro 560X and Adreno 506; **zero NVIDIA architecture families are hardware-qualified**.
 See the [NVIDIA architecture/software matrix](docs/NVIDIA_COMPATIBILITY.md),
-[AMD ROCm/AI matrix](docs/AMD_COMPATIBILITY.md), [AI Services plan](docs/AI_SERVICES_PLAN.md), and
+[AMD ROCm/AI matrix](docs/AMD_COMPATIBILITY.md), AI Services plan (archived), and
 [AMD Mac / Metal build and test guide](docs/MACOS_METAL.md).
 
 ## What runs now?
@@ -347,9 +347,9 @@ CPU/GPU/NPU paths, with optional authenticated remote access. Desktop Java GUI a
 are not Android/iOS installers. Non-root/sandboxed use is the default. The owner resumed
 single-phone GPU tests: [Adreno 506 Vulkan checks pass](docs/ANDROID_VULKAN.md).
 Meshlit app GPU integration and two-phone cluster acceptance remain pending.
-[Mobile/edge plan](docs/MOBILE_AND_EDGE_PLAN.md).
+Mobile/edge plan (archived).
 
-The [enterprise/datacenter plan](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) defines useful
+The enterprise/datacenter plan (archived) defines useful
 services: identity/mTLS, tenant isolation, quotas, durable jobs/leases, scheduler
 adapters, artifact/model registry, data/checkpoints, telemetry, human/agent policies,
 acknowledged global Stop, upgrades/rollback and disaster recovery. These are roadmap
@@ -386,7 +386,7 @@ and actual integration tests precede adoption; none is bundled as a working clus
 Current configuration limits—up to **1,000,000 inventory entries** and **256 active
 workers**—are validation bounds, not demonstrated operating capacity. Begin with an
 independent 3–5-host pilot before expanding. No million-node or low-latency fabric
-performance is claimed. [Detailed rollout gates](docs/ENTERPRISE_AND_CLUSTER_PLAN.md#7-size-limits-and-measured-rollout-gates).
+performance is claimed. Detailed rollout gates (archived).
 
 ## Evidence, not assumed performance
 
@@ -442,18 +442,18 @@ maintenance policy, qualified targets and maintainers exist.
 | [Software stack](docs/SOFTWARE_STACK.md) | Platform layers, deployment profiles, support counts and delivery boundaries |
 | [NVIDIA compatibility](docs/NVIDIA_COMPATIBILITY.md) | Eight tracked architecture families and software integration gates |
 | [AMD compatibility](docs/AMD_COMPATIBILITY.md) | ROCm/HIP, frameworks, serving, EPYC, Ryzen NPU and FPGA tracks |
-| [AI Services plan](docs/AI_SERVICES_PLAN.md) | Proposed model/runtime/serving contracts and integration gates |
+| AI Services plan (archived) | Proposed model/runtime/serving contracts and integration gates |
 | [Mac Metal](docs/MACOS_METAL.md) | Intel/AMD and Apple silicon host preview; exact-device Terminal qualification |
 | [Install, use and program](docs/USER_GUIDE.md) | CLI/GUI, examples, C ABI, installation and troubleshooting |
 | [Library interoperability](docs/LIBRARY_INTEROPERABILITY.md) | Native Python preview, recipes, tensor copying and framework/provider migration |
-| [Developer experience](docs/DEVELOPER_EXPERIENCE_PLAN.md) | Python-style language/API goals, onboarding and SDK ergonomics |
-| [Developer tools](docs/DEVELOPER_TOOLS_PLAN.md) | Current editing/diagnostics versus later IDE/debugger/profiler |
+| Developer experience (archived) | Python-style language/API goals, onboarding and SDK ergonomics |
+| Developer tools (archived) | Current editing/diagnostics versus later IDE/debugger/profiler |
 | [Memory contracts](docs/MEMORY.md) | What CPU admission observes and what remains unknown |
 | [Native architecture](docs/NATIVE_PERFORMANCE_ARCHITECTURE.md) | C/C++ and Rust roles, ABI and performance gates |
-| [Enterprise services](docs/ENTERPRISE_AND_CLUSTER_PLAN.md) | Deployment profiles, services, isolation and rollout |
-| [Phone/edge plan](docs/MOBILE_AND_EDGE_PLAN.md) | Local mobile mode, lifecycle and optional remote use |
+| Enterprise services (archived) | Deployment profiles, services, isolation and rollout |
+| Phone/edge plan (archived) | Local mobile mode, lifecycle and optional remote use |
 | [Platforms](docs/PLATFORMS.md) | Implemented, source-only and unqualified targets |
-| [Architecture/roadmap](docs/ARCHITECTURE_AND_ROADMAP.md) | Ordered runtime/compiler/SDK milestones |
+| Architecture/roadmap (archived) | Ordered runtime/compiler/SDK milestones |
 | [Telecom research](docs/TELECOM.md) | LTE/5G/future-6G research; execution disabled/uncertified |
 
 ## Build and contribute
@@ -481,3 +481,5 @@ preserved in [licence history](docs/LICENSE_HISTORY.md). [NOTICE](NOTICE) record
 foundation provenance and pinned dependencies. Fonts retain OFL-1.1; FlatLaf retains
 Apache-2.0 and RSyntaxTextArea BSD-3-Clause. Proprietary vendor SDKs/drivers are separately
 installed/licensed; no NVIDIA artwork or Odysseus AGPL implementation is copied.
+
+[Intel, AMD and Adreno multi-GPU projection measurements](docs/evidence/intel-amd-adreno-projection-2026-11-24.json)

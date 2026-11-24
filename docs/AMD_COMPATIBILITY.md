@@ -49,7 +49,7 @@ entire AMD ecosystem is not one uniform permissive redistribution grant.
   versions/operators/models on an AMD target. HyperL's existing CPU tensor-copying
   preview does not qualify ROCm tensors, autograd or complete models.
 - **vLLM / SGLang:** reuse selected reviewed inference services in the later
-  [AI Services plan](AI_SERVICES_PLAN.md); no such service starts in this alpha.
+  AI Services plan (archived); no such service starts in this alpha.
 - **Triton Inference Server:** select a ROCm-enabled distribution and backend;
   do not assume any NVIDIA container runs unchanged on AMD. AMD documents its
   [ROCm server](https://rocm.docs.amd.com/projects/triton-inference-server/en/latest/)

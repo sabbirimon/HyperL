@@ -67,7 +67,7 @@ For large testbeds, add tenant/policy scope, concurrent users/jobs, scheduler,
 identity method, storage locality, fault-injection procedure and data residency
 only if those services were actually deployed. Current HyperL source does not
 supply a production enterprise control plane; see the
-[enterprise delivery plan](ENTERPRISE_AND_CLUSTER_PLAN.md).
+enterprise delivery plan (archived).
 
 Remove tokens, private keys, internal hostnames/IPs, customer data, proprietary
 model weights and personal prompts. Use synthetic or approved public inputs when
