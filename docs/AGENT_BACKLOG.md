@@ -156,3 +156,7 @@ require reviewed parsers/adapters; arbitrary downloaded model code is not loaded
 The Flax MessagePack adapter has an Intel macOS CPU decoder qualification. Next test supported Flax architectures and accelerator placement on the target hardware. The [model format matrix](MODEL_FORMATS_2026-11-06.md) distinguishes file identification, worker eligibility and tested inference.
 
 Test model-proposed checkpoint edits against an untouched baseline and an independent held-out set. The candidate CLI currently applies one operator-selected clipping operation. Keep both model-generated proposals and accelerator qualifications open. [Research trial](PROCESSOR_AND_RESEARCH_PLAN.md#checkpoint-repair-versus-behavioral-recovery)
+
+## November 24 native runtime and candidate editing
+
+Qualify proposed edits against the original model on held-out prompts before activation. Closed-weight services and opaque compiled engines still need independent support. Full decoder sharding across both GPUs on Intel Mac remains open.

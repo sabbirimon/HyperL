@@ -324,19 +324,43 @@ impl<'a> Projection<'a> {
             return Ok(result);
         }
         let chunk_cells = (result.len() / 4).div_ceil(self.plan.workers);
-        thread::scope(|scope| {
+        let projected = thread::scope(|scope| {
+            let mut chunks = result.chunks_mut(chunk_cells * 4);
+            let Some(local) = chunks.next() else {
+                return Ok(());
+            };
             let mut jobs = Vec::new();
-            for (group, chunk) in result.chunks_mut(chunk_cells * 4).enumerate() {
-                jobs.push(thread::Builder::new().spawn_scoped(scope, move || {
-                    self.compute_cells(group * chunk_cells, chunk, stop)
-                })?);
+            let mut spawn_error = None;
+            for (group, chunk) in chunks.enumerate() {
+                match thread::Builder::new().spawn_scoped(scope, move || {
+                    self.compute_cells((group + 1) * chunk_cells, chunk, stop)
+                }) {
+                    Ok(job) => jobs.push(job),
+                    Err(error) => {
+                        spawn_error = Some(error);
+                        break;
+                    }
+                }
             }
+            let computed = self.compute_cells(0, local, stop);
             for job in jobs {
                 job.join()
                     .map_err(|_| io::Error::other("worker panicked"))??;
             }
+            computed?;
+            if let Some(error) = spawn_error {
+                return Err(error);
+            }
             checkpoint(stop)
-        })?;
+        });
+        match projected {
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                checkpoint(stop)?;
+                self.compute_cells(0, &mut result, stop)?;
+            }
+            status => status?,
+        }
+        checkpoint(stop)?;
         Ok(result)
     }
 }

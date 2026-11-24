@@ -83,3 +83,7 @@ assets; a GitHub push is not a release, installer signature or deployed service.
 
 See [progress](PROGRESS_2026_10_24.md), [validation](VALIDATION.md) and
 [agent backlog](AGENT_BACKLOG.md) for current state.
+
+## November 24 native runtime and candidate editing
+
+For a sharded SafeTensors model, pass the model.safetensors.index.json file or the package directory to model-adapter inspect. Keep every referenced shard, the config and the tokenizer together. Native CPU execution uses the caller as one worker and retries a temporarily unavailable worker allocation with a single-thread pass.

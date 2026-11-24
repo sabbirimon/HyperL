@@ -214,8 +214,10 @@ def main():
     edit = commands.add_parser("model-edit-candidate", help="Clip one floating-point tensor into a new research checkpoint")
     edit.add_argument("source")
     edit.add_argument("destination")
-    edit.add_argument("--tensor", required=True)
-    edit.add_argument("--clip", type=float, required=True)
+    choice = edit.add_mutually_exclusive_group(required=True)
+    choice.add_argument("--tensor")
+    choice.add_argument("--proposal", help="Digest-bound JSON clip or abstain proposal")
+    edit.add_argument("--clip", type=float)
     edit.add_argument("--source-sha256", required=True)
     edit.add_argument("--max-bytes", type=int, required=True)
     adapters = commands.add_parser("model-adapter", help="Inspect model packages or invoke an installed local Studio runtime")
@@ -281,9 +283,16 @@ def main():
         finally:
             store.close()
     elif args.command == "model-edit-candidate":
-        from .weight_candidate import clip_candidate
-        print(json.dumps(clip_candidate(args.source, args.destination, args.tensor, args.clip,
-                                        args.source_sha256, args.max_bytes)))
+        from .weight_candidate import clip_candidate, proposed_candidate
+        if args.proposal:
+            if args.clip is not None:
+                parser.error("--clip applies only with --tensor")
+            result = proposed_candidate(args.source, args.destination, args.proposal, args.source_sha256, args.max_bytes)
+        else:
+            if args.clip is None:
+                parser.error("--tensor requires --clip")
+            result = clip_candidate(args.source, args.destination, args.tensor, args.clip, args.source_sha256, args.max_bytes)
+        print(json.dumps(result))
     elif args.command == "model-adapter":
         import shutil
         import subprocess

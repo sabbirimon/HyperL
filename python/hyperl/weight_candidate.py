@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-HyperL-Community-1.0
 """Build a separate research candidate by applying one bounded numerical edit."""
 import hashlib
+import json
 import math
 import os
 from pathlib import Path
@@ -73,3 +74,23 @@ def clip_candidate(source, destination, tensor, limit, expected_sha256, max_byte
         os.link(candidate, destination)
     return dict(operation="clip", tensor=tensor, limit=limit, values_changed=changed,
                 source_sha256=expected_sha256, candidate_sha256=sha, evaluated=False)
+
+def proposed_candidate(source, destination, proposal, expected_sha256, max_bytes):
+    """Apply a data-only proposal bound to the owner's expected source digest."""
+    with Path(proposal).open("rb") as stream:
+        raw = stream.read(8193)
+    if len(raw) > 8192:
+        raise ValueError("Proposal exceeds 8 KiB")
+    data = json.loads(raw)
+    if not isinstance(data, dict) or data.get("schema") != "hyperl.weight-proposal.v1":
+        raise ValueError("Unknown proposal schema")
+    if data.get("source_sha256") != expected_sha256 or not re.fullmatch("[0-9a-f]{64}", expected_sha256):
+        raise ValueError("Proposal source digest mismatch")
+    common = {"schema", "operation", "source_sha256"}
+    if data.get("operation") == "abstain" and set(data) == common:
+        return dict(operation="abstain", evaluated=False)
+    if data.get("operation") != "clip" or set(data) != common | {"tensor", "limit"}:
+        raise ValueError("Expected one bounded clip or abstain operation")
+    if not isinstance(data["tensor"], str) or not 1 <= len(data["tensor"]) <= 1024 or type(data["limit"]) not in (int, float):
+        raise ValueError("Invalid proposal tensor or limit")
+    return clip_candidate(source, destination, data["tensor"], data["limit"], expected_sha256, max_bytes)
