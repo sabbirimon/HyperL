@@ -1,13 +1,14 @@
 # HyperL
 
-[CUDA migration and accelerator support](docs/CUDA_MIGRATION.md) covers CUDA project migration, portable kernel compilation, vendor SDK requirements and hardware results.
-
+![HyperL — Bounded CPU and GPU compute experiments](docs/assets/hyperl-cover.png)
 
 HyperL runs bounded tensor workloads on native processors. The standalone Rust engine reads immutable SafeTensors weights through a read-only mapping, plans local work against a byte budget, and executes a dense projection on CPU or a selected wgpu adapter. An optional graph frontend lowers typed operations to StableHLO MLIR for compilation with XLA or IREE.
 
 Desktop Studio bundles a native CPU inference server and a Qwen2.5 starter. Hosted builds execute a prompt after extraction on Linux, macOS and Windows. Android has a separate NativeActivity CPU diagnostic. [Packaging and device checks](docs/BUILD_AND_TEST.md)
 
-## Build and run
+[Native engine guide](docs/NATIVE_ENGINE.md) · [CUDA migration and accelerator support](docs/CUDA_MIGRATION.md) · [Build and test](docs/BUILD_AND_TEST.md)
+
+## Build the native engine
 
 ```sh
 cargo build --release --locked --manifest-path engine/Cargo.toml --features gpu
@@ -16,6 +17,8 @@ cargo test --locked --manifest-path engine/Cargo.toml --features gpu
 ```
 
 Omit `--features gpu` for a CPU-only binary. The Rust executable builds independently of Python, CMake and Java. The output directory follows Cargo's target directory setting. The older bounded C ABI builds separately with CMake.
+
+### Run a projection
 
 With a local, immutable SafeTensors file containing activation matrix `x` and weight matrix `w`, run a projection with the SHA-256 from the model publisher or your own verified import. The last positional argument names a new output file.
 
@@ -41,8 +44,13 @@ HLZ1 supports Huffman, arithmetic range coding, rANS and raw blocks. Auto measur
 
 The Rust projection is one transformer primitive. For token generation, use the existing pinned llama.cpp GGUF adapter or the JAX Llama decoder. The fleet service, storage planner, erasure recovery and model-profile receipts have their own contracts. [Model sharding and fleet](docs/MODEL_SHARDING_AND_FLEET.md) · [High-assurance baseline](docs/HIGH_ASSURANCE_BASELINE.md)
 
-## Development
+## Hardware results
 
+![256 attention-weight rows distributed across Intel UHD 630, AMD Radeon Pro 560X and Adreno 730 GPUs](docs/assets/projection-row-split.png)
+
+Two GPUs in an Intel Mac and one GPU in an Android phone computed different rows of the same Qwen2.5 1.5B attention projection. The Intel UHD 630 handled 86 rows, the Radeon Pro 560X handled 85 and the Adreno 730 handled 85. Each row used 1,536 FP32 inputs. The maximum absolute error against the reference was 1.90 × 10⁻⁶. This experiment measured one projection. End-to-end token generation across these GPUs is still unverified. [Measurement record](docs/evidence/intel-amd-adreno-projection-2026-11-24.json)
+
+## Development guides
 
 - [Research index covering 721 manuscripts](docs/research/manuscripts.csv)
 - [Build and validation](docs/BUILD_AND_TEST.md)
@@ -52,5 +60,3 @@ The Rust projection is one transformer primitive. For token generation, use the 
 The former JVM workbench, Kotlin shard worker and Android JVM probe are available in project history. Existing users of those applications can use the [previous source tree](https://github.com/sabbirimon/HyperL/tree/5a784b8). The native CLI has its own commands and execution contract.
 
 New material uses the [HyperL Community and Enterprise License](LICENSE). Earlier grants and third-party licenses are recorded in the [license history](docs/LICENSE_HISTORY.md) and [notices](NOTICE).
-
-[Intel, AMD and Adreno multi-GPU projection measurements](docs/evidence/intel-amd-adreno-projection-2026-11-24.json)
