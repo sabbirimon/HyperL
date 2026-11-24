@@ -7,7 +7,7 @@ The bounded SmolLM2 pressure test exercised automatic weight and KV placement on
 
 ## Physical three-GPU projection on November 24, 2026
 
-One Qwen2.5 1.5B attention key projection used the Mac's Intel UHD Graphics 630 and Radeon Pro 560X through Metal and an AQUOS R7 Adreno 730 through Vulkan over USB. The test coordinator divided all 256 output rows into 86, 85 and 85 rows and sent the same 1,536-element activation to each worker. The weights came from block zero of the Q4_K_M GGUF and were dequantized to FP32 before dispatch. The input was a reproducible test activation. All 256 outputs agreed with a single FP64 reference to a maximum absolute error of 0.00000190. The three host dispatch intervals overlapped by 149 ms. This measures a single projection including worker startup. End-to-end token generation and a speedup for automatic placement still require separate tests.
+One Qwen2.5 1.5B attention key projection used the Mac's Intel UHD Graphics 630 and Radeon Pro 560X through Metal and an AQUOS R7 Adreno 730 through Vulkan over USB. The test coordinator divided all 256 output rows into 86, 85 and 85 rows and sent the same 1,536-element activation to each worker. The weights came from block zero of the Q4_K_M GGUF and were dequantized to FP32 before dispatch. The input was a reproducible test activation. All 256 outputs agreed with a single FP64 reference to a maximum absolute error of 0.00000190. The three host dispatch intervals overlapped by 149 ms. This measures a single projection including worker startup. End-to-end token generation and a speedup for automatic placement still require separate tests. [Measured per-device dispatches and numerical error](evidence/intel-amd-adreno-projection-2026-11-24.json).
 
 ## Architecture decision
 
