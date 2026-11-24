@@ -1,6 +1,6 @@
-# HyperL
+# HyperL™
 
-![HyperL — Bounded CPU and GPU compute experiments](docs/assets/hyperl-cover.png)
+![HyperL™ — Bounded CPU and GPU compute experiments](docs/assets/hyperl-cover.png)
 
 HyperL explores a common way to describe, validate and eventually execute AI workloads
 across CPUs, GPUs and other accelerators. Its goal is to give developers approachable
@@ -54,8 +54,10 @@ ctest --test-dir build/native -C Release --output-on-failure
 
 On Windows use `gradlew.bat`. For a hardware report, include the source revision, workload, device and driver, expected and observed results, and elapsed time including transfers. Failed runs also help maintainers establish support boundaries. [Build and test](docs/BUILD_AND_TEST.md) · [Report a result](docs/TEST_REPORTING.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-## About and licensing
+## About HyperL™ and commercial licensing
 
 Created by **Sabbir Hassan Imon (IMON)**. HyperL is an independent project. Meshlit is a separate client project. [Meshlit](https://github.com/sabbirimon/meshlit) · [Documentation index](docs/README.md)
 
 Newly covered work uses the HyperL Community and Enterprise License 1.0. Personal, developer and research use is free, as is qualifying small-business production. Enterprise production terms include a six-calendar-month trial for groups meeting the revenue, budget or employee threshold. Published releases through alpha.5 and earlier Apache-covered code retain their Apache 2.0 grants. [License](LICENSE) · [Eligibility and examples](docs/LICENSING.md) · [License history](docs/LICENSE_HISTORY.md) · [Third-party notices](NOTICE)
+
+For commercial licensing inquiries, including proposed royalty arrangements, contact the maintainer. Any payment terms require a separate written agreement. [Commercial terms and contact](docs/LICENSING.md)
